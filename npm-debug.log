@@ -1,0 +1,100 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'grunt-contrib-watc',
+1 verbose cli   '--save-de' ]
+2 info using npm@2.14.7
+3 info using node@v4.2.1
+4 verbose install initial load of C:\Work\Charting\FlowingCharts\package.json
+5 warn package.json flowingcharts@0.1.0 No repository field.
+6 warn package.json flowingcharts@0.1.0 No README data
+7 warn package.json flowingcharts@0.1.0 No license field.
+8 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt\package.json
+9 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-contrib-concat\package.json
+10 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-contrib-copy\package.json
+11 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-contrib-jshint\package.json
+12 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-contrib-uglify\package.json
+13 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-contrib-watch\package.json
+14 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\grunt-jsdoc\package.json
+15 verbose installManyTop reading scoped package data from C:\Work\Charting\FlowingCharts\node_modules\ink-docstrap\package.json
+16 info package.json grunt@0.4.5 No license field.
+17 info package.json grunt-contrib-concat@0.5.1 No license field.
+18 info package.json grunt-contrib-watch@0.6.1 No license field.
+19 verbose readDependencies loading dependencies from C:\Work\Charting\FlowingCharts\package.json
+20 silly cache add args [ 'grunt-contrib-watc', null ]
+21 verbose cache add spec grunt-contrib-watc
+22 silly cache add parsed spec Result {
+22 silly cache add   raw: 'grunt-contrib-watc',
+22 silly cache add   scope: null,
+22 silly cache add   name: 'grunt-contrib-watc',
+22 silly cache add   rawSpec: '',
+22 silly cache add   spec: '*',
+22 silly cache add   type: 'range' }
+23 silly addNamed grunt-contrib-watc@*
+24 verbose addNamed "*" is a valid semver range for grunt-contrib-watc
+25 silly addNameRange { name: 'grunt-contrib-watc', range: '*', hasData: false }
+26 silly mapToRegistry name grunt-contrib-watc
+27 silly mapToRegistry using default registry
+28 silly mapToRegistry registry https://registry.npmjs.org/
+29 silly mapToRegistry uri https://registry.npmjs.org/grunt-contrib-watc
+30 verbose addNameRange registry:https://registry.npmjs.org/grunt-contrib-watc not in flight; fetching
+31 verbose request uri https://registry.npmjs.org/grunt-contrib-watc
+32 verbose request no auth needed
+33 info attempt registry request try #1 at 4:25:33 PM
+34 verbose request id 91cda4b67753f030
+35 http request GET https://registry.npmjs.org/grunt-contrib-watc
+36 http 404 https://registry.npmjs.org/grunt-contrib-watc
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=0',
+37 verbose headers   'content-length': '2',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Tue, 20 Oct 2015 15:25:33 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   age: '0',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-lhr6325-LHR',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1445354733.178015,VS0,VE91' }
+38 silly get cb [ 404,
+38 silly get   { 'content-type': 'application/json',
+38 silly get     'cache-control': 'max-age=0',
+38 silly get     'content-length': '2',
+38 silly get     'accept-ranges': 'bytes',
+38 silly get     date: 'Tue, 20 Oct 2015 15:25:33 GMT',
+38 silly get     via: '1.1 varnish',
+38 silly get     age: '0',
+38 silly get     connection: 'keep-alive',
+38 silly get     'x-served-by': 'cache-lhr6325-LHR',
+38 silly get     'x-cache': 'MISS',
+38 silly get     'x-cache-hits': '0',
+38 silly get     'x-timer': 'S1445354733.178015,VS0,VE91' } ]
+39 verbose stack Error: Registry returned 404 for GET on https://registry.npmjs.org/grunt-contrib-watc
+39 verbose stack     at makeError (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:264:12)
+39 verbose stack     at CachingRegistryClient.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:242:14)
+39 verbose stack     at Request._callback (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:172:14)
+39 verbose stack     at Request.self.callback (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:198:22)
+39 verbose stack     at emitTwo (events.js:87:13)
+39 verbose stack     at Request.emit (events.js:172:7)
+39 verbose stack     at Request.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1063:14)
+39 verbose stack     at emitOne (events.js:82:20)
+39 verbose stack     at Request.emit (events.js:169:7)
+39 verbose stack     at IncomingMessage.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1009:12)
+40 verbose statusCode 404
+41 verbose pkgid grunt-contrib-watc
+42 verbose cwd C:\Work\Charting\FlowingCharts
+43 error Windows_NT 6.1.7601
+44 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "grunt-contrib-watc" "--save-de"
+45 error node v4.2.1
+46 error npm  v2.14.7
+47 error code E404
+48 error 404 Registry returned 404 for GET on https://registry.npmjs.org/grunt-contrib-watc
+48 error 404
+48 error 404 'grunt-contrib-watc' is not in the npm registry.
+48 error 404 You should bug the author to publish it (or use the name yourself!)
+48 error 404 It was specified as a dependency of 'flowingcharts'
+48 error 404
+48 error 404 Note that you can also install from a
+48 error 404 tarball, folder, http url, or git url.
+49 verbose exit [ 1, true ]

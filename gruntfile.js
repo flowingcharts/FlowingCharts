@@ -88,7 +88,7 @@ module.exports = function (grunt)
 				src: ['js/src/**/*.js'],
 				options: 
 				{
-					destination: 'js/doc',
+					destination: '../doc',
 					template : "node_modules/ink-docstrap/template",
 					configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"
 				}
