@@ -1,4 +1,4 @@
-/*! flowingcharts v0.1.0 2015-10-22 */
+/*! flowingcharts v0.1.0 2015-10-23 */
 var flowingcharts = (function (fc)
 {
 	'use strict';

@@ -19,13 +19,24 @@ module.exports = function (grunt)
 				dest: 'js/<%= pkg.name %>.src.js'
 			}
 		},
+		jsonlint: 
+		{
+			sample: 
+			{
+				src: ['package.json']
+			}
+		},
 		jshint: 
 		{
 			beforeconcat:
 			[
 				'js/src/*.js'
 			],
-			afterconcat: ['js/<%= pkg.name %>.src.js']
+			afterconcat: ['js/<%= pkg.name %>.src.js', 'gruntfile.js']
+		},
+		qunit: 
+		{
+			files: ['js/test/**/*.html']
 		},
 		uglify: 
 		{
@@ -89,12 +100,12 @@ module.exports = function (grunt)
 				options: 
 				{
 					destination: '../doc',
-					template : "node_modules/ink-docstrap/template",
-					configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"
+					template : 'node_modules/ink-docstrap/template',
+					configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json'
 				}
 			}
 		},
-		watch: 
+		watch: // '> grunt watch'  	Watches for file changes and runs grunt.
 		{
 			files: ['js/src/*.js'],
 			tasks: ['default']
@@ -105,12 +116,15 @@ module.exports = function (grunt)
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-qunit');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.loadNpmTasks('grunt-jsonlint');
 
 	// Default task(s).
-	grunt.registerTask('default', ['concat', 'jshint','uglify']);
-	grunt.registerTask('publish', ['default','copy']);
-	grunt.registerTask('doc', ['jsdoc']);
+	grunt.registerTask('test', ['qunit', 'jsonlint', 'jshint']); 	// '> grunt test' 		Detect errors and potential problems in code.
+	grunt.registerTask('default', ['concat', 'test','uglify']);		// '> grunt' 			Concatenate, check and uglify code.
+	grunt.registerTask('publish', ['default','copy']); 				// '> grunt publish' 	Publish a release version.
+	grunt.registerTask('doc', ['jsdoc']);							// '> grunt doc'  		Generate code documentation
 };
