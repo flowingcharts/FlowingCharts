@@ -1,23 +1,3 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* jshint browserify: true */
-'use strict';
-
-/**
- * Canvas utility module.
- * @module canvas/util
- */
-module.exports = 
-{
-	/** 
-	 * Check if canvas is supported.
-	 * @function isSupported
-	 */
-	isSupported : function ()
-	{
-        return !!document.createElement('canvas').getContext;
-	}
-};
-},{}],2:[function(require,module,exports){
 /* jshint browserify: true */
 'use strict';
 
@@ -259,49 +239,3 @@ BoundingBox.prototype =
 };
 
 module.exports = BoundingBox;
-},{}],3:[function(require,module,exports){
-(function (global){
-/* jshint browserify: true */
-
-
-var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
-
-$.fn.flowingcharts = function (options) 
-{
-	var settings = $.extend(
-	{
-		color 			: "#556b2f",
-		backgroundColor	: "brown"
-	}, options );
-
-	this.css(  
-	{
-		color 			: settings.color,
-		backgroundColor	: settings.backgroundColor
-	});
-
-	return this;
-};
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
-/* jshint browserify: true */
-'use strict';
-
-// Grab an existing namespace object, or create a blank object if it doesn't exist.
-var flowingcharts = window.flowingcharts || {};
-
-// Add the modules.
-// Only need to require the top-level modules, browserify
-// will walk the dependency graph and load everything correctly.
-flowingcharts.BoundingBox = require('./geom/BoundingBox.js');
-flowingcharts.canvas = require('./canvas/util.js');
-require('./jquery/plugin.js');
-
-// Replace/Create the global namespace
-window.flowingcharts = flowingcharts;
-
-var bb = new flowingcharts.BoundingBox();
-window.console.log(bb);
-var bb2 = new flowingcharts.BoundingBox(34,567,867,2345);
-window.console.log(bb2);
-},{"./canvas/util.js":1,"./geom/BoundingBox.js":2,"./jquery/plugin.js":3}]},{},[4]);

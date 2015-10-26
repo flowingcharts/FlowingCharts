@@ -63,7 +63,7 @@ QUnit.test( 'deepEqual test', function (assert)
 	assert.deepEqual( obj, { foo: 'bar' }, 'Two objects can be the same in value' );
 });
 
-QUnit.test( 'a test', function (assert) 
+/*QUnit.test( 'a test', function (assert) 
 {
 	assert.expect( 1 );
 
@@ -74,4 +74,4 @@ QUnit.test( 'a test', function (assert)
 	});
 
 	$body.trigger( 'click' );
-});
+});*/

@@ -3,8 +3,18 @@
   "name": "flowingcharts",
   "description": "JavaScript Charting Package",
   "version": "0.1.0",
+  "browserify": {
+        "transform": [ "browserify-shim" ]
+    },
+  "browserify-shim": {
+        "jQuery": "global:jQuery"
+    },
   "devDependencies": {
+    "browserify": "^11.2.0",
+    "browserify-shim": "^3.8.10",
     "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.1",
+    "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-copy": "^0.8.1",
     "grunt-contrib-jshint": "^0.11.3",
