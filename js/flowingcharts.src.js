@@ -260,9 +260,30 @@ BoundingBox.prototype =
 
 module.exports = BoundingBox;
 },{}],3:[function(require,module,exports){
+/* jshint browserify: true */
+'use strict';
+
+// Grab an existing namespace object, or create a blank object if it doesn't exist.
+var flowingcharts = window.flowingcharts || {};
+
+// Add the modules.
+// Only need to require the top-level modules, browserify
+// will walk the dependency graph and load everything correctly.
+flowingcharts.BoundingBox = require('./geom/BoundingBox.js');
+flowingcharts.canvas = require('./canvas/util.js');
+require('./plugins/jqueryplugin.js');
+
+// Replace/Create the global namespace
+window.flowingcharts = flowingcharts;
+
+var bb = new flowingcharts.BoundingBox();
+window.console.log(bb);
+var bb2 = new flowingcharts.BoundingBox(34,567,867,2345);
+window.console.log(bb2);
+},{"./canvas/util.js":1,"./geom/BoundingBox.js":2,"./plugins/jqueryplugin.js":4}],4:[function(require,module,exports){
 (function (global){
 /* jshint browserify: true */
-
+'use strict';
 
 var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
 
@@ -283,25 +304,4 @@ $.fn.flowingcharts = function (options)
 	return this;
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
-/* jshint browserify: true */
-'use strict';
-
-// Grab an existing namespace object, or create a blank object if it doesn't exist.
-var flowingcharts = window.flowingcharts || {};
-
-// Add the modules.
-// Only need to require the top-level modules, browserify
-// will walk the dependency graph and load everything correctly.
-flowingcharts.BoundingBox = require('./geom/BoundingBox.js');
-flowingcharts.canvas = require('./canvas/util.js');
-require('./jquery/plugin.js');
-
-// Replace/Create the global namespace
-window.flowingcharts = flowingcharts;
-
-var bb = new flowingcharts.BoundingBox();
-window.console.log(bb);
-var bb2 = new flowingcharts.BoundingBox(34,567,867,2345);
-window.console.log(bb2);
-},{"./canvas/util.js":1,"./geom/BoundingBox.js":2,"./jquery/plugin.js":3}]},{},[4]);
+},{}]},{},[3]);

@@ -9,7 +9,7 @@ var flowingcharts = window.flowingcharts || {};
 // will walk the dependency graph and load everything correctly.
 flowingcharts.BoundingBox = require('./geom/BoundingBox.js');
 flowingcharts.canvas = require('./canvas/util.js');
-require('./jquery/plugin.js');
+require('./plugins/jqueryplugin.js');
 
 // Replace/Create the global namespace
 window.flowingcharts = flowingcharts;
