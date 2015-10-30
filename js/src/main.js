@@ -16,5 +16,6 @@ window.flowingcharts = flowingcharts;
 
 var bb = new flowingcharts.BoundingBox();
 window.console.log(bb);
-var bb2 = new flowingcharts.BoundingBox(34,567,867,2345);
+var bb2 = new flowingcharts.BoundingBox("bah",567,867,2345);
 window.console.log(bb2);
+var t = bb.intersects("test")

@@ -41,5 +41,5 @@ add to package.json:
 	"jQuery": "global:jQuery"
 },
 
-7. Include '/* jshint browserify: true */ at top of each js file to stop commonjs modules causing errors.
+7. Include '/* jshint browserify: true */ at top of each js file to stop commonjs modules causing errors when jshint is run.
 The format for commonjs modules breaks alot of jshints tests - this tells jshint to ignore the commonjs specific code.
