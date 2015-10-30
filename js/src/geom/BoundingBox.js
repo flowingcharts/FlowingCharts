@@ -2,8 +2,10 @@
 'use strict';
 
 /**
- * @file Contains the BoundingBox class.
- * @since 0.1.0
+ * @fileoverview Contains the BoundingBox class.
+ * @author Jonathan Clare 
+ * @copyright FlowingCharts 2015
+ * @module geom/BoundingBox 
  */
 
 /** 
@@ -12,14 +14,12 @@
  * and top-right corner point (<code>xMax</code>, <code>yMax</code>).
  * 
  * @since 0.1.0
- * @author J Clare
- * @copyright Jonathan Clare 2015
  * @constructor
  *
- * @param {number} [xMin = 0] The x coord of the bottom-left corner.
- * @param {number} [yMin = 0] The y coord of the bottom-left corner. 
- * @param {number} [xMax = 100] The x coord of the top-right corner. 
- * @param {number} [yMax = 100] The y coord of the top-right corner. 
+ * @param {number} [xMin = 0] The x coord of the left edge.
+ * @param {number} [yMin = 0] The y coord of the bottom edge.
+ * @param {number} [xMax = 100] The x coord of the right edge.
+ * @param {number} [yMax = 100] The y coord of the top edge.
  */
 function BoundingBox (xMin, yMin, xMax, yMax)
 {
@@ -32,16 +32,25 @@ function BoundingBox (xMin, yMin, xMax, yMax)
 
 BoundingBox.prototype = 
 {
+    // Private variables
+    _xMin : null,      // The x-coord of the left edge.
+    _xMax : null,      // The x-coord of the right edge.
+    _xCenter : null,   // The x-coord of the center.
+    _width : null,     // The width.
+    _yMin : null,      // The y-coord of the bottom edge.
+    _yMax : null,      // The y-coord of the right edge.
+    _yCenter : null,   // The y-coord of the center.
+    _height : null,    // The height.
+
     /** 
-     * Set the coordinates of the bounding box.
+     * Set the coordinates.
      *
      * @since 0.1.0
-     *
      * @param {Object} coords The coordinates.
-     * @param {number} [coords.xMin] The x coord of the bottom-left corner.
-     * @param {number} [coords.yMin] The y coord of the bottom-left corner. 
-     * @param {number} [coords.xMax] The x coord of the top-right corner. 
-     * @param {number} [coords.yMax] The y coord of the top-right corner. 
+     * @param {number} [coords.xMin] The x coord of the left edge.
+     * @param {number} [coords.yMin] The y coord of the bottom edge.
+     * @param {number} [coords.xMax] The x coord of the right edge.
+     * @param {number} [coords.yMax] The y coord of the top edge.
      * @return {BoundingBox} <code>this</code>.
      */
     setCoords : function (coords)
@@ -57,10 +66,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the x-coord of the left edge of the bounding box.
+     * Get or set the x-coord of the left edge.
      *
      * @since 0.1.0
-     *
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if x is not a number.
@@ -79,10 +87,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the x-coord of the right edge of the bounding box.
+     * Get or set the x-coord of the right edge.
      *
      * @since 0.1.0
-     *
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if x is not a number.
@@ -102,10 +109,9 @@ BoundingBox.prototype =
 
 
     /** 
-     * Get or set the x-coord of the center of the bounding box.
+     * Get or set the x-coord of the center.
      *
      * @since 0.1.0
-     *
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if x is not a number.
@@ -125,10 +131,9 @@ BoundingBox.prototype =
 
 
     /** 
-     * Get or set the width of the bounding box.
+     * Get or set the width.
      *
      * @since 0.1.0
-     *
      * @param {number} [w] The width.
      * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if w is not a number.
@@ -147,10 +152,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the bottom edge of the bounding box.
+     * Get or set the y-coord of the bottom edge.
      *
      * @since 0.1.0
-     *
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if y is not a number.
@@ -169,10 +173,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the top edge of the bounding box.
+     * Get or set the y-coord of the top edge.
      *
      * @since 0.1.0
-     *
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if y is not a number.
@@ -191,10 +194,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the center of the bounding box.
+     * Get or set the y-coord of the center.
      *
      * @since 0.1.0
-     *
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if y is not a number.
@@ -213,10 +215,9 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the height of the bounding box.
+     * Get or set the height.
      *
      * @since 0.1.0
-     *
      * @param {number} [h] The height.
      * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
      * @throws {string} Will throw an error if h is not a number.
@@ -238,7 +239,6 @@ BoundingBox.prototype =
      * Returns a clone of this bounding box.        
      * 
      * @since 0.1.0
-     *
      * @return {BoundingBox} The bounding box.   
      */
     clone : function ()
@@ -250,7 +250,6 @@ BoundingBox.prototype =
      * Returns true if a bounding box equals to this one.
      * 
      * @since 0.1.0
-     *
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box is equal to this one, otherwise false.
      * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
@@ -273,7 +272,6 @@ BoundingBox.prototype =
      * Returns true if a bounding box intersects this one.
      * 
      * @since 0.1.0
-     *
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box intercepts this one, otherwise false.
      * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
@@ -296,7 +294,6 @@ BoundingBox.prototype =
      * Returns true if a bounding box is contained within this one.
      * 
      * @since 0.1.0
-     *
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if bounding box is contained within this one, otherwise false.
      * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
@@ -316,5 +313,4 @@ BoundingBox.prototype =
     },
 };
 
-/** @module geom/BoundingBox */
 module.exports = BoundingBox;
