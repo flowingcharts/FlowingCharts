@@ -7,9 +7,9 @@ var flowingcharts = window.flowingcharts || {};
 // Add the modules.
 // Only need to require the top-level modules, browserify
 // will walk the dependency graph and load everything correctly.
-flowingcharts.BoundingBox = require('./geom/BoundingBox.js');
-flowingcharts.canvas = require('./canvas/util.js');
-require('./plugins/jqueryplugin.js');
+flowingcharts.BoundingBox = require('./geom/BoundingBox');
+flowingcharts.canvas = require('./canvas/util');
+require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
 window.flowingcharts = flowingcharts;
