@@ -47,40 +47,39 @@ function BoundingBox (xMin, yMin, xMax, yMax)
     yMin = yMin !== undefined ? yMin : 0;
     xMax = xMax !== undefined ? xMax : 100;
     yMax = yMax !== undefined ? yMax : 100;
-    this.setCoords({xMin:xMin, yMin:yMin, xMax:xMax, yMax:yMax});
+    this.setCoords(xMin, yMin, xMax, yMax);
 }
 
 BoundingBox.prototype = 
 {
     // Private variables
-    _xMin : null,      // The x-coord of the left edge.
-    _xMax : null,      // The x-coord of the right edge.
-    _xCenter : null,   // The x-coord of the center.
-    _width : null,     // The width.
-    _yMin : null,      // The y-coord of the bottom edge.
-    _yMax : null,      // The y-coord of the right edge.
-    _yCenter : null,   // The y-coord of the center.
-    _height : null,    // The height.
+    _xMin       : null,     // The x-coord of the left edge.
+    _xMax       : null,     // The x-coord of the right edge.
+    _xCenter    : null,     // The x-coord of the center.
+    _width      : null,     // The width.
+    _yMin       : null,     // The y-coord of the bottom edge.
+    _yMax       : null,     // The y-coord of the right edge.
+    _yCenter    : null,     // The y-coord of the center.
+    _height     : null,     // The height.
 
     /** 
      * Set the coordinates.
      *
      * @since 0.1.0
-     * @param {Object} coords The coordinates.
-     * @param {number} [coords.xMin] The x coord of the left edge.
-     * @param {number} [coords.yMin] The y coord of the bottom edge.
-     * @param {number} [coords.xMax] The x coord of the right edge.
-     * @param {number} [coords.yMax] The y coord of the top edge.
+     * @param {number} [xMin] The x coord of the left edge.
+     * @param {number} [yMin] The y coord of the bottom edge.
+     * @param {number} [xMax] The x coord of the right edge.
+     * @param {number} [yMax] The y coord of the top edge.
      * @return {BoundingBox} <code>this</code>.
      */
-    setCoords : function (coords)
+    setCoords : function (xMin, yMin, xMax, yMax)
     {
         if (arguments.length > 0)
         {
-            if (coords.xMin !== undefined) this.xMin(coords.xMin);
-            if (coords.yMin !== undefined) this.yMin(coords.yMin);
-            if (coords.xMax !== undefined) this.xMax(coords.xMax);
-            if (coords.yMax !== undefined) this.yMax(coords.yMax);
+            if (xMin !== undefined) this.xMin(xMin);
+            if (yMin !== undefined) this.yMin(yMin);
+            if (xMax !== undefined) this.xMax(xMax);
+            if (yMax !== undefined) this.yMax(yMax);
         }
         return this;
     },
@@ -97,7 +96,8 @@ BoundingBox.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof x !== 'number') throw 'BoundingBox.xMin(x): x must be a number.';
+            if (typeof x !== 'number') throw new Error('BoundingBox.xMin(x): x must be a number.');
+
             this._xMin = x;
             this._width = Math.abs(this._xMax - this._xMin);
             this._xCenter = this._xMin + (this._width / 2); 
@@ -119,6 +119,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (typeof x !== 'number') throw 'BoundingBox.xMax(x): x must be a number.';
+
             this._xMax = x;
             this._width = Math.abs(this._xMax - this._xMin);
             this._xCenter = this._xMin + (this._width / 2);
@@ -141,6 +142,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (typeof x !== 'number') throw 'BoundingBox.xCenter(x): x must be a number.';
+
             this._xCenter = x;
             this._xMin  = this._xCenter - (this._width / 2);
             this._xMax  = this._xCenter + (this._width / 2);
@@ -156,13 +158,15 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if w is not a number.
+     * @throws {string} Will throw an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
         if (arguments.length > 0)
         {
-            if (typeof w !== 'number') throw 'BoundingBox.width(w): w must be a number.';
+            if (typeof w !== 'number')  throw 'BoundingBox.width(w): w must be a number.';
+            if (w < 0)                  throw 'BoundingBox.width(w): w must be > 0.';
+
             this._width = w;
             this._xMax = this._xMin + this._width;
             this._xCenter = this._xMin + (this._width / 2);
@@ -184,6 +188,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (typeof y !== 'number') throw 'BoundingBox.yMin(y): y must be a number.';
+
             this._yMin = y;
             this._height = Math.abs(this._yMax - this._yMin);
             this._yCenter = this._yMin + (this._height / 2);
@@ -205,6 +210,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (typeof y !== 'number') throw 'BoundingBox.yMax(y): y must be a number.';
+
             this._yMax = y;
             this._height = Math.abs(this._yMax - this._yMin);
             this._yCenter = this._yMin + (this._height / 2);
@@ -226,6 +232,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (typeof y !== 'number') throw 'BoundingBox.yCenter(y): y must be a number.';
+
             this._yCenter = y;
             this._yMin  = this._yCenter - (this._height / 2);
             this._yMax  = this._yCenter + (this._height / 2);
@@ -240,13 +247,15 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [h] The height.
      * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if h is not a number.
+     * @throws {string} Will throw an error if h is not a number or is less than 0.
      */
     height : function (h)
     {
         if (arguments.length > 0)
         {
-            if (typeof h !== 'number') throw 'BoundingBox.yCenter(h): h must be a number.';
+            if (typeof h !== 'number') throw 'BoundingBox.height(h): h must be a number.';
+            if (h < 0)                 throw 'BoundingBox.height(h): h must be > 0.';
+
             this._height = h;
             this._yMax = this._yMin + this._height;
             this._yCenter = this._yMin + (this._height / 2);
@@ -279,6 +288,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.equals(bBox): bBox must be a BoundingBox.';
+
             if (bBox.getXMin() !== this._xMin) return false;
             if (bBox.getYMin() !== this._yMin) return false;
             if (bBox.getXMax() !== this._xMax) return false;
@@ -301,6 +311,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.intersects(bBox): bBox must be a BoundingBox.';
+
             if (bBox.getXMin() > this._xMax) return false;
             if (bBox.getXMax() < this._xMin) return false;
             if (bBox.getYMin() > this._yMax) return false;
@@ -323,6 +334,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.contains(bBox): bBox must be a BoundingBox.';
+
             if (bBox.getXMin() < this._xMin) return false;
             if (bBox.getXMax() > this._xMax) return false;
             if (bBox.getYMin() < this._yMin) return false;
@@ -330,7 +342,7 @@ BoundingBox.prototype =
             return true;
         }
         else throw 'BoundingBox.contains(bBox): bBox has not been defined.';
-    },
+    }
 };
 
 module.exports = BoundingBox;
