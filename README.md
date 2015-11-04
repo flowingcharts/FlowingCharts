@@ -6,9 +6,13 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 * Download: [flowingcharts.com/download](http://www.flowingcharts.com/download)
 * Support: [flowingcharts.com/support](http://www.flowingcharts.com/support)
 
-# Onboarding
+## Onboarding
+
+# Node
 
 * Download and install Node from [https://nodejs.org/en/](https://nodejs.org/en/)
+
+# Grunt
 
 * Help on using Grunt can be found at [http://gruntjs.com/getting-started](http://gruntjs.com/getting-started)
 
