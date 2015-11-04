@@ -41,11 +41,23 @@ module.exports = function (grunt)
                 options: 
                 {
                     reporter: 'spec',
-                    captureFile: 'js/test/mocha/results.txt',   // Optionally capture the reporter output to a file 
-                    quiet: false,                               // Optionally suppress output to standard out (defaults to false) 
-                    clearRequireCache: false                    // Optionally clear the require cache before running tests (defaults to false) 
+                    captureFile: 'js/test/results.html',
+                    require: 'js/test/tests'
                 },
-                src: ['js/test/mocha/**/*.js']
+                src: ['js/test/**/*.js']
+            },
+            coverage: 
+            {
+                options: 
+                {
+                    reporter: 'html-cov',
+                    // use the quiet flag to suppress the mocha console output 
+                    quiet: true,
+                    // specify a destination file to capture the mocha 
+                    // output (the quiet option does not suppress this) 
+                    captureFile: 'js/test/coverage.html'
+                },
+                src: ['js/test/**/*.js']
             }
         },
         uglify: 

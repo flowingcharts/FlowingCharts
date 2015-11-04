@@ -96,7 +96,7 @@ BoundingBox.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof x !== 'number') throw new Error('BoundingBox.xMin(x): x must be a number.');
+            if (typeof x !== 'number') throw 'BoundingBox.xMin(x): x must be a number.';
 
             this._xMin = x;
             this._width = Math.abs(this._xMax - this._xMin);
@@ -351,13 +351,15 @@ module.exports = BoundingBox;
 'use strict';
 
 // Grab an existing namespace object, or create a blank object if it doesn't exist.
-var flowingcharts = window.flowingcharts || {};
+var flowingcharts = window.flowingcharts || 
+{
+    BoundingBox : require('./geom/BoundingBox'),
+    canvas : require('./canvas/util')
+};
 
 // Add the modules.
 // Only need to require the top-level modules, browserify
 // will walk the dependency graph and load everything correctly.
-flowingcharts.BoundingBox = require('./geom/BoundingBox');
-flowingcharts.canvas = require('./canvas/util');
 require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
