@@ -4,7 +4,7 @@ module.exports = function (grunt)
     grunt.initConfig(
     {
         // Fetch the package file.
-        // We can reference from this file eg. <%= pkg.name %> <%= pkg.version %>.
+        // We can reference properties of this file like so: <%= pkg.name %> <%= pkg.version %>.
         pkg: grunt.file.readJSON('package.json'),
 
         // Concatenates files.
@@ -252,21 +252,28 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mocha-test');
 
-    // '>grunt lint' Detect errors and potential problems in code.
+    // Tasks that can be run from the command line.
+    // Open command prompt in this directory (shift + right click > Open command window here) to run tasks.
+
+    // '>grunt lint' 
+    // Detect errors and potential problems in code.
     grunt.registerTask('lint', ['jshint']); 
 
-    // '>grunt test' Unit testing and test coverage.
+    // '>grunt test' 
+    // Unit testing and test coverage is carried out in a generated directory 'test_coverage'.
     // Test coverage results are copied to 'test_coverage/coverage.html'.
     grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
 
-    // '>grunt' Check, browserify (concatenate node modules into single file for use in browser) and uglify code.  
-    // Also copies bundled source files to demos directory.              
-    grunt.registerTask('default', ['lint', 'browserify', 'uglify', 'copy:demos']);    
+    // '>grunt' 
+    // Check, browserify (concatenate node modules into single file for use in browser) and uglify code.  
+    // Also copies bundled source files to 'demos' directory.              
+    grunt.registerTask('default', ['lint', 'test', 'browserify', 'uglify', 'copy:demos']);    
 
-    // '>grunt doc' Generate jsdoc style code documentation in 'doc'.
+    // '>grunt doc' 
+    // Generate jsdoc style code documentation in 'doc' directory. 
     grunt.registerTask('doc', ['clean:doc','jsdoc:doc']);           
 
-    // '>grunt publish' Publish a release version.
-    // Runs through all tasks before generating the release files in 'release'
-    grunt.registerTask('publish', ['clean:release', 'test', 'default', 'doc', 'copy:release']);      
+    // '>grunt publish' 
+    // Creates documentation and publishes to 'release/<%= pkg.version %>/' (eg 'release/0.1.0/').
+    grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release']);      
 };           

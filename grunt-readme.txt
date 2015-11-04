@@ -8,15 +8,11 @@ http://gruntjs.com/getting-started
 
 1. Install Node from https://nodejs.org/en/
 
-2. Put the grunt command in your system path, allowing it to be run from any directory
+2. Put the grunt command line module in your system path, allowing it to be run from any directory
 To start a command prompt as an administrator
 Click Start
 In the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 > npm install -g grunt-cli
-
-3. Add the following files to the root directory of your project
-package.json
-gruntfile.js
 
 4. Install project dependencies with npm install
 Open command prompt in the root directory of your project (shift + right click > Open command window here)
