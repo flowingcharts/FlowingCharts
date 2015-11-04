@@ -1,3 +1,5 @@
+/*! flowingcharts v0.1.0 2015-11-04 */
+
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* jshint browserify: true */
 'use strict';
@@ -351,15 +353,15 @@ module.exports = BoundingBox;
 'use strict';
 
 // Grab an existing namespace object, or create a blank object if it doesn't exist.
+// Add the modules.
+// Only need to require the top-level modules, browserify
+// will walk the dependency graph and load everything correctly.
 var flowingcharts = window.flowingcharts || 
 {
     BoundingBox : require('./geom/BoundingBox'),
     canvas : require('./canvas/util')
 };
 
-// Add the modules.
-// Only need to require the top-level modules, browserify
-// will walk the dependency graph and load everything correctly.
 require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
@@ -369,7 +371,7 @@ var bb = new flowingcharts.BoundingBox();
 window.console.log(bb);
 var bb2 = new flowingcharts.BoundingBox("bah",567,867,2345);
 window.console.log(bb2);
-var t = bb.intersects("test")
+var t = bb.intersects("test");
 },{"./canvas/util":1,"./geom/BoundingBox":2,"./plugins/jqueryplugin":4}],4:[function(require,module,exports){
 (function (global){
 /* jshint browserify: true */

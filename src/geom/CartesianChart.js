@@ -40,13 +40,13 @@ var Point = require('Point');
  */
 function CartesianChart (options)
 {
-    this._rect = new Rectangle(options.dimensions.x
-                                options.dimensions.y
-                                options.dimensions.width
+    this._rect = new Rectangle(options.dimensions.x,
+                                options.dimensions.y,
+                                options.dimensions.width,
                                 options.dimensions.height);
-    this._bBox = new BoundingBox(options.xAxis.min
-                                options.yAxis.min
-                                options.xAxis.max
+    this._bBox = new BoundingBox(options.xAxis.min,
+                                options.yAxis.min,
+                                options.xAxis.max,
                                 options.yAxis.max);
 }
 
@@ -131,10 +131,10 @@ CartesianChart.prototype =
         // precision in real world coords.
         var oldRect = this.getPixelCoords(this.oldBBox);
         var newRect = this.getPixelCoords(this.bBox);
-        var w = Math.round(newrect.width());
-        var h = Math.round(newrect.height());
-        var ow = Math.round(oldrect.width());
-        var oh = Math.round(oldrect.height());
+        var w = Math.round(newRect.width());
+        var h = Math.round(newRect.height());
+        var ow = Math.round(oldRect.width());
+        var oh = Math.round(oldRect.height());
 
         if((w === ow) && (h === oh))
         {
@@ -209,10 +209,10 @@ CartesianChart.prototype =
      */
     getPixelCoords : function (bBox)
     {
-        var x = this.getPixelX(bBox.getXMin())
-        var y = this.getPixelY(bBox.getYMax())
-        var w = this.getPixelWidth(bBox.getWidth())
-        var h = this.getPixelHeight(bBox.getHeight())
+        var x = this.getPixelX(bBox.getXMin());
+        var y = this.getPixelY(bBox.getYMax());
+        var w = this.getPixelWidth(bBox.getWidth());
+        var h = this.getPixelHeight(bBox.getHeight());
         return new Rectangle(x, y, w, h);
     },
 

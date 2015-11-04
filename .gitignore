@@ -46,11 +46,17 @@ Temporary Items
 # flowingcharts Files
 # =========================
 
-# release
-release
+# test coverage
+test-coverage
 
 # docs
 doc
+
+# distribution files
+dist
+
+# release
+release
 
 # node modules
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git

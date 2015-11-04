@@ -26,7 +26,7 @@ function Rectangle (x, y, width, height)
     y = y !== undefined ? y : 0;
     width = width !== undefined ? width : 100;
     height = height !== undefined ? height : 100;
-    this.setCoords(xMin, yMin, xMax, yMax);
+    this.setCoords(x, y, width, height);
 }
 
 Rectangle.prototype = 
