@@ -25,11 +25,8 @@ In the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 * Install project dependencies with npm install
 Open command prompt in the root directory of your project (shift + right click > Open command window here)
 eg.
-
 > npm install grunt --save-dev
-
 > npm install grunt-contrib-concat --save-dev
-
 > npm install grunt-jsdoc --save-dev
 
 * Run the grunt tasks (see gruntfile.js)
