@@ -8,11 +8,11 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 ## Onboarding
 
-# Node
+### Node
 
 * Download and install Node from [https://nodejs.org/en/](https://nodejs.org/en/)
 
-# Grunt
+### Grunt
 
 * Help on using Grunt can be found at [http://gruntjs.com/getting-started](http://gruntjs.com/getting-started)
 
@@ -26,7 +26,9 @@ In the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 Open command prompt in the root directory of your project (shift + right click > Open command window here)
 eg.
 >npm install grunt --save-dev
+
 >npm install grunt-contrib-concat --save-dev
+
 >npm install grunt-jsdoc --save-dev
 
 * Run the grunt tasks (see gruntfile.js)
