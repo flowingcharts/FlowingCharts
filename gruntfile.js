@@ -66,7 +66,7 @@ module.exports = function (grunt)
             // Test coverage.
             coverage: 
             {
-                src: ['test-coverage/']
+                src: ['test_coverage/']
             },
             // Release.
             release: 
@@ -120,7 +120,7 @@ module.exports = function (grunt)
                     }
                 ]
             },
-            // Copies the javascript test files 'test/' to a temporary directory 'test-coverage/test/' for testing coverage.
+            // Copies the javascript test files 'test/' to a temporary directory 'test_coverage/test/' for testing coverage.
             coverage: 
             {
                 files: 
@@ -129,7 +129,7 @@ module.exports = function (grunt)
                         expand: true,
                         cwd: 'test/',
                         src: '**/*',
-                        dest: 'test-coverage/test/'
+                        dest: 'test_coverage/test/'
                     }
                 ]
             },
@@ -161,23 +161,23 @@ module.exports = function (grunt)
             {
                 // Copies the javascript source files 'src/'
                 src: ['src/'],
-                // to a temporary directory 'test-coverage/src/' for testing coverage.
-                dest: 'test-coverage/src/'
+                // to a temporary directory 'test_coverage/src/' for testing coverage.
+                dest: 'test_coverage/src/'
             }
         },   
         // Unit testing.
         mochaTest: 
         {
-            // Runs unit tests 'test-coverage/test/' on the intermediate javascript source code 'test-coverage/src/'.
+            // Runs unit tests 'test_coverage/test/' on the intermediate javascript source code 'test_coverage/src/'.
             test: 
             {
                 options: 
                 {
                     reporter: 'spec',
                 },
-                src: ['test-coverage/test/**/*.js']
+                src: ['test_coverage/test/**/*.js']
             },
-            // Creates a test coverage file 'test-coverage/coverage.html'.
+            // Creates a test coverage file 'test_coverage/coverage.html'.
             // This file helps highlight areas where more testing is required.
             coverage: 
             {
@@ -185,9 +185,9 @@ module.exports = function (grunt)
                 {
                     reporter: 'html-cov',
                     quiet: true,
-                    captureFile: 'test-coverage/coverage.html'
+                    captureFile: 'test_coverage/coverage.html'
                 },
-                src: ['test-coverage/test/**/*.js']
+                src: ['test_coverage/test/**/*.js']
             }
         },
         // Creates jsdoc style documentation for javascript files.
@@ -256,7 +256,7 @@ module.exports = function (grunt)
     grunt.registerTask('lint', ['jshint']); 
 
     // '>grunt test' Unit testing and test coverage.
-    // Test coverage results are copied to 'test-coverage/coverage.html'.
+    // Test coverage results are copied to 'test_coverage/coverage.html'.
     grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
 
     // '>grunt' Check, browserify (concatenate node modules into single file for use in browser) and uglify code.  
