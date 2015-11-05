@@ -6,41 +6,54 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 * Download: [flowingcharts.com/download](http://www.flowingcharts.com/download)
 * Support: [flowingcharts.com/support](http://www.flowingcharts.com/support)
 
-## Onboarding
+# Onboarding
 
-### [Grunt](http://gruntjs.com)
+### Grunt
 
-We use Grunt to automate repetitive tasks. Built on top of Node.js, Grunt is a task-based command-line tool can perform minification, compilation, unit testing etc.
+We use [Grunt](http://gruntjs.com) to automate repetitive tasks. Built on top of Node.js, Grunt is a task-based command-line tool that can perform tasks such as minification, compilation, unit testing and many others through the use of plugins.
 
 Help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started)
 
-#### Install [Node](https://nodejs.org)
+#### Install Node
 
-Node needs to be installed for grunt to be able to run. Grunt and Grunt plugins are installed and managed via npm, the Node.js package manager. 
+[Node](https://nodejs.org) needs to be installed for grunt to be able to run. Grunt and Grunt plugins are installed and managed via npm, the Node.js package manager. 
 
 Download and install Node from [nodejs.org](https://nodejs.org/en/)
 
 #### Install the CLI
 
-The job of the Grunt CLI is to run the version of Grunt which has been installed next to a Gruntfile. 
+The job of the Grunt CLI (Grunts command line interface) is to run the version of Grunt which has been installed alongside your project. 
 
-Run the following command to install Grunts command line interface (CLI) globally.
+Run the following command to install Grunt CLI in your system path, allowing it to be run from any directory.
 
-Run your command shell as Administrator.
+Open a command prompt as Administrator.
 For windows: click Start, in the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 
 ```
 npm install -g grunt-cli
 ```
 
-This puts the grunt command line module in your system path, allowing it to be run from any directory.
 To make sure Grunt has been properly installed, you can run the following command:
 
 ```
 grunt --version
 ```
 
+#### Install project dependencies 
+
+Open a command prompt in the root directory of your project.
+For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
+
+```
+npm install
+```
+
+This tells npm which dependencies to install and places them in a node_modules folder.
+
+
 #### Using Grunt
+
+
 
 *Change to the project's root directory.
 Install project dependencies with npm install.
