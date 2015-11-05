@@ -8,25 +8,43 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 ## Onboarding
 
-### Node
+### [Grunt](http://gruntjs.com)
+
+Built on top of Node.js, Grunt is a task-based command-line tool that speeds up workflows by reducing the effort required to prepare assets for production. Through the use of plugins it can perform repetitive tasks like minification, compilation, unit testing etc.
+
+Help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started)
+
+#### Install [Node](https://nodejs.org)
+
+Node needs to be installed for grunt to be able to run. Grunt and Grunt plugins are installed and managed via npm, the Node.js package manager. 
 
 Download and install Node from [nodejs.org](https://nodejs.org/en/)
 
-Once Node.js is installed, run the following command to install Grunt globally:
+#### Install the CLI
+
+Run the following command to install Grunts command line interface (CLI) globally.
+
+Run your command shell as Administrator.
+For windows: click Start, in the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 
 ```
 npm install -g grunt-cli
 ```
 
-### Grunt
+This puts the grunt command line module in your system path, allowing it to be run from any directory.
+The job of the Grunt CLI is to run the version of Grunt which has been installed next to a Gruntfile. 
 
-* Help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started)
+#### Using Grunt
 
-* Put the grunt command line module in your system path, allowing it to be run from any directory
-To start a command prompt as an administrator
-Click Start
-In the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
-> npm install -g grunt-cli
+
+Change to the project's root directory.
+Install project dependencies with npm install.
+Run Grunt with grunt.
+That's really all there is to it. Installed Grunt tasks can be listed by running grunt --help but it's usually a good idea to start with the project's documentation.
+
+
+
+
 
 * Install project dependencies with npm install
 Open command prompt in the root directory of your project (shift + right click > Open command window here)
