@@ -8,7 +8,7 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 # How to build your own FlowingCharts
 
-## Grunt
+##### Grunt
 
 We use [Grunt](http://gruntjs.com) to automate repetitive tasks. Built on top of Node.js, Grunt is a task-based command-line tool that can perform tasks such as minification, compilation, unit testing and many others through the use of plugins.
 
