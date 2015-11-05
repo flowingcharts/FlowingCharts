@@ -234,13 +234,14 @@ module.exports = function (grunt)
         },
         watch:
         {
-             // '>grunt watch' Runs the default task if changes are made to the javascript source files 'src/**/*.js'.
+             // '>grunt watch' Runs the 'build' task if changes are made to the javascript source files 'src/**/*.js'.
             files: ['src/**/*.js'],
-            tasks: ['default']
+            tasks: ['build']
         }
     });
 
     // Load the plugins that provide the tasks.
+    //grunt.loadNpmTasks('grunt-blanket');
     grunt.loadNpmTasks('grunt-blanket');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -264,16 +265,24 @@ module.exports = function (grunt)
     // Test coverage results are copied to 'test_coverage/coverage.html'.
     grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
 
-    // '>grunt' 
-    // Check, browserify (concatenate node modules into single file for use in browser) and uglify code.  
-    // Also copies bundled source files to 'demos' directory.              
-    grunt.registerTask('default', ['lint', 'test', 'browserify', 'uglify', 'copy:demos']);    
-
     // '>grunt doc' 
-    // Generate jsdoc style code documentation in 'doc' directory. 
+    // Generate jsdoc style code documentation in a generated directory 'doc'. 
     grunt.registerTask('doc', ['clean:doc','jsdoc:doc']);           
 
     // '>grunt publish' 
-    // Creates documentation and publishes to 'release/<%= pkg.version %>/' (eg 'release/0.1.0/').
+    // Publishes to a generated directory 'release/<%= pkg.version %>/' (eg 'release/0.1.0/').
     grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release']);      
+
+    // '>grunt build' 
+    // Used for quick build during development.
+    // lint: detect errors and potential problems in code. 
+    // browserify: concatenate node modules into single file 'dist/flowingcharts.src.js' ('dist/<%= pkg.name %>.src.js').
+    // uglify: minimise code 'dist/flowingcharts.js' ('dist/<%= pkg.name %>.js'). Also creates a source map file
+    // for debugging the minimised code 'dist/flowingcharts.map' ('dist/<%= pkg.name %>.map').
+    // copy:demos: Copies files from 'dist' to 'demos'.
+    grunt.registerTask('build', ['lint', 'browserify', 'uglify', 'copy:demos']);      
+
+    // '>grunt' 
+    // Run this after installation to create all required directories.              
+    grunt.registerTask('default', ['build', 'test', 'doc']);    
 };           

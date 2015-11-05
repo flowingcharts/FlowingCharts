@@ -12,20 +12,22 @@
     "jQuery": "global:jQuery"
   },
   "devDependencies": {
+    "blanket": "^1.1.9",
     "browserify": "^11.2.0",
     "browserify-shim": "^3.8.10",
+    "chai": "^3.4.0",
     "grunt": "^0.4.5",
+    "grunt-blanket": "0.0.8",
     "grunt-browserify": "^4.0.1",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-copy": "^0.8.1",
     "grunt-contrib-jshint": "^0.11.3",
-    "grunt-contrib-qunit": "^0.7.0",
     "grunt-contrib-uglify": "^0.9.2",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-jsdoc": "^1.0.0",
-    "grunt-jsonlint": "^1.0.5",
     "grunt-mocha-test": "^0.12.7",
+    "ink-docstrap": "^0.5.2",
     "mocha": "^2.3.3"
   }
 }
