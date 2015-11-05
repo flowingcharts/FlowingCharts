@@ -20,7 +20,7 @@ Help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-sta
 
 Download and install Node from [nodejs.org](https://nodejs.org/en/)
 
-To make sure Node has been properly installed, you can opena command prompt and run the following command:
+To make sure Node has been properly installed, you can open a command prompt and run the following command:
 
 ```
 node -v
