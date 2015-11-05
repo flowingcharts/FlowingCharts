@@ -10,17 +10,15 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 ##### Grunt
 
-We use [Grunt](http://gruntjs.com) to automate repetitive tasks. Built on top of Node.js, Grunt is a task-based command-line tool that can perform tasks such as minification, compilation, unit testing and many others through the use of plugins.
-
-Help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started)
+We use [Grunt](http://gruntjs.com) to automate repetitive tasks. Built on top of Node.js, Grunt is a task-based command-line tool that can perform tasks such as minification, compilation, unit testing and many others through the use of Grunt plugins. Further help on using Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started)
 
 ##### Install Node
 
-[Node](https://nodejs.org) needs to be installed for grunt to be able to run. Grunt and Grunt plugins are installed and managed via npm, the Node.js package manager. 
+Grunt and Grunt plugins are installed and managed via npm, the [Node](https://nodejs.org) package manager. 
 
 Download and install Node from [nodejs.org](https://nodejs.org/en/)
 
-To make sure Node has been properly installed, you can open a command prompt and run the following command:
+To make sure Node has been properly installed, open a command prompt and run the following command:
 
 ```
 node -v
