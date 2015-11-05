@@ -45,7 +45,9 @@ To make sure Grunt has been properly installed, you can run the following comman
 grunt --version
 ```
 
-##### Install Project Dependencies 
+##### Install project dependencies 
+
+Run the following command to install the project dependencies in a `node_modules` folder.
 
 Open a command prompt in the root directory of your project.
 For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
@@ -53,9 +55,6 @@ For windows: Navigate to the project directory in Windows Explorer > shift + rig
 ```
 npm install
 ```
-
-This tells npm which dependencies to install and places them in a node_modules folder.
-
 
 ##### Running Tasks
 
