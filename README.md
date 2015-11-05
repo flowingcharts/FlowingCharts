@@ -10,7 +10,13 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 ### Node
 
-* Download and install Node from [nodejs.org](https://nodejs.org/en/)
+Download and install Node from [nodejs.org](https://nodejs.org/en/)
+
+Once Node.js is installed, run the following command to install Grunt globally:
+
+```
+npm install -g grunt-cli
+```
 
 ### Grunt
 
