@@ -6,11 +6,35 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 * Download: [flowingcharts.com/download](http://www.flowingcharts.com/download)
 * Support: [flowingcharts.com/support](http://www.flowingcharts.com/support)
 
-## Getting Started
+# Getting Started
 
-#### GitHub Desktop
+## GitHub
 
-#### Grunt
+Download and install GitHub Desktop For Windows from [https://desktop.github.com/](https://desktop.github.com/)
+
+#### Options
+
+Open GitHub
+
+Settings > Options
+
+Clone path
+C:\Work\GitHub
+
+Configure git
+JC
+flowingcharts.com@gmail.com
+
++ Add Account
+Login
+username: flowingcharts
+password: *************
+
+#### Repository
+
++ > clone
+
+## Grunt
 
 We use [Grunt](http://gruntjs.com) to automate repetitive tasks such as minification, compilation, unit testing and many others through the use of Grunt plugins.  An introduction to getting started with Grunt can be found at [gruntjs.com](http://gruntjs.com/getting-started).
 
