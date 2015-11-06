@@ -113,7 +113,7 @@ module.exports = function (grunt)
                 ]
             }
         },
-        // Used for test coverage alongside mocha.
+        // Used for test coverage alongside mochaTest.
         // Copies the JavaScript module files 'src/' to 'gen_test_coverage/src/' for testing coverage.
         blanket: 
         {
@@ -163,19 +163,18 @@ module.exports = function (grunt)
                 }
             }
         },
-        // Browserify lets you require('modules') in the browser by bundling up all of your dependencies.
-        // It will recursively analyze all the require() calls in your app in order 
-        // to build a bundle you can serve up to the browser in a single <script> tag.
+        // Browserify bundles up all of the project dependencies into a single JavaScript file.
+        // Generates a bundled file 'gen_dist/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
         browserify: 
         {
             options: 
             {
-                // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
                 browserifyOptions: 
                 {
-                    // Enable source map that allow you to debug your files separately.
-                    // browserify generates inline source maps as a comment at the bottom of 'gen_dist/<%= pkg.name %>.src.js'.
+                    // Generates inline source maps as a comment at the bottom of 'gen_dist/<%= pkg.name %>.src.js' 
+                    // to enable debugging of original JavaScript module files.
                     debug: true
                 }
             },
@@ -183,14 +182,12 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    // Generates a bundled file 'gen_dist/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
                     'gen_dist/<%= pkg.name %>.src.js': ['src/main.js']
                 }
             }
         },
-        // Processes and copies the demo files 'demos/', to 'gen_release/<%= pkg.version %>/demos/'.
-        // Adds a banner to each file displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
-        // Adds a banner to each file displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
+        // Processes and copies the demo files 'examples/', to 'gen_release/<%= pkg.version %>/examples/'.
+        // Adds a banner to each file displaying the project name, version and date.
         // Replaces 
         // <script type="text/javascript" src="../../gen_dist/flowingcharts.src.js"></script>
         // with
@@ -211,18 +208,18 @@ module.exports = function (grunt)
                 [
                     {
                         expand: true,   
-                        cwd: 'demos/', 
+                        cwd: 'examples/', 
                         src: ['**/*.html'],
-                        dest: 'gen_release/<%= pkg.version %>/demos/',
+                        dest: 'gen_release/<%= pkg.version %>/examples/',
                         ext: '.html'
                     }
                 ]
             }
         },
+        // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
+        // Enable by typing '>grunt watch' into a command prompt.
         watch:
         {
-            // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
-            // Enable by typing '>grunt watch' into a command prompt.
             files: ['src/**/*.js'],
             tasks: ['build']
         }
