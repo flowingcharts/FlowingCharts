@@ -25,14 +25,14 @@ Configure git
 JC
 flowingcharts.com@gmail.com
 
-+ Add Account
+/+ Add Account
 Login
 username: flowingcharts
 password: *************
 
 #### Repository
 
-+ > clone
+/+ > clone
 
 ## Grunt
 
