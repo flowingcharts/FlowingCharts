@@ -29,7 +29,7 @@ JC
 flowingcharts.com@gmail.com
 ```
 
-/+ Add Account
+`+ Add Account`
 Login
 ```
 username: flowingcharts
@@ -38,7 +38,7 @@ password: *************
 
 #### Repository
 
-Go to `/+` > `clone` > `flowingcharts` > `ok`
+Go to `+` > `clone` > `flowingcharts` > `ok`
 
 you should now see `flowingcharts` repository in `C:\Work\GitHub`
 
