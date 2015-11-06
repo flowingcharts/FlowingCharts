@@ -1,3 +1,6 @@
+<!-- build:template 
+<%= banner %> 
+/build -->
 <!doctype html>
 <html lang="">
     <head>
@@ -13,7 +16,9 @@
         <![endif]-->
         <div id="container" style="height: 600px; max-width: 800px; margin: 0 auto"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" src="../flowingcharts.js"></script>
+        <!-- build:js ../../flowingcharts.js -->
+        <script type="text/javascript" src="../../gen_dist/flowingcharts.src.js"></script>
+        <!-- /build -->
         <script type="text/javascript">
             $(document).ready(function()
             {
@@ -141,7 +146,6 @@
                         ]
                     });
                 }
-                else window.location = "./unsupported.html";
             });
         </script>
     </body>

@@ -4,123 +4,102 @@ module.exports = function (grunt)
     grunt.initConfig(
     {
         // Fetch the package file.
-        // We can reference properties of this file like so: <%= pkg.name %> <%= pkg.version %>.
+        // We can use properties of this file in our code eg <%= pkg.name %> <%= pkg.version %>.
         pkg: grunt.file.readJSON('package.json'),
 
-        // Concatenates files.
+        // Concatenates and bundles the JavaScript module files in 'src/' into 'gen_dist/<%= pkg.name %>.src.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
         concat: 
         {
             options: 
             {
-                // Adds a banner displaying the project name, version and date to 'flowingcharts.src.js'.
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
-            // Concatenates the javascript source files in 'src/' into a single file called 'dist/flowingcharts.src.js' ('dist/<%= pkg.name %>.src.js').
             dist: 
             {
                 src: 
                 [
                     'src/**/*.js'
                 ],
-                dest: 'dist/<%= pkg.name %>.src.js'
+                dest: 'gen_dist/<%= pkg.name %>.src.js'
             }
         },
-        // Detects errors and potential problems in the code.
+        // Detects errors and potential problems in the JavaScript module and test files.
+        // 'gruntfile.js' This file.
+        // 'src/**/*.js' The JavaScript module files.
+        // 'test/**/*.js' The JavaScript test files.
         jshint: 
         {
-            // 'gruntfile.js' This file.
-            // 'src/**/*.js' All javascript source files.
-            // 'test/**/*.js' All javascript test files.
             all: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js']
         },
-        // Minimises code.
+        // Minimises the JavaScript source code file 'gen_dist/<%= pkg.name %>.src.js' into 'gen_dist/<%= pkg.name %>.js'.
+        // Adds a banner displaying the project name, version and date to the minimised file.
+        // Creates a source map file 'gen_dist/<%= pkg.name %>.map' for debugging the minimised code file.
         uglify: 
         {
             options: 
             {
-                // Adds a banner displaying the project name, version and date to 'flowingcharts.js'.
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */',
-                // Creates a source map file for debugging the minimised code 'dist/flowingcharts.map' ('dist/<%= pkg.name %>.map').
-                sourceMap: true,
-                sourceMapName: "dist/<%= pkg.name %>.map"
+                /*sourceMap: true,
+                sourceMapName: "gen_dist/<%= pkg.name %>.map"*/
             },
-            // Minimises the code in 'dist/flowingcharts.src.js' ('dist/<%= pkg.name %>.src.js')
-            // and places it in a new file called 'dist/flowingcharts.js' ('dist/<%= pkg.name %>.js').
             build: 
             {
                 files: 
                 {
-                    'dist/<%= pkg.name %>.js': ['dist/<%= pkg.name %>.src.js']
+                    'gen_dist/<%= pkg.name %>.js': ['gen_dist/<%= pkg.name %>.src.js']
                 }
             }
         },
         // Deletes directories.
         clean: 
         {
-            // These directories are deleted so that they can be rebuilt when the relevant task is run.
-            // Javascript documentation.
-            doc: 
-            {
-                src: ['doc']
-            },
-            // Test coverage.
-            coverage: 
-            {
-                src: ['test_coverage/']
-            },
-            // Release.
-            release: 
-            {
-                src: ['release/<%= pkg.version %>/']
-            }
+            // Deletes JavaScript API documentation.
+            doc: {src: ['gen_doc']},
+            // Deletes test coverage.
+            coverage: {src: ['gen_test_coverage/']},
+            // Deletes release.
+            release: {src: ['gen_release/<%= pkg.version %>/']},
+            // Deletes distribution.
+            dist: {src: ['gen_dist/']}
         },
         // Copies files/directories.
         copy: 
         {
-            // Copies files to a release version directory 'release/<%= pkg.version %>/' (eg 'release/0.1.0/').
+            // Copies files to a release directory 'gen_release/<%= pkg.version %>/'.
             release: 
             {
                 files: 
                 [
-                    // Copies the concatenated javascript source code 'flowingcharts.src.js' and 'flowingcharts.js' to 'release/'.
+                    // Copies the JavaScript source file 'gen_dist/<%= pkg.name %>.js' and 
+                    // minimised file 'gen_dist/<%= pkg.name %>.src.js' to 'gen_release/'.
                     {
                         expand: true, 
-                        // Flattens results to a single level so directory structure isnt copied.
-                        flatten: true,
+                        flatten: true, // Flattens results to a single level so directory structure isnt copied.
                         src: 
                         [
-                            'dist/<%= pkg.name %>.js', 
-                            'dist/<%= pkg.name %>.src.js'
+                            'gen_dist/<%= pkg.name %>.js', 
+                            'gen_dist/<%= pkg.name %>.src.js'
                         ], 
-                        dest: 'release/<%= pkg.version %>/'
+                        dest: 'gen_release/<%= pkg.version %>/'
                     },
-                    // Copies the demos 'demos/', to 'release/<%= pkg.version %>/demos/' (eg 'release/0.1.0/demos/').
+                    // Copies the JavaScript module files 'src/', to 'gen_release/<%= pkg.version %>/src/'.
                     {
                         expand: true,
-                        // Makes the src relative to cwd.
-                        cwd: 'demos/',    
-                        // Subsequently only includes files within path 'demos/' and its sub-directories.                       
-                        src: '**/*',     
-                        // This is done so that the dest directory is 'release/0.1.0/demos/' rather than 'release/0.1.0/demos/'                            
-                        dest: 'release/<%= pkg.version %>/demos/'
-                    },
-                    // Copies the javascript source code 'src/', to 'release/<%= pkg.version %>/src/' (eg 'release/0.1.0/src/').
-                    {
-                        expand: true,
-                        cwd: 'src/',
+                        cwd: 'src/', // Makes the src relative to cwd so that the full file path is not copied into release.    
                         src: '**/*',
-                        dest: 'release/<%= pkg.version %>/src/'
+                        dest: 'gen_release/<%= pkg.version %>/src/'
                     },
-                    // Copies the javascript documentation 'doc/', to 'release/<%= pkg.version %>/doc/' (eg 'release/0.1.0/doc/').
+                    // Copies the JavaScript API documentation 'gen_doc/', to 'gen_release/<%= pkg.version %>/doc/'.
                     {
                         expand: true,
-                        cwd: 'doc/',
+                        cwd: 'gen_doc/',
                         src: '**/*',
-                        dest: 'release/<%= pkg.version %>/doc/'
+                        dest: 'gen_release/<%= pkg.version %>/doc/'
                     }
                 ]
             },
-            // Copies the javascript test files 'test/' to a temporary directory 'test_coverage/test/' for testing coverage.
+            // Copies the JavaScript test files 'test/' to 'gen_test_coverage/test/' for testing coverage.
             coverage: 
             {
                 files: 
@@ -129,55 +108,34 @@ module.exports = function (grunt)
                         expand: true,
                         cwd: 'test/',
                         src: '**/*',
-                        dest: 'test_coverage/test/'
-                    }
-                ]
-            },
-            // Copies distribution files to demo.
-            demos: 
-            {
-                files: 
-                [
-                    {
-                        expand: true, 
-                        // Flattens results to a single level so directory structure isnt copied.
-                        flatten: true,
-                        src: 
-                        [
-                            'dist/<%= pkg.name %>.js', 
-                            'dist/<%= pkg.name %>.src.js'
-                        ], 
-                        dest: 'demos/'
+                        dest: 'gen_test_coverage/test/'
                     }
                 ]
             }
         },
         // Used for test coverage alongside mocha.
+        // Copies the JavaScript module files 'src/' to 'gen_test_coverage/src/' for testing coverage.
         blanket: 
         {
-            // In most cases it may be more useful to instrument files before running tests. 
-            // This has the added advantage of creating intermediate files that will match the line numbers reported in exception reports. 
             coverage: 
             {
-                // Copies the javascript source files 'src/'
                 src: ['src/'],
-                // to a temporary directory 'test_coverage/src/' for testing coverage.
-                dest: 'test_coverage/src/'
+                dest: 'gen_test_coverage/src/'
             }
         },   
         // Unit testing.
         mochaTest: 
         {
-            // Runs unit tests 'test_coverage/test/' on the intermediate javascript source code 'test_coverage/src/'.
+            // Runs unit tests 'gen_test_coverage/test/' on the JavaScript module files in 'gen_test_coverage/src/'.
             test: 
             {
                 options: 
                 {
                     reporter: 'spec',
                 },
-                src: ['test_coverage/test/**/*.js']
+                src: ['gen_test_coverage/test/**/*.js']
             },
-            // Creates a test coverage file 'test_coverage/coverage.html'.
+            // Creates a test coverage file 'gen_test_coverage/coverage.html'.
             // This file helps highlight areas where more testing is required.
             coverage: 
             {
@@ -185,25 +143,22 @@ module.exports = function (grunt)
                 {
                     reporter: 'html-cov',
                     quiet: true,
-                    captureFile: 'test_coverage/coverage.html'
+                    captureFile: 'gen_test_coverage/coverage.html'
                 },
-                src: ['test_coverage/test/**/*.js']
+                src: ['gen_test_coverage/test/**/*.js']
             }
         },
-        // Creates jsdoc style documentation for javascript files.
+        // Generates documentation for the JavaScript module files 'src/**/*.js' in 'gen_doc'.
+        // Uses template and config files from ink-docstrap.
         jsdoc: 
         {
             doc: 
             {
-                // Generates documentation for the javascript source code 'src/**/*.js'.
                 src: ['src/**/*.js'],
                 options: 
                 {
-                    // The generated documentation is placed in 'doc'
-                    destination: 'doc',
-                    // Specifies a template for the documentation.
+                    destination: 'gen_doc',
                     template : 'node_modules/ink-docstrap/template',
-                    // Specifies a configuration for the documentation.
                     configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json'
                 }
             }
@@ -215,33 +170,65 @@ module.exports = function (grunt)
         {
             options: 
             {
-                // Adds a banner displaying the project name, version and date to 'flowingcharts.src.js'.
-                banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-            },
-            browserifyOptions: 
-            {
-                // Enable source maps that allow you to debug your files separately.
-                debug: true
+                // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
+                banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+                browserifyOptions: 
+                {
+                    // Enable source map that allow you to debug your files separately.
+                    // browserify generates inline source maps as a comment at the bottom of 'gen_dist/<%= pkg.name %>.src.js'.
+                    debug: true
+                }
             },
             dist: 
             {
                 files: 
                 {
-                    // Produces a bundled file 'dist/flowingcharts.src.js' ('dist/<%= pkg.name %>.src.js') from the starting point 'src/main.js'.
-                    'dist/<%= pkg.name %>.src.js': ['src/main.js']
+                    // Generates a bundled file 'gen_dist/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
+                    'gen_dist/<%= pkg.name %>.src.js': ['src/main.js']
                 }
+            }
+        },
+        // Processes and copies the demo files 'demos/', to 'gen_release/<%= pkg.version %>/demos/'.
+        // Adds a banner to each file displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
+        // Adds a banner to each file displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
+        // Replaces 
+        // <script type="text/javascript" src="../../gen_dist/flowingcharts.src.js"></script>
+        // with
+        // <script type="text/javascript" src="../../flowingcharts.js"></script>
+        processhtml: 
+        {
+            options:
+            {
+                data: 
+                {
+                    banner: '<!-- <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> -->'
+                }
+            },
+            dist: 
+            {
+
+                files: 
+                [
+                    {
+                        expand: true,   
+                        cwd: 'demos/', 
+                        src: ['**/*.html'],
+                        dest: 'gen_release/<%= pkg.version %>/demos/',
+                        ext: '.html'
+                    }
+                ]
             }
         },
         watch:
         {
-             // '>grunt watch' Runs the 'build' task if changes are made to the javascript source files 'src/**/*.js'.
+            // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
+            // Enable by typing '>grunt watch' into a command prompt.
             files: ['src/**/*.js'],
             tasks: ['build']
         }
     });
 
     // Load the plugins that provide the tasks.
-    //grunt.loadNpmTasks('grunt-blanket');
     grunt.loadNpmTasks('grunt-blanket');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -252,37 +239,28 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-processhtml');
 
     // Tasks that can be run from the command line.
     // Open command prompt in this directory (shift + right click > Open command window here) to run tasks.
 
-    // '>grunt lint' 
-    // Detect errors and potential problems in code.
-    grunt.registerTask('lint', ['jshint']); 
-
-    // '>grunt test' 
-    // Unit testing and test coverage is carried out in a generated directory 'test_coverage'.
-    // Test coverage results are copied to 'test_coverage/coverage.html'.
-    grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
-
     // '>grunt doc' 
-    // Generate jsdoc style code documentation in a generated directory 'doc'. 
+    // Generate API documentation in 'gen_doc'. 
     grunt.registerTask('doc', ['clean:doc','jsdoc:doc']);           
 
-    // '>grunt publish' 
-    // Publishes to a generated directory 'release/<%= pkg.version %>/' (eg 'release/0.1.0/').
-    grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release']);      
-
     // '>grunt build' 
-    // Used for quick build during development.
-    // lint: detect errors and potential problems in code. 
-    // browserify: concatenate node modules into single file 'dist/flowingcharts.src.js' ('dist/<%= pkg.name %>.src.js').
-    // uglify: minimise code 'dist/flowingcharts.js' ('dist/<%= pkg.name %>.js'). Also creates a source map file
-    // for debugging the minimised code 'dist/flowingcharts.map' ('dist/<%= pkg.name %>.map').
-    // copy:demos: Copies files from 'dist' to 'demos'.
-    grunt.registerTask('build', ['lint', 'browserify', 'uglify', 'copy:demos']);      
+    // Used for a quick build during development.
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'uglify']);      
+
+    // '>grunt test' 
+    // Carries out unit testing on the JavaScript module files and generates a test coverage file at 'gen_test_coverage/coverage.html'.
+    grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
+
+    // '>grunt publish' 
+    // Publishes a release version to 'gen_release/<%= pkg.version %>/'.
+    grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release', 'processhtml']);      
 
     // '>grunt' 
-    // Run this after installation to create all required directories.              
-    grunt.registerTask('default', ['build', 'test', 'doc']);    
+    // Run this after installation to generate 'gen_dist', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.              
+    grunt.registerTask('default', ['build', 'test', 'publish']);    
 };           

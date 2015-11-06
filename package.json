@@ -3,6 +3,22 @@
   "name": "flowingcharts",
   "description": "JavaScript Charting Package",
   "version": "0.1.0",
+  "homepage": "http://www.flowingcharts.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/flowingcharts/flowingcharts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flowingcharts/flowingcharts/issues"
+  },
+  "keywords": [
+    "charts",
+    "flowingcharts",
+    "svg",
+    "canvas",
+    "html5",
+    "graph"
+  ],
   "browserify": {
     "transform": [
       "browserify-shim"
@@ -27,6 +43,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-jsdoc": "^1.0.0",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-processhtml": "^0.3.8",
     "ink-docstrap": "^0.5.2",
     "mocha": "^2.3.3"
   }

@@ -47,16 +47,16 @@ Temporary Items
 # =========================
 
 # test coverage
-test_coverage
+gen_test_coverage
 
 # docs
-doc
+gen_doc
 
 # distribution files
-dist
+gen_dist
 
 # release
-release
+gen_release
 
 # node modules
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
