@@ -80,25 +80,6 @@ var shouldThrowErrorIfNotNumber = function (fnc)
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is not a number.
- *
- * @param {function} fnc The function to test.
- */
-var shouldThrowErrorIfNotNumber = function (fnc)
-{        
-    shouldThrowErrorIfTypeIsNotNumber(fnc);
-    shouldNotThrowErrorIfNumberEqualsZero(fnc);
-    shouldNotThrowErrorIfNumberIsPositive(fnc);
-    shouldThrowErrorIfNumberIsNegative(fnc);
-
-    expect(function(){fnc(-1);}).to.not.throw(Error);
-    expect(function(){fnc(-1.0000000000000000000001);}).to.not.throw(Error);
-    expect(function(){fnc(-999999999999999999999999);}).to.not.throw(Error);
-    expect(function(){fnc(8e-5);}).to.not.throw(Error);
-    expect(function(){fnc(1e-24);}).to.not.throw(Error);
-}
-
-/** 
  * Check if an error is thrown when the argument passed to fnc is not a positve number.
  *
  * @param {function} fnc The function to test.
