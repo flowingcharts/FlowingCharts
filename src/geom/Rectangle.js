@@ -65,13 +65,13 @@ Rectangle.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Rectangle} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if coord is not a number.
+     * @throws {Error} Will throw an error if coord is not a number.
      */
     x : function (coord)
     {
         if (arguments.length > 0)
         {
-            if (typeof coord !== 'number') throw 'Rectangle.x(coord): coord must be a number.';
+            if (typeof coord !== 'number') throw new Error('Rectangle.x(coord): coord must be a number.');
 
             this._x = coord;
             return this;
@@ -85,13 +85,13 @@ Rectangle.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Rectangle} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if coord is not a number.
+     * @throws {Error} Will throw an error if coord is not a number.
      */
     y : function (coord)
     {
         if (arguments.length > 0)
         {
-            if (typeof coord !== 'number') throw 'Rectangle.y(coord): coord must be a number.';
+            if (typeof coord !== 'number') throw new Error('Rectangle.y(coord): coord must be a number.');
 
             this._y = coord;
             return this;
@@ -105,14 +105,14 @@ Rectangle.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|Rectangle} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if w is not a number or is less than 0.
+     * @throws {Error} Will throw an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
         if (arguments.length > 0)
         {
-            if (typeof w !== 'number')  throw 'Rectangle.width(w): w must be a number.';
-            if (w < 0)                  throw 'Rectangle.width(w): w must be > 0.';
+            if (typeof w !== 'number')  throw new Error('Rectangle.width(w): w must be a number.');
+            if (w < 0)                  throw new Error('Rectangle.width(w): w must be > 0.');
 
             this._width = w;
             return this;
@@ -126,14 +126,14 @@ Rectangle.prototype =
      * @since 0.1.0
      * @param {number} [h] The height.
      * @return {number|Rectangle} The height if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if h is not a number or is less than 0.
+     * @throws {Error} Will throw an error if h is not a number or is less than 0.
      */
     height : function (h)
     {
         if (arguments.length > 0)
         {
-            if (typeof h !== 'number') throw 'Rectangle.height(h): h must be a number.';
-            if (h < 0)                 throw 'Rectangle.height(h): h must be > 0.';
+            if (typeof h !== 'number') throw new Error('Rectangle.height(h): h must be a number.');
+            if (h < 0)                 throw new Error('Rectangle.height(h): h must be > 0.');
 
             this._height = h;
             return this;

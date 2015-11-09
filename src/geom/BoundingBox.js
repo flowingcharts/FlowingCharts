@@ -8,6 +8,9 @@
  * @module geom/BoundingBox 
  */
 
+var util = require('../util');
+var isNumber = util.isNumber;
+
 /** 
  * @classdesc An area defined by its position, as indicated 
  * by its bottom-left corner point (<code>xMin</code>, <code>yMin</code>) 
@@ -15,6 +18,8 @@
  * 
  * @since 0.1.0
  * @constructor
+ *
+ * @requires util.isNumber
  *
  * @param {number} [xMin = 0] The x coord of the left edge.
  * @param {number} [yMin = 0] The y coord of the bottom edge.
@@ -70,13 +75,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if x is not a number.
+     * @throws {Error} Will throw an error if x is not a number.
      */
     xMin : function (x)
     {
         if (arguments.length > 0)
         {
-            if (typeof x !== 'number') throw 'BoundingBox.xMin(x): x must be a number.';
+            if (!isNumber(x)) throw new Error('BoundingBox.xMin(x): x must be a number.');
 
             this._xMin = x;
             this._width = Math.abs(this._xMax - this._xMin);
@@ -92,13 +97,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if x is not a number.
+     * @throws {Error} Will throw an error if x is not a number.
      */
     xMax : function (x)
     {
         if (arguments.length > 0)
         {
-            if (typeof x !== 'number') throw 'BoundingBox.xMax(x): x must be a number.';
+            if (!isNumber(x)) throw new Error('BoundingBox.xMax(x): x must be a number.');
 
             this._xMax = x;
             this._width = Math.abs(this._xMax - this._xMin);
@@ -115,13 +120,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if x is not a number.
+     * @throws {Error} Will throw an error if x is not a number.
      */
     xCenter : function (x)
     {
         if (arguments.length > 0)
         {
-            if (typeof x !== 'number') throw 'BoundingBox.xCenter(x): x must be a number.';
+            if (!isNumber(x)) throw new Error('BoundingBox.xCenter(x): x must be a number.');
 
             this._xCenter = x;
             this._xMin  = this._xCenter - (this._width / 2);
@@ -138,14 +143,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if w is not a number or is less than 0.
+     * @throws {Error} Will throw an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
         if (arguments.length > 0)
         {
-            if (typeof w !== 'number')  throw 'BoundingBox.width(w): w must be a number.';
-            if (w < 0)                  throw 'BoundingBox.width(w): w must be > 0.';
+            if (!isNumber(w))  throw new Error('BoundingBox.width(w): w must be a number.');
+            if (w < 0)         throw new Error('BoundingBox.width(w): w must be > 0.');
 
             this._width = w;
             this._xMax = this._xMin + this._width;
@@ -161,13 +166,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if y is not a number.
+     * @throws {Error} Will throw an error if y is not a number.
      */
     yMin : function (y)
     {
         if (arguments.length > 0)
         {
-            if (typeof y !== 'number') throw 'BoundingBox.yMin(y): y must be a number.';
+            if (!isNumber(y)) throw new Error('BoundingBox.yMin(y): y must be a number.');
 
             this._yMin = y;
             this._height = Math.abs(this._yMax - this._yMin);
@@ -183,13 +188,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if y is not a number.
+     * @throws {Error} Will throw an error if y is not a number.
      */
     yMax : function (y)
     {
         if (arguments.length > 0)
         {
-            if (typeof y !== 'number') throw 'BoundingBox.yMax(y): y must be a number.';
+            if (!isNumber(y)) throw new Error('BoundingBox.yMax(y): y must be a number.');
 
             this._yMax = y;
             this._height = Math.abs(this._yMax - this._yMin);
@@ -205,13 +210,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if y is not a number.
+     * @throws {Error} Will throw an error if y is not a number.
      */
     yCenter : function (y)
     {
         if (arguments.length > 0)
         {
-            if (typeof y !== 'number') throw 'BoundingBox.yCenter(y): y must be a number.';
+            if (!isNumber(y)) throw new Error('BoundingBox.yCenter(y): y must be a number.');
 
             this._yCenter = y;
             this._yMin  = this._yCenter - (this._height / 2);
@@ -227,21 +232,21 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [h] The height.
      * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {string} Will throw an error if h is not a number or is less than 0.
+     * @throws {Error} Will throw an error if h is not a number or is less than 0.
      */
     height : function (h)
     {
         if (arguments.length > 0)
         {
-            if (typeof h !== 'number') throw 'BoundingBox.height(h): h must be a number.';
-            if (h < 0)                 throw 'BoundingBox.height(h): h must be > 0.';
+            if (!isNumber(h)) throw new Error('BoundingBox.height(h): h must be a number.');
+            if (h < 0)                 throw new Error('BoundingBox.height(h): h must be > 0.');
 
             this._height = h;
             this._yMax = this._yMin + this._height;
             this._yCenter = this._yMin + (this._height / 2);
             return this;
         }
-        else return this._yCenter;
+        else return this._height;
     },
 
     /** 
@@ -261,13 +266,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box is equal to this one, otherwise false.
-     * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
      */
     equals : function (bBox)
     {
         if (arguments.length > 0)
         {
-            if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.equals(bBox): bBox must be a BoundingBox.';
+            if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.equals(bBox): bBox must be a BoundingBox.');
 
             if (bBox.getXMin() !== this._xMin) return false;
             if (bBox.getYMin() !== this._yMin) return false;
@@ -275,7 +280,7 @@ BoundingBox.prototype =
             if (bBox.getYMax() !== this._yMax) return false;
             return true;
         }
-        else throw 'BoundingBox.equals(bBox): bBox has not been defined.';
+        else throw new Error('BoundingBox.equals(bBox): bBox has not been defined.');
     },
 
     /** 
@@ -284,13 +289,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box intercepts this one, otherwise false.
-     * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
      */
     intersects : function (bBox)
     {
         if (arguments.length > 0)
         {
-            if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.intersects(bBox): bBox must be a BoundingBox.';
+            if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.intersects(bBox): bBox must be a BoundingBox.');
 
             if (bBox.getXMin() > this._xMax) return false;
             if (bBox.getXMax() < this._xMin) return false;
@@ -298,7 +303,7 @@ BoundingBox.prototype =
             if (bBox.getYMax() < this._yMin) return false;
             return true;
         }
-        else throw 'BoundingBox.intersects(bBox): bBox has not been defined.';
+        else throw new Error('BoundingBox.intersects(bBox): bBox has not been defined.');
     },
 
     /** 
@@ -307,13 +312,13 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if bounding box is contained within this one, otherwise false.
-     * @throws {string} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
      */
     contains : function (bBox)
     {
         if (arguments.length > 0)
         {
-            if (!(bBox instanceof BoundingBox)) throw 'BoundingBox.contains(bBox): bBox must be a BoundingBox.';
+            if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.contains(bBox): bBox must be a BoundingBox.');
 
             if (bBox.getXMin() < this._xMin) return false;
             if (bBox.getXMax() > this._xMax) return false;
@@ -321,7 +326,7 @@ BoundingBox.prototype =
             if (bBox.getYMax() > this._yMax) return false;
             return true;
         }
-        else throw 'BoundingBox.contains(bBox): bBox has not been defined.';
+        else throw new Error('BoundingBox.contains(bBox): bBox has not been defined.');
     }
 };
 

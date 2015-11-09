@@ -8,26 +8,30 @@
  * @module geom/CartesianChart 
  */
 
-var BoundingBox = require('BoundingBox');
-var Rectangle = require('Rectangle');
-var Point = require('Point');
+var BoundingBox = require('./BoundingBox');
+var Rectangle = require('./Rectangle');
+var Point = require('./Point');
 
 /** 
- * @classdesc Maps data coords to pixel coords and vice versa.
+ * @class Maps data coords to pixel coords and vice versa.
  *
- * <p>The pixel coords are defined by a rectangle {@link pixelCoords}</p>
+ * <p>The pixel coords are defined by a rectangle {@link pixelCoords}.
+ * Pixel coords are relative to the top left corner of the chart.</p>
  *
- * <p>The data coords are defined by a bounding box {@link dataCoords}.</p>
- * 
- * <p>Pixel coords are relative to the top left corner of the chart. 
+ * <p>The data coords are defined by a bounding box {@link dataCoords}.
  * Data coords are relative to the bottom left corner of the chart.</p>
- *
+ * 
  * <p>The data coords may be adjusted to maintain the aspect ratio by setting 
- * the value of <a href="#_maintainAspectRatio">_maintainAspectRatio</a> to true.</p>
+ * the value of {@link _maintainAspectRatio} to true.</p>
  *
  * @since 0.1.0
  * @author J Clare
  * @constructor
+ *
+ * @requires geom/BoundingBox
+ * @requires geom/Rectangle
+ * @requires geom/Point
+ *
  * @param {Object} [options] The options.
  * @param {number} [options.dimensions.x] The x coord of the left edge (pixel units).
  * @param {number} [options.dimensions.y] The y coord of the top edge (pixel units).
@@ -57,9 +61,6 @@ CartesianChart.prototype =
     _bBox : null,                   // The bounding box defining the data coords.
 
     /** 
-     * The data space will often be a different shape to the 
-     * pixel space it has to fill. 
-     * 
      * <p>If set to <code>true</code> the data space is
      * adjusted to maintain the aspect ratio.</p>
      * 
@@ -116,78 +117,49 @@ CartesianChart.prototype =
 
     /** 
      * A call to <code>_onPropertyChanged</code> commits any changes made to
-     * <a href="#this._rect.width()">this._rect.width()</a>, <a href="#this._rect.height()">this._rect.height()</a> or <a href="#bBox">bBox</a>.
-     * 
-     * <p>This function exists to allow properties to be changed  
-     * without continuous updates to the object.</p>
      *
      * @private
      */
     _onPropertyChanged : function ()
     {
-        if (this._maintainAspectRatio) this._adjustBBox(this.bBox);
-            
-        // Test against rounded pixels - due to problems with 
-        // precision in real world coords.
-        var oldRect = this.getPixelCoords(this.oldBBox);
-        var newRect = this.getPixelCoords(this.bBox);
-        var w = Math.round(newRect.width());
-        var h = Math.round(newRect.height());
-        var ow = Math.round(oldRect.width());
-        var oh = Math.round(oldRect.height());
-
-        if((w === ow) && (h === oh))
+        // Stretches the bBox to fit the rect whilst maintaining the aspect ratio.
+        if (this._maintainAspectRatio) 
         {
-            // Pan.
-        }
-        else
-        {
-            // Zoom.
-        }
+            var sy = this._bBox.getHeight() / this._rect.height();
+            var sx = this._bBox.getWidth() / this._rect.width();
 
-    },
+            var sBBoxX;
+            var sBBoxY;
+            var sBBoxW;
+            var sBBoxH; 
 
-    /** 
-     * Adjusts the bounding box to fit the pixel space whilst maintaining its aspect ratio.
-     * 
-     * @private
-     */
-    _adjustBBox : function ()
-    {
-        var sy = this._bBox.getHeight() / this._rect.height();
-        var sx = this._bBox.getWidth() / this._rect.width();
+            if (sy > sx)
+            {
+                sBBoxY = this._bBox.getYMin();
+                sBBoxH = this._bBox.getHeight();
+                sBBoxW = (this._rect.width() / this._rect.height()) * sBBoxH;
+                sBBoxX = this._bBox.getXMin() - ((sBBoxW - this._bBox.getWidth()) / 2);
+            }
+            else if (sx > sy)
+            {
+                sBBoxX = this._bBox.getXMin();
+                sBBoxW = this._bBox.getWidth();
+                sBBoxH = (this._rect.height() / this._rect.width()) * sBBoxW;
+                sBBoxY = this._bBox.getYMin() - ((sBBoxH - this._bBox.getHeight()) / 2);
+            }
+            else
+            {
+                sBBoxX = this._bBox.getXMin();
+                sBBoxY = this._bBox.getYMin();
+                sBBoxW = this._bBox.getWidth();
+                sBBoxH = this._bBox.getHeight();
+            }
 
-        var sBBoxX;
-        var sBBoxY;
-        var sBBoxW;
-        var sBBoxH; 
-
-        if (sy > sx)
-        {
-            sBBoxY = this._bBox.getYMin();
-            sBBoxH = this._bBox.getHeight();
-            sBBoxW = (this._rect.width() / this._rect.height()) * sBBoxH;
-            sBBoxX = this._bBox.getXMin() - ((sBBoxW - this._bBox.getWidth()) / 2);
+            this._bBox.setXMin(sBBoxX);
+            this._bBox.setYMin(sBBoxY);
+            this._bBox.setWidth(sBBoxW);
+            this._bBox.setHeight(sBBoxH);
         }
-        else if (sx > sy)
-        {
-            sBBoxX = this._bBox.getXMin();
-            sBBoxW = this._bBox.getWidth();
-            sBBoxH = (this._rect.height() / this._rect.width()) * sBBoxW;
-            sBBoxY = this._bBox.getYMin() - ((sBBoxH - this._bBox.getHeight()) / 2);
-        }
-        else
-        {
-            sBBoxX = this._bBox.getXMin();
-            sBBoxY = this._bBox.getYMin();
-            sBBoxW = this._bBox.getWidth();
-            sBBoxH = this._bBox.getHeight();
-        }
-
-        this._bBox.setXMin(sBBoxX);
-        this._bBox.setYMin(sBBoxY);
-        this._bBox.setWidth(sBBoxW);
-        this._bBox.setHeight(sBBoxH);
     },
 
     /** 
@@ -207,7 +179,7 @@ CartesianChart.prototype =
      * @param {BoundingBox} bBox A bounding box (data units).
      * @return {Rectangle} A rectangle (pixel units).
      */
-    getPixelCoords : function (bBox)
+    getPixelRect : function (bBox)
     {
         var x = this.getPixelX(bBox.getXMin());
         var y = this.getPixelY(bBox.getYMax());

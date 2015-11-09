@@ -8,16 +8,21 @@
 var flowingcharts = window.flowingcharts || 
 {
     BoundingBox : require('./geom/BoundingBox'),
+    CartesianChart : require('./geom/CartesianChart'),
     canvas : require('./canvas/util')
 };
 
 require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
-window.flowingcharts = flowingcharts;
+window.flowingcharts = flowingcharts; 
+var fc = flowingcharts;
 
-var bb = new flowingcharts.BoundingBox();
+var chart = new fc.CartesianChart();
+
+
+var bb = new fc.BoundingBox();
 window.console.log(bb);
-var bb2 = new flowingcharts.BoundingBox("bah",567,867,2345);
+var bb2 = new fc.BoundingBox("bah",567,867,2345);
 window.console.log(bb2);
 var t = bb.intersects("test");
