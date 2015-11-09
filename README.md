@@ -1,4 +1,4 @@
-# FlowingCharts
+# [FlowingCharts](http://www.flowingcharts.com/)
 
 FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas and SVG.
 
