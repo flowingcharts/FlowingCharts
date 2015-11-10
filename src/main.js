@@ -15,14 +15,4 @@ var flowingcharts = window.flowingcharts ||
 require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
-window.flowingcharts = flowingcharts; 
-var fc = flowingcharts;
-
-var chart = new fc.CartesianChart();
-
-
-var bb = new fc.BoundingBox();
-window.console.log(bb);
-var bb2 = new fc.BoundingBox("bah",567,867,2345);
-window.console.log(bb2);
-var t = bb.intersects("test");
+window.flowingcharts = flowingcharts;

@@ -8,117 +8,141 @@ var shouldThrowErrorIfNotPositiveNumber = util.shouldThrowErrorIfNotPositiveNumb
 describe('BoundingBox', function () 
 {  
     'use strict';
-    var bBox;
+    
+    describe('Constructor', function () 
+    {  
+        describe('BoundingBox (xMin, yMin, xMax, yMax)', function () 
+        {
+            it('Should supply default values for xMin, yMin, xMax, yMax', function () 
+            {
+                var bBox = new BoundingBox();
+                expect(bBox.xMin()).to.equal(0);
+                expect(bBox.yMin()).to.equal(0);
+                expect(bBox.xMax()).to.equal(100);
+                expect(bBox.yMax()).to.equal(100);
+            });
+            it('xMin, yMin, xMax, yMax should be numbers or undefined', function () 
+            {
+                expect(function(){new BoundingBox('1');}).to.throw(Error);
+                expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
+                expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
+                expect(function(){new BoundingBox(1, 2, '3', 4);}).to.throw(Error);
+                expect(function(){new BoundingBox(1, 2, 3, '4');}).to.throw(Error);
+                expect(function(){new BoundingBox([1]);}).to.throw(Error);
+                expect(function(){new BoundingBox([1, 2, 3, 4]);}).to.throw(Error);
 
-    beforeEach('Create a new bounding box', function() 
-    {
-        bBox = new BoundingBox();
+                expect(function(){new BoundingBox(1);}).to.not.throw(Error);
+                expect(function(){new BoundingBox(1, 2);}).to.not.throw(Error);
+                expect(function(){new BoundingBox(1, 2, 3);}).to.not.throw(Error);
+                expect(function(){new BoundingBox(1, 2, 3, 4);}).to.not.throw(Error);
+                expect(function(){new BoundingBox(undefined, undefined, undefined, 4);}).to.not.throw(Error);
+            });
+        });
     });
 
-    describe('BoundingBox (xMin, yMin, xMax, yMax)', function () 
-    {
-        it('Should supply default values for the arguments', function () 
+    describe('Methods', function () 
+    {  
+        var bBox;
+        beforeEach('Create a new bounding box', function() 
         {
-            expect(bBox.xMin()).to.equal(0);
-            expect(bBox.yMin()).to.equal(0);
-            expect(bBox.xMax()).to.equal(100);
-            expect(bBox.yMax()).to.equal(100);
+            bBox = new BoundingBox();
         });
-    });
-    describe('xMin(x)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+
+        describe('xMin(x)', function () 
         {
-            expect(bBox.xMin(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.xMin()).to.equal(10);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.xMin(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xMin()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.xMin);
+            });
         });
-        it('The argument should be a number if its defined', function () 
+        describe('xMax(x)', function () 
         {
-            shouldThrowErrorIfNotNumber(bBox.xMin);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.xMax(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xMax()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.xMax);
+            });
         });
-    });
-    describe('xMax(x)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+        describe('xCenter(x)', function () 
         {
-            expect(bBox.xMax(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.xMax()).to.equal(10);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.xCenter(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xCenter()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.xCenter);
+            });
         });
-        it('The argument should be a number if its defined', function () 
+        describe('width(w)', function () 
         {
-            shouldThrowErrorIfNotNumber(bBox.xMax);
+            it('Should return the width if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.width(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.width()).to.equal(10);
+            });
+            it('The argument should be a positive number if its defined', function () 
+            {
+                shouldThrowErrorIfNotPositiveNumber(bBox.width);
+            });
         });
-    });
-    describe('xCenter(x)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+        describe('yMin(y)', function () 
         {
-            expect(bBox.xCenter(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.xCenter()).to.equal(10);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.yMin(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yMin()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.yMin);
+            });
         });
-        it('The argument should be a number if its defined', function () 
+        describe('yMax(y)', function () 
         {
-            shouldThrowErrorIfNotNumber(bBox.xCenter);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.yMax(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yMax()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.yMax);
+            });
         });
-    });
-    describe('width(w)', function () 
-    {
-        it('Should return the width if no arguments are supplied, otherwise the BoundingBox.', function () 
+        describe('yCenter(y)', function () 
         {
-            expect(bBox.width(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.width()).to.equal(10);
+            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.yCenter(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yCenter()).to.equal(10);
+            });
+            it('The argument should be a number if its defined', function () 
+            {
+                shouldThrowErrorIfNotNumber(bBox.yCenter);
+            });
         });
-        it('The argument should be a number if its defined', function () 
+        describe('height(h)', function () 
         {
-            shouldThrowErrorIfNotPositiveNumber(bBox.width);
-        });
-    });
-    describe('yMin(y)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
-        {
-            expect(bBox.yMin(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.yMin()).to.equal(10);
-        });
-        it('The argument should be a number if its defined', function () 
-        {
-            shouldThrowErrorIfNotNumber(bBox.yMin);
-        });
-    });
-    describe('yMax(y)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
-        {
-            expect(bBox.yMax(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.yMax()).to.equal(10);
-        });
-        it('The argument should be a number if its defined', function () 
-        {
-            shouldThrowErrorIfNotNumber(bBox.yMax);
-        });
-    });
-    describe('yCenter(y)', function () 
-    {
-        it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
-        {
-            expect(bBox.yCenter(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.yCenter()).to.equal(10);
-        });
-        it('The argument should be a number if its defined', function () 
-        {
-            shouldThrowErrorIfNotNumber(bBox.yCenter);
-        });
-    });
-    describe('height(h)', function () 
-    {
-        it('Should return the height if no arguments are supplied, otherwise the BoundingBox.', function () 
-        {
-            expect(bBox.height(10)).to.be.an.instanceof(BoundingBox);
-            expect(bBox.height()).to.equal(10);
-        });
-        it('The argument should be a number if its defined', function () 
-        {
-            shouldThrowErrorIfNotPositiveNumber(bBox.height);
+            it('Should return the height if no arguments are supplied, otherwise the BoundingBox.', function () 
+            {
+                expect(bBox.height(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.height()).to.equal(10);
+            });
+            it('The argument should be a positive number if its defined', function () 
+            {
+                shouldThrowErrorIfNotPositiveNumber(bBox.height);
+            });
         });
     });
 });

@@ -239,7 +239,7 @@ BoundingBox.prototype =
         if (arguments.length > 0)
         {
             if (!isNumber(h)) throw new Error('BoundingBox.height(h): h must be a number.');
-            if (h < 0)                 throw new Error('BoundingBox.height(h): h must be > 0.');
+            if (h < 0)        throw new Error('BoundingBox.height(h): h must be > 0.');
 
             this._height = h;
             this._yMax = this._yMin + this._height;

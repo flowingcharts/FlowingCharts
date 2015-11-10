@@ -11,6 +11,9 @@
 var BoundingBox = require('./BoundingBox');
 var Rectangle = require('./Rectangle');
 var Point = require('./Point');
+var canvas = require('../renderers/canvas');
+var util = require('../util');
+var extend = util.extend;
 
 /** 
  * @class Maps data coords to pixel coords and vice versa.
@@ -22,7 +25,7 @@ var Point = require('./Point');
  * Data coords are relative to the bottom left corner of the chart.</p>
  * 
  * <p>The data coords may be adjusted to maintain the aspect ratio by setting 
- * the value of {@link _maintainAspectRatio} to true.</p>
+ * the value of {@link maintainAspectRatio} to true.</p>
  *
  * @since 0.1.0
  * @author J Clare
@@ -31,6 +34,7 @@ var Point = require('./Point');
  * @requires geom/BoundingBox
  * @requires geom/Rectangle
  * @requires geom/Point
+ * @requires util.extend
  *
  * @param {Object} [options] The options.
  * @param {number} [options.dimensions.x] The x coord of the left edge (pixel units).
@@ -44,21 +48,54 @@ var Point = require('./Point');
  */
 function CartesianChart (options)
 {
-    this._rect = new Rectangle(options.dimensions.x,
-                                options.dimensions.y,
-                                options.dimensions.width,
-                                options.dimensions.height);
-    this._bBox = new BoundingBox(options.xAxis.min,
-                                options.yAxis.min,
-                                options.xAxis.max,
-                                options.yAxis.max);
+    options = options !== undefined ? options : {};
+    var defaultOptions =
+    {
+        container : null,
+        dimensions :
+        {
+            x : 0,
+            y : 0,
+            width : 100,
+            height : 100
+        },
+        axes :
+        {
+            xAxis :
+            {
+                min : 0,
+                max : 100
+            },
+            yAxis :
+            {
+                min : 0,
+                max : 100
+            }
+        }
+    };
+    extend(defaultOptions, options);
+
+    window.console.log(defaultOptions);
+
+    this._rect = new Rectangle(defaultOptions.dimensions.x,
+                                defaultOptions.dimensions.y,
+                                defaultOptions.dimensions.width,
+                                defaultOptions.dimensions.height);
+    this._bBox = new BoundingBox(defaultOptions.axes.xAxis.min,
+                                defaultOptions.axes.yAxis.min,
+                                defaultOptions.axes.xAxis.max,
+                                defaultOptions.axes.yAxis.max);
+
+
+    var c = canvas.getDrawingCanvas();
+    canvas.appendTo(c, defaultOptions.container);
 }
 
 CartesianChart.prototype = 
 {
     // Private variables
-    _rect : null,                   // The rectangle defining the pixel coords.
-    _bBox : null,                   // The bounding box defining the data coords.
+    _rect : null, // The rectangle defining the pixel coords.
+    _bBox : null, // The bounding box defining the data coords.
 
     /** 
      * <p>If set to <code>true</code> the data space is
@@ -68,10 +105,11 @@ CartesianChart.prototype =
      * to fit the pixel space. This will generally result
      * in the aspect ratio changing (a stretching effect).</p>
      * 
+     * @since 0.1.0
      * @type Boolean
      * @default false
      */
-    _maintainAspectRatio : false,   // The bounding box defining the coordinate system (data units).
+    maintainAspectRatio : false,
 
     /** 
      * Get or set the data coords.
@@ -123,7 +161,7 @@ CartesianChart.prototype =
     _onPropertyChanged : function ()
     {
         // Stretches the bBox to fit the rect whilst maintaining the aspect ratio.
-        if (this._maintainAspectRatio) 
+        if (this.maintainAspectRatio) 
         {
             var sy = this._bBox.getHeight() / this._rect.height();
             var sx = this._bBox.getWidth() / this._rect.width();

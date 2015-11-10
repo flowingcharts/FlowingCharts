@@ -10,108 +10,139 @@ var expect = chai.expect;
  */
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is not a number.
+ * Check if an error is thrown.
  *
  * @param {function} fnc The function to test.
+ * @param {...*} args The arguments passed into the function.
  */
-var shouldThrowErrorIfTypeIsNotNumber = function (fnc)
+function shouldThrowError (fnc, args)
 {        
-    expect(function(){fnc(NaN);}).to.throw(Error);
-    expect(function(){fnc(null);}).to.throw(Error);
-    expect(function(){fnc(undefined);}).to.throw(Error);
-    expect(function(){fnc(Infinity);}).to.throw(Error);
-    expect(function(){fnc(-Infinity);}).to.throw(Error);
-    expect(function(){fnc('');}).to.throw(Error);
-    expect(function(){fnc(' ');}).to.throw(Error);
-    expect(function(){fnc('1');}).to.throw(Error);
-    expect(function(){fnc('one');}).to.throw(Error);
+    expect(function(){fnc(args);}).to.throw(Error);
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc negative.
+ * Check if an error is not thrown.
  *
  * @param {function} fnc The function to test.
+ * @param {...*} args The arguments passed into the function.
  */
-var shouldNotThrowErrorIfNumberIsNegative = function (fnc)
-{       
-    expect(function(){fnc(-1);}).to.not.throw(Error);
-    expect(function(){fnc(-1.0000000000000000000001);}).to.not.throw(Error);
-    expect(function(){fnc(-999999999999999999999999);}).to.not.throw(Error);
-    expect(function(){fnc(8e-5);}).to.not.throw(Error);
-    expect(function(){fnc(1e-24);}).to.not.throw(Error);
+function shouldNotThrowError (fnc, args)
+{        
+    expect(function(){fnc(args);}).to.not.throw(Error);
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is 0.
+ * Check if an error is thrown when the argument passed to a function is not a number.
  *
  * @param {function} fnc The function to test.
  */
-var shouldNotThrowErrorIfNumberEqualsZero = function (fnc)
-{       
-    expect(function(){fnc(0);}).to.not.throw(Error);
+function shouldThrowErrorIfIsNotNumberType (fnc)
+{        
+    shouldThrowError(fnc, NaN);
+    shouldThrowError(fnc, null);
+    shouldThrowError(fnc, undefined);
+    shouldThrowError(fnc, Infinity);
+    shouldThrowError(fnc, -Infinity);
+    shouldThrowError(fnc, null);
+    shouldThrowError(fnc, {});
+    shouldThrowError(fnc, []);
+    shouldThrowError(fnc, [1]);
+    shouldThrowError(fnc, '');
+    shouldThrowError(fnc, ''+1);
+    shouldThrowError(fnc, 1+'');
+    shouldThrowError(fnc, ' ');
+    shouldThrowError(fnc, '0');
+    shouldThrowError(fnc, '1');
+    shouldThrowError(fnc, 'foo');
+    shouldThrowError(fnc, Number('foo'));
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is positive.
+ * Check if an error is thrown when the argument passed to a function is a negative number.
  *
  * @param {function} fnc The function to test.
  */
-var shouldNotThrowErrorIfNumberIsPositive = function (fnc)
+function shouldThrowErrorIfNumberIsNegative (fnc)
 {       
-    expect(function(){fnc(0);}).to.not.throw(Error);
-    expect(function(){fnc(1);}).to.not.throw(Error);
-    expect(function(){fnc(1.0000000000000000000001);}).to.not.throw(Error);
-    expect(function(){fnc(999999999999999999999999);}).to.not.throw(Error);
-    expect(function(){fnc(8e5);}).to.not.throw(Error);
-    expect(function(){fnc(1e+24);}).to.not.throw(Error);
+    shouldThrowError(fnc, -1);
+    shouldThrowError(fnc, -0.0000000000000000000001);
+    shouldThrowError(fnc, -999999999999999999999999);
+    shouldThrowError(fnc, -8e5);
+    shouldThrowError(fnc, -1e+24);
+    shouldThrowError(fnc, -1e-24);
+    shouldThrowError(fnc, Number('-123'));
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is not a number.
+ * Check if an error is not thrown when the argument passed to a function is a negative number.
  *
  * @param {function} fnc The function to test.
  */
-var shouldThrowErrorIfNotNumber = function (fnc)
+function shouldNotThrowErrorIfNumberIsNegative (fnc)
 {       
-    shouldThrowErrorIfTypeIsNotNumber(fnc);
+    shouldNotThrowError(fnc, -1);
+    shouldNotThrowError(fnc, -0.0000000000000000000001);
+    shouldNotThrowError(fnc, -999999999999999999999999);
+    shouldNotThrowError(fnc, -8e5);
+    shouldNotThrowError(fnc, -1e+24);
+    shouldNotThrowError(fnc, -1e-24);
+    shouldNotThrowError(fnc, Number('-123'));
+}
+
+/** 
+ * Check if an error is not thrown when the argument passed to a function equals 0.
+ *
+ * @param {function} fnc The function to test.
+ */
+function shouldNotThrowErrorIfNumberEqualsZero (fnc)
+{       
+    shouldNotThrowError(fnc, 0);
+}
+
+/** 
+ * Check if an error is not thrown when the argument passed to a function is a positive number.
+ *
+ * @param {function} fnc The function to test.
+ */
+function shouldNotThrowErrorIfNumberIsPositive (fnc)
+{       
+    shouldNotThrowError(fnc, 1);
+    shouldNotThrowError(fnc, 0.0000000000000000000001);
+    shouldNotThrowError(fnc, 999999999999999999999999);
+    shouldNotThrowError(fnc, 8e5);
+    shouldNotThrowError(fnc, 1e+24);
+    shouldNotThrowError(fnc, 1e-24);
+    shouldNotThrowError(fnc, Number('123'));
+}
+
+/** 
+ * Check if an error is thrown when the argument passed to a function is not a number.
+ *
+ * @param {function} fnc The function to test.
+ */
+function shouldThrowErrorIfNotNumber (fnc)
+{       
+    shouldThrowErrorIfIsNotNumberType(fnc);
     shouldNotThrowErrorIfNumberIsNegative(fnc);
     shouldNotThrowErrorIfNumberEqualsZero(fnc);
     shouldNotThrowErrorIfNumberIsPositive(fnc);
 }
 
 /** 
- * Check if an error is thrown when the argument passed to fnc is not a positve number.
+ * Check if an error is not thrown when the argument passed to a function is a positive number.
  *
  * @param {function} fnc The function to test.
  */
-var shouldThrowErrorIfNotPositiveNumber = function (fnc)
+function shouldThrowErrorIfNotPositiveNumber (fnc)
 {
-    expect(function(){fnc(NaN);}).to.throw(Error);
-    expect(function(){fnc(null);}).to.throw(Error);
-    expect(function(){fnc(undefined);}).to.throw(Error);
-    expect(function(){fnc(Infinity);}).to.throw(Error);
-    expect(function(){fnc(-Infinity);}).to.throw(Error);
-    expect(function(){fnc('');}).to.throw(Error);
-    expect(function(){fnc(' ');}).to.throw(Error);
-    expect(function(){fnc('1');}).to.throw(Error);
-    expect(function(){fnc('one');}).to.throw(Error);
-
-    expect(function(){fnc(0);}).to.not.throw(Error);
-    expect(function(){fnc(1);}).to.not.throw(Error);
-    expect(function(){fnc(1.0000000000000000000001);}).to.not.throw(Error);
-    expect(function(){fnc(999999999999999999999999);}).to.not.throw(Error);
-    expect(function(){fnc(8e5);}).to.not.throw(Error);
-    expect(function(){fnc(1e+24);}).to.not.throw(Error);
-
-    expect(function(){fnc(-1);}).to.throw(Error);
-    expect(function(){fnc(-1.0000000000000000000001);}).to.throw(Error);
-    expect(function(){fnc(-999999999999999999999999);}).to.throw(Error);
-    //expect(function(){fnc(8e-5);}).to.throw(Error);
-    //expect(function(){fnc(1e-24);}).to.throw(Error);
+    shouldThrowErrorIfIsNotNumberType(fnc);
+    shouldNotThrowErrorIfNumberEqualsZero(fnc);
+    shouldNotThrowErrorIfNumberIsPositive(fnc);
+    shouldThrowErrorIfNumberIsNegative(fnc);
 }
 
 module.exports = 
 {
   shouldThrowErrorIfNotNumber: shouldThrowErrorIfNotNumber,
   shouldThrowErrorIfNotPositiveNumber: shouldThrowErrorIfNotPositiveNumber
-}
+};

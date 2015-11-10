@@ -2,20 +2,11 @@
 'use strict';
 
 var $ = require('jQuery');
+var CartesianChart = require('../geom/CartesianChart');
 
 $.fn.flowingcharts = function (options) 
-{
-	var settings = $.extend(
-	{
-		color 			: "#556b2f",
-		backgroundColor	: "brown"
-	}, options );
-
-	this.css(  
-	{
-		color 			: settings.color,
-		backgroundColor	: settings.backgroundColor
-	});
-
+{	
+	options.container = this[0];
+	var chart = new CartesianChart(options);
 	return this;
 };

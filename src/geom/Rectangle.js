@@ -8,12 +8,17 @@
  * @module geom/Rectangle 
  */
 
+var util = require('../util');
+var isNumber = util.isNumber;
+
 /** 
  * @classdesc A rectangle defined by its <code>x</code>, <code>y</code> 
  * <code>width</code> and <code>height</code>.
  * 
  * @since 0.1.0
  * @constructor
+ *
+ * @requires util.isNumber
  *
  * @param {number} [x = 0] The x-coord of the left edge.
  * @param {number} [y = 0] The y coord of the top edge.
@@ -71,7 +76,7 @@ Rectangle.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof coord !== 'number') throw new Error('Rectangle.x(coord): coord must be a number.');
+            if (!isNumber(coord)) throw new Error('Rectangle.x(coord): coord must be a number.');
 
             this._x = coord;
             return this;
@@ -91,7 +96,7 @@ Rectangle.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof coord !== 'number') throw new Error('Rectangle.y(coord): coord must be a number.');
+            if (!isNumber(coord)) throw new Error('Rectangle.y(coord): coord must be a number.');
 
             this._y = coord;
             return this;
@@ -111,8 +116,8 @@ Rectangle.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof w !== 'number')  throw new Error('Rectangle.width(w): w must be a number.');
-            if (w < 0)                  throw new Error('Rectangle.width(w): w must be > 0.');
+            if (!isNumber(w)) throw new Error('Rectangle.width(w): w must be a number.');
+            if (w < 0)        throw new Error('Rectangle.width(w): w must be > 0.');
 
             this._width = w;
             return this;
@@ -132,8 +137,8 @@ Rectangle.prototype =
     {
         if (arguments.length > 0)
         {
-            if (typeof h !== 'number') throw new Error('Rectangle.height(h): h must be a number.');
-            if (h < 0)                 throw new Error('Rectangle.height(h): h must be > 0.');
+            if (!isNumber(h)) throw new Error('Rectangle.height(h): h must be a number.');
+            if (h < 0)        throw new Error('Rectangle.height(h): h must be > 0.');
 
             this._height = h;
             return this;
