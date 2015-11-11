@@ -8,10 +8,11 @@
  * @module geom/CartesianChart 
  */
 
+// Required modules.
 var BoundingBox = require('./BoundingBox');
 var Rectangle = require('./Rectangle');
 var Point = require('./Point');
-var canvas = require('../renderers/canvas');
+var CanvasRenderer = require('../renderers/SvgRenderer');
 var util = require('../util');
 var extend = util.extend;
 
@@ -34,66 +35,63 @@ var extend = util.extend;
  * @requires geom/BoundingBox
  * @requires geom/Rectangle
  * @requires geom/Point
+ * @requires renderers/CanvasRenderer
  * @requires util.extend
  *
  * @param {Object} [options] The options.
- * @param {number} [options.dimensions.x] The x coord of the left edge (pixel units).
- * @param {number} [options.dimensions.y] The y coord of the top edge (pixel units).
+ * @param {number} [options.dimensions.x] The x coord of the top left corner (pixel units).
+ * @param {number} [options.dimensions.y] The y coord of the top left corner (pixel units).
  * @param {number} [options.dimensions.width] The width (pixel units).
  * @param {number} [options.dimensions.height] The height (pixel units).
- * @param {number} [options.xAxis.min] The x coord of the left edge (data units).
+ * @param {number} [options.xAxis.min] The x coord of the top left corner (data units).
  * @param {number} [options.xAxis.max] The x coord of the right edge (data units).
  * @param {number} [options.yAxis.min] The y coord of the bottom edge (data units).
- * @param {number} [options.yAxis.max] The y coord of the top edge (data units).
+ * @param {number} [options.yAxis.max] The y coord of the top left corner (data units).
  */
 function CartesianChart (options)
 {
     options = options !== undefined ? options : {};
     var defaultOptions =
     {
-        container : null,
-        dimensions :
+        chart :
         {
-            x : 0,
-            y : 0,
-            width : 100,
-            height : 100
+
         },
-        axes :
+        xAxis :
         {
-            xAxis :
-            {
-                min : 0,
-                max : 100
-            },
-            yAxis :
-            {
-                min : 0,
-                max : 100
-            }
+
+        },
+        yAxis :
+        {
+
         }
     };
-    extend(defaultOptions, options);
-
-    window.console.log(defaultOptions);
-
-    this._rect = new Rectangle(defaultOptions.dimensions.x,
-                                defaultOptions.dimensions.y,
-                                defaultOptions.dimensions.width,
-                                defaultOptions.dimensions.height);
-    this._bBox = new BoundingBox(defaultOptions.axes.xAxis.min,
-                                defaultOptions.axes.yAxis.min,
-                                defaultOptions.axes.xAxis.max,
-                                defaultOptions.axes.yAxis.max);
+    defaultOptions = extend(defaultOptions, options);
 
 
-    var c = canvas.getDrawingCanvas();
-    canvas.appendTo(c, defaultOptions.container);
+    this._rect = new Rectangle(defaultOptions.chart.x,
+                                defaultOptions.chart.y,
+                                defaultOptions.chart.width,
+                                defaultOptions.chart.height);
+    this._bBox = new BoundingBox(defaultOptions.xAxis.min,
+                                defaultOptions.yAxis.min,
+                                defaultOptions.xAxis.max,
+                                defaultOptions.yAxis.max);
+
+    this._renderer = new CanvasRenderer(
+    {
+        container : defaultOptions.container,
+        onResize : function ()
+        {
+            this.render();
+        }
+        .bind(this)
+    });
 }
 
 CartesianChart.prototype = 
 {
-    // Private variables
+    // Private variables.
     _rect : null, // The rectangle defining the pixel coords.
     _bBox : null, // The bounding box defining the data coords.
 
@@ -111,14 +109,33 @@ CartesianChart.prototype =
      */
     maintainAspectRatio : false,
 
+    render : function()
+    {
+        this._renderer.clear();
+        this._renderer.fillStyle('#f5f5f5').strokeStyle('#cccccc', 2);
+
+        for (var i = 0; i < 100; i++)
+        {
+            this._renderer.rect(Math.random()*500, 
+                Math.random()*500, 
+                Math.random()*100, 
+                Math.random()*100).fill().stroke();
+
+
+            this._renderer.circle(Math.random()*500, 
+                Math.random()*400, 
+                Math.random()*50).fill().stroke();
+        }
+    },
+
     /** 
      * Get or set the data coords.
      *
      * @since 0.1.0
-     * @param {number} [xMin] The x coord of the left edge.
-     * @param {number} [yMin] The y coord of the bottom edge.
-     * @param {number} [xMax] The x coord of the right edge.
-     * @param {number} [yMax] The y coord of the top edge.
+     * @param {number} [xMin] The x coord of the bottom left corner.
+     * @param {number} [yMin] The y coord of the bottom left corner.
+     * @param {number} [xMax] The x coord of the top right corner.
+     * @param {number} [yMax] The y coord of the top right corner.
      * @return {BoundingBox|CartesianChart} The data coords as a BoundingBox if no arguments are supplied, otherwise <code>this</code>.
      */
     dataCoords : function (xMin, yMin, xMax, yMax)
@@ -126,7 +143,7 @@ CartesianChart.prototype =
         if (arguments.length > 0)
         {
             this._bBox.setCoords(xMin, yMin, xMax, yMax);
-            this._onPropertyChanged();
+            if (this.maintainAspectRatio) fitBBoxToRect(this._bBox, this._rect);
             return this;
         }
         return this._bBox.clone();
@@ -136,10 +153,10 @@ CartesianChart.prototype =
      * Get or set the pixel coords.
      *
      * @since 0.1.0
-     * @param {number} [x] The x coord of the left edge.
-     * @param {number} [y] The y coord of the top edge.
+     * @param {number} [x] The x-coord of the top left corner.
+     * @param {number} [y] The y coord of the top left corner.
      * @param {number} [w] The width.
-     * @param {number} [h] The height.     
+     * @param {number} [h] The height.
      * @return {Rectangle|CartesianChart} The pixel coords as a Rectangle if no arguments are supplied, otherwise <code>this</code>.
      */
     pixelCoords : function (x, y, w, h)
@@ -147,57 +164,10 @@ CartesianChart.prototype =
         if (arguments.length > 0)
         {
             this._rect.setCoords(x, y, w, h);
-            this._onPropertyChanged();
+            if (this.maintainAspectRatio) fitBBoxToRect(this._bBox, this._rect);
             return this;
         }
         return this._rect.clone();
-    },
-
-    /** 
-     * A call to <code>_onPropertyChanged</code> commits any changes made to
-     *
-     * @private
-     */
-    _onPropertyChanged : function ()
-    {
-        // Stretches the bBox to fit the rect whilst maintaining the aspect ratio.
-        if (this.maintainAspectRatio) 
-        {
-            var sy = this._bBox.getHeight() / this._rect.height();
-            var sx = this._bBox.getWidth() / this._rect.width();
-
-            var sBBoxX;
-            var sBBoxY;
-            var sBBoxW;
-            var sBBoxH; 
-
-            if (sy > sx)
-            {
-                sBBoxY = this._bBox.getYMin();
-                sBBoxH = this._bBox.getHeight();
-                sBBoxW = (this._rect.width() / this._rect.height()) * sBBoxH;
-                sBBoxX = this._bBox.getXMin() - ((sBBoxW - this._bBox.getWidth()) / 2);
-            }
-            else if (sx > sy)
-            {
-                sBBoxX = this._bBox.getXMin();
-                sBBoxW = this._bBox.getWidth();
-                sBBoxH = (this._rect.height() / this._rect.width()) * sBBoxW;
-                sBBoxY = this._bBox.getYMin() - ((sBBoxH - this._bBox.getHeight()) / 2);
-            }
-            else
-            {
-                sBBoxX = this._bBox.getXMin();
-                sBBoxY = this._bBox.getYMin();
-                sBBoxW = this._bBox.getWidth();
-                sBBoxH = this._bBox.getHeight();
-            }
-
-            this._bBox.setXMin(sBBoxX);
-            this._bBox.setYMin(sBBoxY);
-            this._bBox.setWidth(sBBoxW);
-            this._bBox.setHeight(sBBoxH);
-        }
     },
 
     /** 
@@ -208,7 +178,9 @@ CartesianChart.prototype =
      */
     getPixelPoint : function (dataPoint)
     {
-        return new Point(this.getPixelX(dataPoint.x), this.getPixelY(dataPoint.y));
+        var x = this.getPixelX(dataPoint.x());
+        var y = this.getPixelY(dataPoint.y());
+        return new Point(x, y);
     },
 
     /** 
@@ -219,10 +191,10 @@ CartesianChart.prototype =
      */
     getPixelRect : function (bBox)
     {
-        var x = this.getPixelX(bBox.getXMin());
-        var y = this.getPixelY(bBox.getYMax());
-        var w = this.getPixelWidth(bBox.getWidth());
-        var h = this.getPixelHeight(bBox.getHeight());
+        var x = this.getPixelX(bBox.xMin());
+        var y = this.getPixelY(bBox.yMax());
+        var w = this.getPixelWidth(bBox.width());
+        var h = this.getPixelHeight(bBox.height());
         return new Rectangle(x, y, w, h);
     },
 
@@ -234,7 +206,7 @@ CartesianChart.prototype =
      */
     getPixelX : function (dataX)
     {
-        var px = this._rect.x() + this.getPixelWidth(dataX - this.bBox.getXMin());
+        var px = this._rect.x() + this.getPixelWidth(dataX - this.bBox.xMin());
         return px;
     },
 
@@ -246,7 +218,7 @@ CartesianChart.prototype =
      */
     getPixelY : function (dataY)
     {
-        var py =  this._rect.y() + this._rect.height() - this.getPixelHeight(dataY - this.bBox.getYMin());
+        var py =  this._rect.y() + this._rect.height() - this.getPixelHeight(dataY - this.bBox.yMin());
         return py;
     },
 
@@ -259,7 +231,7 @@ CartesianChart.prototype =
     getPixelWidth : function (dataWidth)
     {
         if (dataWidth === 0) return 0;
-        var pixelDistance  = (dataWidth / this.bBox.getWidth()) * this._rect.width();
+        var pixelDistance  = (dataWidth / this.bBox.width()) * this._rect.width();
         return pixelDistance;
     },
 
@@ -272,7 +244,7 @@ CartesianChart.prototype =
     getPixelHeight : function (dataHeight)
     {
         if (dataHeight === 0) return 0;
-        var pixelDistance = (dataHeight / this.bBox.getHeight()) * this._rect.height();
+        var pixelDistance = (dataHeight / this.bBox.height()) * this._rect.height();
         return pixelDistance;
     },
 
@@ -284,8 +256,9 @@ CartesianChart.prototype =
      */
     getDataPoint : function (pixelPoint)
     {
-        var dataPoint = new Point(this.getDataX(pixelPoint.x),this.getDataY(pixelPoint.y));
-        return dataPoint;
+        var x = this.getDataX(pixelPoint.x());
+        var y = this.getDataY(pixelPoint.y());
+        return new Point(x, y);
     },
 
     /** 
@@ -311,7 +284,7 @@ CartesianChart.prototype =
      */
     getDataX : function (pixelX)
     {
-        var dataX = this.bBox.getXMin() + this.getDataWidth(pixelX);
+        var dataX = this.bBox.xMin() + this.getDataWidth(pixelX);
         return dataX;
     },
 
@@ -323,7 +296,7 @@ CartesianChart.prototype =
      */
     getDataY : function (pixelY)
     {
-        var dataY = this.bBox.getYMin() + this.getDataHeight(this._rect.height() - pixelY);
+        var dataY = this.bBox.yMin() + this.getDataHeight(this._rect.height() - pixelY);
         return dataY;
     },
 
@@ -336,7 +309,7 @@ CartesianChart.prototype =
     getDataWidth : function (pixelWidth)
     {
         if (pixelWidth === 0) return 0;
-        var dataDistance = (pixelWidth / this._rect.width()) * this.bBox.getWidth();
+        var dataDistance = (pixelWidth / this._rect.width()) * this.bBox.width();
         return dataDistance;
     },
 
@@ -348,10 +321,49 @@ CartesianChart.prototype =
      */
     getDataHeight : function (pixelHeight)
     {
-        if (pixelHeight === 0)return 0;
-        var dataDistance = (pixelHeight / this._rect.height()) * this.bBox.getHeight();
+        if (pixelHeight === 0) return 0;
+        var dataDistance = (pixelHeight / this._rect.height()) * this.bBox.height();
         return dataDistance;
     }
 };
 
 module.exports = CartesianChart;
+
+/** 
+ * Adjusts a boundnig box to fit a rectangle in order to maintain the aspect ratio.
+ *
+ * @private
+ * @param {BoundingBox} bBox The bounding box.
+ * @param {Rectangle} rect The rectangle.
+ */
+function fitBBoxToRect (bBox, rect)
+{
+    var sy = bBox.height() / rect.height();
+    var sx = bBox.height() / rect.width();
+
+    var sBBoxX, sBBoxY, sBBoxW, sBBoxH; 
+
+    if (sy > sx)
+    {
+        sBBoxY = bBox.yMin();
+        sBBoxH = bBox.height();
+        sBBoxW = (rect.width() / rect.height()) * sBBoxH;
+        sBBoxX = bBox.xMin() - ((sBBoxW - bBox.width()) / 2);
+    }
+    else if (sx > sy)
+    {
+        sBBoxX = bBox.xMin();
+        sBBoxW = bBox.width();
+        sBBoxH = (rect.height() / rect.width()) * sBBoxW;
+        sBBoxY = bBox.yMin() - ((sBBoxH - bBox.height()) / 2);
+    }
+    else
+    {
+        sBBoxX = bBox.xMin();
+        sBBoxY = bBox.yMin();
+        sBBoxW = bBox.width();
+        sBBoxH = bBox.height();
+    }
+
+    bBox.xMin(sBBoxX).yMin(sBBoxY).width(sBBoxW).height(sBBoxH);
+}

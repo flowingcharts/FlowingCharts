@@ -8,6 +8,7 @@
  * @module geom/Point 
  */
 
+// Required modules.
 var util = require('../util');
 var isNumber = util.isNumber;
 
@@ -19,10 +20,10 @@ var isNumber = util.isNumber;
  *
  * @requires util.isNumber
  *
- * @param {number} [x = 0] The x-coord of the left edge.
- * @param {number} [y = 0] The y coord of the top edge.
+ * @param {number} [x = 0] The x-coord.
+ * @param {number} [y = 0] The y coord.
  */
-function Point (x, y, width, height)
+function Point (x, y)
 {
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
@@ -31,7 +32,7 @@ function Point (x, y, width, height)
 
 Point.prototype = 
 {
-    // Private variables
+    // Private variables.
     _x : null, // The x-coord.
     _y : null, // The y-coord.
 
@@ -39,8 +40,8 @@ Point.prototype =
      * Set the coordinates.
      *
      * @since 0.1.0
-     * @param {number} [x] The x-coord of the left edge.
-     * @param {number} [y] The y coord of the top edge.
+     * @param {number} [x] The x-coord.
+     * @param {number} [y] The y coord.
      * @return {Point} <code>this</code>.
      */
     setCoords : function (x, y)

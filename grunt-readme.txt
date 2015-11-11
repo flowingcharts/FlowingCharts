@@ -36,6 +36,6 @@ add to package.json:
 "browserify-shim": {
 	"jQuery": "global:jQuery"
 },
-change this
+
 7. Include '/* jshint browserify: true */ at top of each js file to stop commonjs modules causing errors when jshint is run.
 The format for commonjs modules breaks alot of jshints tests - this tells jshint to ignore the commonjs specific code.

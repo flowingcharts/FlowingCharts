@@ -8,6 +8,7 @@
  * @module geom/BoundingBox 
  */
 
+// Required modules.
 var util = require('../util');
 var isNumber = util.isNumber;
 
@@ -21,10 +22,10 @@ var isNumber = util.isNumber;
  *
  * @requires util.isNumber
  *
- * @param {number} [xMin = 0] The x coord of the left edge.
- * @param {number} [yMin = 0] The y coord of the bottom edge.
- * @param {number} [xMax = 100] The x coord of the right edge.
- * @param {number} [yMax = 100] The y coord of the top edge.
+ * @param {number} [xMin = 0] The x coord of the bottom left corner.
+ * @param {number} [yMin = 0] The y coord of the bottom left corner.
+ * @param {number} [xMax = 100] The x coord of the top right corner.
+ * @param {number} [yMax = 100] The y coord of the top right corner.
  */
 function BoundingBox (xMin, yMin, xMax, yMax)
 {
@@ -37,13 +38,13 @@ function BoundingBox (xMin, yMin, xMax, yMax)
 
 BoundingBox.prototype = 
 {
-    // Private variables
-    _xMin       : null,     // The x-coord of the left edge.
-    _xMax       : null,     // The x-coord of the right edge.
+    // Private variables.
+    _xMin       : null,     // The x-coord of the bottom left corner.
+    _xMax       : null,     // The x-coord of the top right corner.
     _xCenter    : null,     // The x-coord of the center.
     _width      : null,     // The width.
-    _yMin       : null,     // The y-coord of the bottom edge.
-    _yMax       : null,     // The y-coord of the right edge.
+    _yMin       : null,     // The y-coord of the bottom left corner.
+    _yMax       : null,     // The y-coord of the top right corner.
     _yCenter    : null,     // The y-coord of the center.
     _height     : null,     // The height.
 
@@ -51,10 +52,10 @@ BoundingBox.prototype =
      * Set the coordinates.
      *
      * @since 0.1.0
-     * @param {number} [xMin] The x coord of the left edge.
-     * @param {number} [yMin] The y coord of the bottom edge.
-     * @param {number} [xMax] The x coord of the right edge.
-     * @param {number} [yMax] The y coord of the top edge.
+     * @param {number} [xMin] The x coord of the bottom left corner.
+     * @param {number} [yMin] The y coord of the bottom left corner.
+     * @param {number} [xMax] The x coord of the top right corner.
+     * @param {number} [yMax] The y coord of the top right corner.
      * @return {BoundingBox} <code>this</code>.
      */
     setCoords : function (xMin, yMin, xMax, yMax)
@@ -70,7 +71,7 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the x-coord of the left edge.
+     * Get or set the x-coord of the bottom left corner.
      *
      * @since 0.1.0
      * @param {number} [x] The coordinate.
@@ -92,7 +93,7 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the x-coord of the right edge.
+     * Get or set the x-coord of the top right corner.
      *
      * @since 0.1.0
      * @param {number} [x] The coordinate.
@@ -161,7 +162,7 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the bottom edge.
+     * Get or set the y-coord of the bottom left corner.
      *
      * @since 0.1.0
      * @param {number} [y] The coordinate.
@@ -183,7 +184,7 @@ BoundingBox.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the top edge.
+     * Get or set the y-coord of the top right corner.
      *
      * @since 0.1.0
      * @param {number} [y] The coordinate.

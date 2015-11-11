@@ -8,6 +8,7 @@
  * @module geom/Rectangle 
  */
 
+// Required modules.
 var util = require('../util');
 var isNumber = util.isNumber;
 
@@ -20,8 +21,8 @@ var isNumber = util.isNumber;
  *
  * @requires util.isNumber
  *
- * @param {number} [x = 0] The x-coord of the left edge.
- * @param {number} [y = 0] The y coord of the top edge.
+ * @param {number} [x = 0] The x-coord of the top left corner.
+ * @param {number} [y = 0] The y coord of the top left corner.
  * @param {number} [width = 100] The width.
  * @param {number} [height = 100] The height.
  */
@@ -36,36 +37,36 @@ function Rectangle (x, y, width, height)
 
 Rectangle.prototype = 
 {
-    // Private variables
-    _x      : null, // The x-coord of the left edge.
-    _y      : null, // The y-coord of the top edge.
-    _width  : null, // The width.
-    _height : null, // The height.
+    // Private variables.
+    _x : null, // The x-coord of the top left corner.
+    _y : null, // The y-coord of the top left corner.
+    _w : null, // The width.
+    _h : null, // The height.
 
     /** 
      * Set the coordinates.
      *
      * @since 0.1.0
-     * @param {number} [x] The x-coord of the left edge.
-     * @param {number} [y] The y coord of the top edge.
-     * @param {number} [width] The width.
-     * @param {number} [height] The height.
+     * @param {number} [x] The x-coord of the top left corner.
+     * @param {number} [y] The y coord of the top left corner.
+     * @param {number} [w] The width.
+     * @param {number} [h] The height.
      * @return {Rectangle} <code>this</code>.
      */
-    setCoords : function (x, y, width, height)
+    setCoords : function (x, y, w, h)
     {
         if (arguments.length > 0)
         {
             if (x !== undefined) this.x(x);
             if (y !== undefined) this.y(y);
-            if (width !== undefined) this.width(width);
-            if (height !== undefined) this.height(height);
+            if (w !== undefined) this.width(w);
+            if (h !== undefined) this.height(h);
         }
         return this;
     },
 
     /** 
-     * Get or set the x-coord of the left edge.
+     * Get or set the x-coord of the top left corner.
      *
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
@@ -85,7 +86,7 @@ Rectangle.prototype =
     },
 
     /** 
-     * Get or set the y-coord of the top edge.
+     * Get or set the y-coord of the top left corner.
      *
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
@@ -119,10 +120,10 @@ Rectangle.prototype =
             if (!isNumber(w)) throw new Error('Rectangle.width(w): w must be a number.');
             if (w < 0)        throw new Error('Rectangle.width(w): w must be > 0.');
 
-            this._width = w;
+            this._w = w;
             return this;
         }
-        else return this._width;
+        else return this._w;
     },
 
     /** 
@@ -140,7 +141,7 @@ Rectangle.prototype =
             if (!isNumber(h)) throw new Error('Rectangle.height(h): h must be a number.');
             if (h < 0)        throw new Error('Rectangle.height(h): h must be > 0.');
 
-            this._height = h;
+            this._h = h;
             return this;
         }
         else return this._yCenter;
@@ -154,7 +155,7 @@ Rectangle.prototype =
      */
     clone : function ()
     {
-        return new Rectangle(this._x, this._y, this._width, this._height);
+        return new Rectangle(this._x, this._y, this._w, this._h);
     }
 };
 
