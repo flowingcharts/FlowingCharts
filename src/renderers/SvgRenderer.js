@@ -16,7 +16,7 @@ var appendTo = util.appendTo;
 var svgNS = "http://www.w3.org/2000/svg"; 
 
 /** 
- * @class A wrapper class for rendering to SVG.
+ * @classdesc A wrapper class for rendering to SVG.
  *
  * @since 0.1.0
  * @author J Clare

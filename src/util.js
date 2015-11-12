@@ -31,13 +31,29 @@ module.exports =
      * @param {Object} a The object to be extended.
      * @param {Object} b The object to add to the first one.
      */
-    extend : function (a, b)
+    extendObject : function (a, b)
     {
         for (var key in b)
         {
             if (b.hasOwnProperty(key)) a[key] = b[key];
         }
         return a;
+    },
+
+    /** 
+     * A function used to extend one class with another.
+     *
+     * @param {Object} baseClass The class from which to inherit.
+     * @param {Object} subClass The inheriting class, or subclass.
+     */
+    extendClass : function(baseClass, subClass)
+    {
+        function Inheritance() {}
+        Inheritance.prototype = baseClass.prototype;
+        subClass.prototype = new Inheritance();
+        subClass.prototype.constructor = subClass;
+        subClass.baseConstructor = baseClass;
+        subClass.superClass = baseClass.prototype;
     },
 
     /** 
@@ -64,9 +80,11 @@ module.exports =
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(function ()
                 {
-                    childElement.setAttribute('width', parentElement.offsetWidth);
-                    childElement.setAttribute('height', parentElement.offsetHeight);
-                    if (onResize) onResize.call(null);
+                    var w = parentElement.offsetWidth;
+                    var h = parentElement.offsetHeight;
+                    childElement.setAttribute('width', w);
+                    childElement.setAttribute('height', h);
+                    if (onResize) onResize.call(null, w, h);
                 }, 100);
             };
         })();

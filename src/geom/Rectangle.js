@@ -144,7 +144,7 @@ Rectangle.prototype =
             this._h = h;
             return this;
         }
-        else return this._yCenter;
+        else return this._h;
     },
 
     /** 

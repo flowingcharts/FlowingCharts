@@ -9,16 +9,24 @@
  */
 
 // Required modules.
+var Renderer = require('./Renderer');
 var util = require('../util');
+var extendClass = util.extendClass;
+var extendObject = util.extendObject;
 var appendTo = util.appendTo;
 
 /** 
- * @class A wrapper class for rendering to a HTML5 canvas.
+ * @class CanvasRenderer
+ * @classdesc A wrapper class for rendering to a HTML5 canvas.
  *
  * @since 0.1.0
  * @author J Clare
  * @constructor
+ * @augments renderers/Renderer
  *
+ * @requires renderers/Renderer
+ * @requires util.extendClass
+ * @requires util.extendObject
  * @requires util.appendTo
  *
  * @param {Object} [options] The options.
@@ -26,121 +34,144 @@ var appendTo = util.appendTo;
  */
 function CanvasRenderer (options)
 {
-    options = options !== undefined ? options : {};
+    CanvasRenderer.baseConstructor.call(this, options);
 
-    this._canvas = document.createElement('canvas');
-    this._context = this._canvas.getContext('2d');
-    appendTo(this._canvas, options.container, options.onResize);
+    this.canvas = document.createElement('canvas');
+    this.context = this.canvas.getContext('2d');
+    appendTo(this.canvas, options.container, options.onResize);
 }
+extendClass(Renderer, CanvasRenderer);
 
-CanvasRenderer.prototype = 
+extendObject(CanvasRenderer.prototype,
 {
-    // Private variables.
-    _canvas : null,     // The canvas element.
-    _context : null,    // The context to draw to.
+    /** 
+     * The canvas element.
+     * 
+     * @memberof CanvasRenderer
+     * @since 0.1.0
+     * @type HTMLCanvas
+     * @default null
+     */
+    canvas : null,
 
     /** 
-     * Clears the canvas.
-     *
+     * The canvas context.
+     * 
+     * @memberof CanvasRenderer
      * @since 0.1.0
-     * @return {CanvasRenderer} <code>this</code>.
+     * @type HTMLCanvasContext
+     * @default null
+     */
+    context : null,
+
+    /** 
+     * @inheritdoc
+     * @memberof CanvasRenderer
      */
     clear : function ()
     {
-        this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         return this;
     },
 
     /** 
-     * Draws a solid shape by filling the path's content area.
-     *
-     * @since 0.1.0
-     * @return {CanvasRenderer} <code>this</code>.
+     * @inheritdoc
+     * @memberof CanvasRenderer
      */
-    fill : function ()
+    fill : function (options)
     {
-        this._context.fill();
+        // TODO opacity
+        // TODO join and cap options
+
+        // Temporary styles.
+        var fillColor   = this._tempFillColor;
+        var fillOpacity = this._tempFillOpacity;
+
+        // Option styles override temporary styles.
+        if (options !== undefined)
+        {
+            if (options.color !== undefined)    fillColor = options.color;
+            if (options.opacity !== undefined)  fillOpacity = options.opacity;
+        }
+
+        // Apply styles.
+        this.context.fillStyle = fillColor;
+
+        // Apply fill.
+        this.context.fill();
+
+        // Reset temporary styles to default styles.
+        this._tempFillColor     = this._fillColor; 
+        this._tempFillOpacity   = this._fillOpacity; 
+
         return this;
     },
 
     /** 
-     * Draws the shape by stroking its outline.
-     *
-     * @since 0.1.0
-     * @return {CanvasRenderer} <code>this</code>.
+     * @inheritdoc
+     * @memberof CanvasRenderer
      */
-    stroke : function ()
+    stroke : function (options)
     {
-        this._context.stroke();
+        // TODO Opacity
+
+        // Temporary styles.
+        var lineColor   = this._tempLineColor;
+        var lineWidth   = this._tempLineWidth;
+        var lineJoin    = this._tempLineJoin;
+        var lineCap     = this._tempLineCap;
+        var lineOpacity = this._tempLineOpacity;
+
+        // Option styles override temporary styles.
+        if (options !== undefined)
+        {
+            if (options.color !== undefined)    lineColor = options.color;
+            if (options.width !== undefined)    lineWidth = options.width;
+            if (options.join !== undefined)     lineJoin = options.join;
+            if (options.cap !== undefined)      lineCap = options.cap;
+            if (options.opacity !== undefined)  lineOpacity = options.opacity;
+        }
+
+        // Apply styles.
+        this.context.strokeStyle    = lineColor;
+        this.context.lineWidth      = lineWidth;
+        this.context.lineJoin       = lineJoin;
+        this.context.lineCap        = lineCap;
+
+        // Apply stroke.
+        this.context.stroke();
+
+        // Reset temporary styles to default styles.
+        this._tempLineColor     = this._lineColor; 
+        this._tempLineWidth     = this._lineWidth;
+        this._tempLineJoin      = this._lineJoin; 
+        this._tempLineCap       = this._lineCap; 
+        this._tempLineOpacity   = this._lineOpacity; 
+
         return this;
     },
 
     /** 
-     * Defines the fill style.
-     *
-     * @since 0.1.0
-     * @param {string} [color] The fill color.
-     * @param {number} [opacity] The fill opacity.
-     * @return {CanvasRenderer} <code>this</code>.
-     */
-    fillStyle : function (color, opacity)
-    {
-        if (color !== undefined)     this._context.fillStyle = color;
-        return this;
-    },
-
-    /** 
-     * Defines the line style.
-     *
-     * @since 0.1.0
-     * @param {string} [color] The line color.
-     * @param {number} [thickness] The line thickness.
-     * @param {string} [join] The line join.
-     * @param {string} [cap] The line cap.
-     * @param {number} [opacity] The fill opacity.
-     * @return {CanvasRenderer} <code>this</code>.
-     */
-    strokeStyle : function (color, thickness, join, cap, opacity)
-    {
-        if (color !== undefined)     this._context.strokeStyle = color;
-        if (thickness !== undefined) this._context.lineWidth = thickness;
-        if (join !== undefined)      this._context.lineJoin = join;
-        if (cap !== undefined)       this._context.lineCap = cap;
-        return this;
-    },
-
-    /** 
-     * Draws a rectangle.
-     *
-     * @since 0.1.0
-     * @param {number} x The x-coord of the top left corner.
-     * @param {number} y The y coord of the top left corner.
-     * @param {number} w The width.
-     * @param {number} h The height.
-     * @return {CanvasRenderer} <code>this</code>.
+     * @inheritdoc
+     * @memberof CanvasRenderer
      */
     rect : function (x, y, w, h)
     {
-        this._context.beginPath();
-        this._context.rect(x, y, w, h);
+        this.context.beginPath();
+        this.context.rect(x, y, w, h);
         return this;
     },
 
     /** 
-     * Draws a circle.
-     *
-     * @since 0.1.0
-     * @param {number} cx The x-coord of the centre of the circle.
-     * @param {number} cy The y-coord of the centre of the circle.
-     * @param {number} r The circle radius.
-     * @return {SvgRenderer} <code>this</code>.
+     * @inheritdoc
+     * @memberof CanvasRenderer
      */
     circle : function (cx, cy, r)
     {
-        this._context.beginPath();
-        this._context.arc(cx, cy, r, 0, 2 * Math.PI, false);
+        this.context.beginPath();
+        this.context.arc(cx, cy, r, 0, 2 * Math.PI, false);
         return this;
     }
-};
+});
 
 module.exports = CanvasRenderer;

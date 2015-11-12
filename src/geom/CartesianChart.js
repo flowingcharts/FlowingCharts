@@ -12,12 +12,12 @@
 var BoundingBox = require('./BoundingBox');
 var Rectangle = require('./Rectangle');
 var Point = require('./Point');
-var CanvasRenderer = require('../renderers/SvgRenderer');
+var CanvasRenderer = require('../renderers/CanvasRenderer');
 var util = require('../util');
-var extend = util.extend;
+var extendObject = util.extendObject;
 
 /** 
- * @class Maps data coords to pixel coords and vice versa.
+ * @classdesc Maps data coords to pixel coords and vice versa.
  *
  * <p>The pixel coords are defined by a rectangle {@link pixelCoords}.
  * Pixel coords are relative to the top left corner of the chart.</p>
@@ -36,7 +36,7 @@ var extend = util.extend;
  * @requires geom/Rectangle
  * @requires geom/Point
  * @requires renderers/CanvasRenderer
- * @requires util.extend
+ * @requires util.extendObject
  *
  * @param {Object} [options] The options.
  * @param {number} [options.dimensions.x] The x coord of the top left corner (pixel units).
@@ -51,7 +51,9 @@ var extend = util.extend;
 function CartesianChart (options)
 {
     options = options !== undefined ? options : {};
-    var defaultOptions =
+
+    // Default options.
+    var o =
     {
         chart :
         {
@@ -66,23 +68,18 @@ function CartesianChart (options)
 
         }
     };
-    defaultOptions = extend(defaultOptions, options);
+    o = extendObject(o, options);
 
+    this._rect = new Rectangle(o.chart.x, o.chart.y, o.chart.width, o.chart.height);
+    this._bBox = new BoundingBox(o.xAxis.min, o.yAxis.min, o.xAxis.max, o.yAxis.max);
 
-    this._rect = new Rectangle(defaultOptions.chart.x,
-                                defaultOptions.chart.y,
-                                defaultOptions.chart.width,
-                                defaultOptions.chart.height);
-    this._bBox = new BoundingBox(defaultOptions.xAxis.min,
-                                defaultOptions.yAxis.min,
-                                defaultOptions.xAxis.max,
-                                defaultOptions.yAxis.max);
-
+    // TODO options.container can be id or element - test for string.
     this._renderer = new CanvasRenderer(
     {
-        container : defaultOptions.container,
-        onResize : function ()
+        container : o.container,
+        onResize : function (w, h)
         {
+            this._rect.setCoords(0, 0, w, h);
             this.render();
         }
         .bind(this)
@@ -104,7 +101,7 @@ CartesianChart.prototype =
      * in the aspect ratio changing (a stretching effect).</p>
      * 
      * @since 0.1.0
-     * @type Boolean
+     * @type boolean
      * @default false
      */
     maintainAspectRatio : false,
@@ -112,19 +109,33 @@ CartesianChart.prototype =
     render : function()
     {
         this._renderer.clear();
-        this._renderer.fillStyle('#f5f5f5').strokeStyle('#cccccc', 2);
 
-        for (var i = 0; i < 100; i++)
+        var w = this._rect.width();
+        var h = this._rect.height();
+
+        for (var i = 0; i < 5; i++)
         {
-            this._renderer.rect(Math.random()*500, 
-                Math.random()*500, 
-                Math.random()*100, 
-                Math.random()*100).fill().stroke();
+            this._renderer.rect(Math.random()*w, 
+                Math.random()*h, 
+                Math.random()*50, 
+                Math.random()*50).fill({color:'#f5f5f5'}).stroke({color:'#cccccc'});
 
+            this._renderer.circle(Math.random()*w, 
+                Math.random()*h, 
+                Math.random()*50).fillColor('#ff0000').fill().stroke();
 
-            this._renderer.circle(Math.random()*500, 
-                Math.random()*400, 
-                Math.random()*50).fill().stroke();
+            this._renderer.circle(Math.random()*w, 
+                Math.random()*h, 
+                Math.random()*50).fill({color:'#ccf5f5'}).stroke({color:'#ccccff', width:5});
+
+            this._renderer.lineColor('#0000ff').lineWidth(10).rect(Math.random()*w, 
+                Math.random()*h, 
+                Math.random()*50, 
+                Math.random()*50).fillColor('#ff00ff').stroke().fill();
+
+            this._renderer.lineWidth(10).circle(Math.random()*w, 
+                Math.random()*h, 
+                Math.random()*50).stroke().fill();
         }
     },
 
