@@ -2,17 +2,24 @@
 'use strict';
 
 /**
- * @fileoverview Contains the Renderer class.
+ * @fileoverview Exports the {@link Renderer} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module renderers/Renderer 
+ * @requires util
  */
+
+// Required modules.
+var util = require('../util');
+var isColor = util.isColor;
+var isNumber = util.isNumber;
 
 /** 
  * @classdesc A base wrapper class for rendering.
  *
+ * @class
+ * @alias Renderer
  * @since 0.1.0
- * @author J Clare
  * @constructor
  *
  * @param {Object} [options] The options.
@@ -28,22 +35,31 @@ Renderer.prototype =
     // Private variables.
 
     // Default styles.
+    _defaultFillColor       : '#ffffff', 
+    _defaultFillOpacity     : 1,
+    _defaultLineColor       : '#000000', 
+    _defaultLineWidth       : 1, 
+    _defaultLineJoin        : 'round',
+    _defaultLineCap         : 'butt',
+    _defaultLineOpacity     : 1,
+
+    // Current styles override default styles.
     _fillColor      : '#ffffff', 
     _fillOpacity    : 1,
-    _lineColor      : '#000000', 
+    _lineColor      : '#000000',  
     _lineWidth      : 1, 
-    _lineJoin       : 'round',
-    _lineCap        : 'butt',
-    _lineOpacity    : 1,
+    _lineJoin       : 'round', 
+    _lineCap        : 'butt', 
+    _lineOpacity    : 1, 
 
-    // Default styles.
-    _tempFillColor : '#ffffff', 
-    _tempFillOpacity : 1,
-    _tempLineColor : '#000000',  
-    _tempLineWidth : 1, 
-    _tempLineJoin : 'round', 
-    _tempLineCap : 'butt', 
-    _tempLineOpacity : 1, 
+    /** 
+     * The drawing canvas.
+     * 
+     * @since 0.1.0
+     * @type HTMLElement
+     * @default null
+     */
+    canvas : null,
 
     /** 
      * Clears the drawing canvas.
@@ -56,8 +72,27 @@ Renderer.prototype =
         return this;
     },
 
-        /** 
-     * Draws a shape by filling its content area. Use the arguments to override the default fill style.
+    /** 
+     * Overrides the default fill style. Call this method before [fill()]{@link Renderer#fill}.
+     *
+     * @since 0.1.0
+     * @param {Object} [options] The fill properties.
+     * @param {string} [options.color] The fill color.
+     * @param {number} [options.opacity] The fill opacity.
+     * @return {Renderer} <code>this</code>.
+     */
+    startFill : function (options)
+    {
+        if (options !== undefined) 
+        {
+            if (options.color !== undefined)    this.fillColor(options.color);
+            if (options.opacity !== undefined)  this.fillOpacity(options.opacity);
+        }
+        return this;
+    },
+
+    /** 
+     * Draws a shape by filling its content area. The arguments override the default fill style.
      *
      * @since 0.1.0
      * @param {Object} [options] The fill properties.
@@ -71,7 +106,44 @@ Renderer.prototype =
     },
 
     /** 
-     * Draws a shape by stroking its outline. Use the arguments to override the default stroke style.
+     * Resets to default fill style. Call this method after [fill()]{@link Renderer#fill}.
+     *
+     * @since 0.1.0
+     * @return {Renderer} <code>this</code>.
+     */
+    endFill : function ()
+    {
+        this.fillColor(this._defaultFillColor).fillOpacity(this._defaultFillOpacity);
+        return this;
+    },
+
+    /** 
+     * Overrides the default stroke style. Call this method before [stroke()]{@link Renderer#stroke}.
+     *
+     * @since 0.1.0
+     * @param {Object} [options] The stroke properties.
+     * @param {string} [options.color] The line color.
+     * @param {number} [options.width] The line width.
+     * @param {string} [options.join] The line join.
+     * @param {string} [options.cap] The line cap.
+     * @param {number} [options.opacity] The fill opacity.
+     * @return {Renderer} <code>this</code>.
+     */
+    startStroke : function (options)
+    {
+        if (options !== undefined) 
+        {
+            if (options.color !== undefined)    this.lineColor(options.color);
+            if (options.width !== undefined)    this.lineWidth(options.width);
+            if (options.join !== undefined)     this.lineJoin(options.join);
+            if (options.cap !== undefined)      this.lineCap(options.cap);
+            if (options.opacity !== undefined)  this.lineOpacity(options.opacity);
+        }
+        return this;
+    },
+
+    /** 
+     * Draws a shape by stroking its outline. The arguments override the default stroke style.
      *
      * @since 0.1.0
      * @param {Object} [options] The stroke properties.
@@ -88,7 +160,24 @@ Renderer.prototype =
     },
 
     /** 
-     * Defines the default fill style.
+     * Resets to default stroke style. Call this method after [stroke()]{@link Renderer#stroke}.
+     *
+     * @since 0.1.0
+     * @return {Renderer} <code>this</code>.
+     */
+    endStroke : function ()
+    {
+        this.lineColor(this._defaultLineColor)
+            .lineWidth(this._defaultLineWidth)
+            .lineJoin(this._defaultLineJoin)
+            .lineCap(this._defaultLineCap)
+            .lineOpacity(this._defaultLineOpacity);
+        return this;
+    },
+
+    /** 
+     * Defines the default stroke style. This can be overridden on a shape by 
+     * shape basis by calling [fillColor()]{@link Renderer#fillColor} or [fillOpacity()]{@link Renderer#fillOpacity}.  
      *
      * @since 0.1.0
      * @param {Object} [options] The fill properties.
@@ -98,44 +187,18 @@ Renderer.prototype =
      */
     fillStyle : function (options)
     {
-        if (options !== undefined)
+        if (options !== undefined) 
         {
-            if (options.color !== undefined)    this._fillColor     = options.color;
-            if (options.opacity !== undefined)  this._fillOpacity   = options.opacity;
+            if (options.color !== undefined)    this._defaultFillColor     = options.color;
+            if (options.opacity !== undefined)  this._defaultFillOpacity   = options.opacity;
         }
         return this;
     },
 
     /** 
-     * Overrides default fill color.
-     *
-     * @since 0.1.0
-
-     * @param {string} color The fill color.
-     * @return {Renderer} <code>this</code>.
-     */
-    fillColor : function (color)
-    {
-        if (color !== undefined) this._tempFillColor = color;
-        return this;
-    },
-
-    /** 
-     * Overrides default fill opacity.
-     *
-     * @since 0.1.0
-
-     * @param {string} opacity The fill opacity.
-     * @return {Renderer} <code>this</code>.
-     */
-    fillOpacity : function (opacity)
-    {
-        if (opacity !== undefined) this._tempFillOpacity = opacity;
-        return this;
-    },
-
-    /** 
-     * Defines the default stroke style.
+     * Defines the default fill style. This can be overridden on a shape by 
+     * shape basis by calling {@link lineColor()}, {@link lineWidth()}, 
+     * {@link lineJoin()}, {@link lineCap()} or {@link lineOpacity()}.  
      *
      * @since 0.1.0
      * @param {Object} [options] The stroke properties.
@@ -148,87 +211,161 @@ Renderer.prototype =
      */
     strokeStyle : function (options)
     {
-        if (options !== undefined)
+        if (arguments.length > 0)
         {
-            if (options.color !== undefined)    this._lineColor     = options.color;
-            if (options.width !== undefined)    this._lineWidth     = options.width;
-            if (options.join !== undefined)     this._lineJoin      = options.join;
-            if (options.cap !== undefined)      this._lineCap       = options.cap;
-            if (options.opacity !== undefined)  this._lineOpacity   = options.opacity;
+            if (options.color !== undefined)    this._defaultLineColor     = options.color;
+            if (options.width !== undefined)    this._defaultLineWidth     = options.width;
+            if (options.join !== undefined)     this._defaultLineJoin      = options.join;
+            if (options.cap !== undefined)      this._defaultLineCap       = options.cap;
+            if (options.opacity !== undefined)  this._defaultLineOpacity   = options.opacity;
         }
         return this;
     },
 
     /** 
-     * Overrides default line color.
+     * Get or set the fill color.
      *
      * @since 0.1.0
 
+     * @param {string} color The fill color.
+     * @return {string|Renderer} The fill color if no arguments are supplied, otherwise <code>this</code>.
+     * @throws {Error} Throws an error if color is not a color.
+     */
+    fillColor : function (color)
+    {
+        if (arguments.length > 0)
+        {
+            if (!isColor(color)) throw new Error('Renderer.fillColor(color): color must be a color.');
+
+            this._fillColor = color;
+            return this;
+        }
+        else return this._fillColor;
+    },
+
+    /** 
+     * Get or set the fill opacity.
+     *
+     * @since 0.1.0
+
+     * @param {string} opacity The fill opacity.
+     * @return {number|Renderer} The fill opacity if no arguments are supplied, otherwise <code>this</code>.
+     * @throws {Error} Throws an error if opacity is not a number.
+     */
+    fillOpacity : function (opacity)
+    {
+        if (arguments.length > 0)
+        {
+            if (!isNumber(opacity)) throw new Error('Renderer.fillOpacity(opacity): opacity must be a number.');
+
+            opacity = Math.max(0, opacity);
+            opacity = Math.min(1, opacity);
+
+            this._fillOpacity = opacity;
+            return this;
+        }
+        else return this._fillOpacity;
+    },
+
+    /** 
+     * Get or set the line color.
+     *
+     * @since 0.1.0
      * @param {string} color The line color.
-     * @return {Renderer} <code>this</code>.
+     * @return {string|Renderer} The line color if no arguments are supplied, otherwise <code>this</code>.
+     * @throws {Error} Throws an error if color is not a color.
      */
     lineColor : function (color)
     {
-        if (color !== undefined) this._tempLineColor = color;
-        return this;
+        if (arguments.length > 0)
+        {
+            if (!isColor(color)) throw new Error('Renderer.lineColor(color): color must be a color.');
+
+            this._lineColor = color;
+            return this;
+        }
+        else return this._lineColor;
     },
 
     /** 
-     * Overrides default line width.
+     * Get or set the line width.
      *
      * @since 0.1.0
-
-     * @param {string} width The line width.
-     * @return {Renderer} <code>this</code>.
+     * @param {number} width The line width.
+     * @return {number|Renderer} The line width if no arguments are supplied, otherwise <code>this</code>.
+     * @throws {Error} Throws an error if width is not a number or is less than 0.
      */
     lineWidth : function (width)
     {
-        if (width !== undefined) this._tempLineWidth = width;
-        return this;
+        if (arguments.length > 0)
+        {
+            if (!isNumber(width)) throw new Error('Renderer.lineWidth(width): width must be a number.');
+            if (width < 0)        throw new Error('Renderer.lineWidth(width): width must be > 0.');
+
+            this._lineWidth = width;
+            return this;
+        }
+        else return this._lineWidth;
     },
 
-
     /** 
-     * Overrides default line join.
+     * Get or set the line join.
      *
      * @since 0.1.0
-
-     * @param {string} join The line join.
-     * @return {Renderer} <code>this</code>.
+     * @param {string} join The line join, one of "bevel", "round", "miter".
+     * @return {string|Renderer} The line join if no arguments are supplied, otherwise <code>this</code>.
      */
     lineJoin : function (join)
     {
-        if (join !== undefined) this._tempLineJoin = join;
-        return this;
+        if (arguments.length > 0)
+        {
+            if (join !== "bevel" && join !== "round" && join !== "miter")
+                 throw new Error('Renderer.lineJoin(join): join must one of "bevel", "round", "miter"');
+          
+            this._lineJoin = join;
+            return this;
+        }
+        else return this._lineJoin;
     },
 
-
     /** 
-     * Overrides default line cap.
+     * Get or set the line cap.
      *
      * @since 0.1.0
-
-     * @param {string} cap The line cap.
-     * @return {Renderer} <code>this</code>.
+     * @param {string} cap The line cap, one of "butt", "round", "square".
+     * @return {string|Renderer} The line cap if no arguments are supplied, otherwise <code>this</code>.
      */
     lineCap : function (cap)
     {
-        if (cap !== undefined) this._tempLineCap = cap;
-        return this;
+        if (arguments.length > 0)
+        {
+            if (cap !== "butt" && cap !== "round" && cap !== "square")
+                 throw new Error('Renderer.lineCap(cap): cap must one of "butt", "round", "square"');
+
+            this._lineCap = cap;
+            return this;
+        }
+        else return this._lineCap;
     },
 
     /** 
-     * Overrides default line opacity.
+     * Get or set the line opacity.
      *
      * @since 0.1.0
-
      * @param {string} opacity The line opacity.
-     * @return {Renderer} <code>this</code>.
+     * @return {number|Renderer} The line opacity if no arguments are supplied, otherwise <code>this</code>.
+     * @throws {Error} Throws an error if opacity is not a number.
      */
     lineOpacity : function (opacity)
     {
-        if (opacity !== undefined) this._tempLineOpacity = opacity;
-        return this;
+        if (arguments.length > 0)
+        {
+            if (!isNumber(opacity)) throw new Error('Renderer.lineOpacity(opacity): opacity must be a number.');
+
+            this._lineOpacity = opacity;
+            return this;
+        }
+        else return this._lineOpacity;
     },
 
     /** 
@@ -253,7 +390,7 @@ Renderer.prototype =
      * @param {number} cx The x-coord of the centre of the circle.
      * @param {number} cy The y-coord of the centre of the circle.
      * @param {number} r The circle radius.
-     * @return {SvgRenderer} <code>this</code>.
+     * @return {Renderer} <code>this</code>.
      */
     circle : function (cx, cy, r)
     {

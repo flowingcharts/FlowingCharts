@@ -2,10 +2,15 @@
 'use strict';
 
 /**
- * @fileoverview Contains the CartesianChart class.
+ * @fileoverview Exports the {@link CartesianChart} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/CartesianChart 
+ * @requires geom/BoundingBox
+ * @requires geom/Rectangle
+ * @requires geom/Point
+ * @requires renderers/CanvasRenderer
+ * @requires util
  */
 
 // Required modules.
@@ -19,24 +24,19 @@ var extendObject = util.extendObject;
 /** 
  * @classdesc Maps data coords to pixel coords and vice versa.
  *
- * <p>The pixel coords are defined by a rectangle {@link pixelCoords}.
+ * <p>The pixel coords are defined by a rectangle [pixelCoords]{@link CartesianChart#pixelCoords}.
  * Pixel coords are relative to the top left corner of the chart.</p>
  *
- * <p>The data coords are defined by a bounding box {@link dataCoords}.
+ * <p>The data coords are defined by a bounding box [dataCoords]{@link CartesianChart#dataCoords}.
  * Data coords are relative to the bottom left corner of the chart.</p>
  * 
  * <p>The data coords may be adjusted to maintain the aspect ratio by setting 
  * the value of {@link maintainAspectRatio} to true.</p>
  *
+ * @class
+ * @alias CartesianChart
  * @since 0.1.0
- * @author J Clare
  * @constructor
- *
- * @requires geom/BoundingBox
- * @requires geom/Rectangle
- * @requires geom/Point
- * @requires renderers/CanvasRenderer
- * @requires util.extendObject
  *
  * @param {Object} [options] The options.
  * @param {number} [options.dimensions.x] The x coord of the top left corner (pixel units).

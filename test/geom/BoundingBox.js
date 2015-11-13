@@ -9,34 +9,32 @@ describe('BoundingBox', function ()
 {  
     'use strict';
     
-    describe('Constructor', function () 
+    describe('Constructor (xMin, yMin, xMax, yMax)', function () 
     {  
-        describe('BoundingBox (xMin, yMin, xMax, yMax)', function () 
+        it('Should supply default values for xMin, yMin, xMax, yMax', function () 
         {
-            it('Should supply default values for xMin, yMin, xMax, yMax', function () 
-            {
-                var bBox = new BoundingBox();
-                expect(bBox.xMin()).to.equal(0);
-                expect(bBox.yMin()).to.equal(0);
-                expect(bBox.xMax()).to.equal(100);
-                expect(bBox.yMax()).to.equal(100);
-            });
-            it('xMin, yMin, xMax, yMax should be numbers or undefined', function () 
-            {
-                expect(function(){new BoundingBox('1');}).to.throw(Error);
-                expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
-                expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
-                expect(function(){new BoundingBox(1, 2, '3', 4);}).to.throw(Error);
-                expect(function(){new BoundingBox(1, 2, 3, '4');}).to.throw(Error);
-                expect(function(){new BoundingBox([1]);}).to.throw(Error);
-                expect(function(){new BoundingBox([1, 2, 3, 4]);}).to.throw(Error);
+            var bBox = new BoundingBox();
+            expect(bBox.xMin()).to.equal(0);
+            expect(bBox.yMin()).to.equal(0);
+            expect(bBox.xMax()).to.equal(100);
+            expect(bBox.yMax()).to.equal(100);
+        });
+        it('Arguments should be numbers or undefined', function () 
+        {
+            expect(function(){new BoundingBox('1');}).to.throw(Error);
+            expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
+            expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
+            expect(function(){new BoundingBox(1, 2, '3', 4);}).to.throw(Error);
+            expect(function(){new BoundingBox(1, 2, 3, '4');}).to.throw(Error);
+            expect(function(){new BoundingBox([1]);}).to.throw(Error);
+            expect(function(){new BoundingBox([1, 2, 3, 4]);}).to.throw(Error);
 
-                expect(function(){new BoundingBox(1);}).to.not.throw(Error);
-                expect(function(){new BoundingBox(1, 2);}).to.not.throw(Error);
-                expect(function(){new BoundingBox(1, 2, 3);}).to.not.throw(Error);
-                expect(function(){new BoundingBox(1, 2, 3, 4);}).to.not.throw(Error);
-                expect(function(){new BoundingBox(undefined, undefined, undefined, 4);}).to.not.throw(Error);
-            });
+            expect(function(){new BoundingBox();}).to.not.throw(Error);
+            expect(function(){new BoundingBox(1);}).to.not.throw(Error);
+            expect(function(){new BoundingBox(1, 2);}).to.not.throw(Error);
+            expect(function(){new BoundingBox(1, 2, 3);}).to.not.throw(Error);
+            expect(function(){new BoundingBox(1, 2, 3, 4);}).to.not.throw(Error);
+            expect(function(){new BoundingBox(undefined, undefined, undefined, 4);}).to.not.throw(Error);
         });
     });
 

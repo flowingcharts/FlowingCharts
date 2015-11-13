@@ -2,10 +2,11 @@
 'use strict';
 
 /**
- * @fileoverview Contains the BoundingBox class.
+ * @fileoverview Exports the {@link BoundingBox} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/BoundingBox 
+ * @requires util
  */
 
 // Required modules.
@@ -17,10 +18,10 @@ var isNumber = util.isNumber;
  * by its bottom-left corner point (<code>xMin</code>, <code>yMin</code>) 
  * and top-right corner point (<code>xMax</code>, <code>yMax</code>).
  * 
+ * @class
+ * @alias BoundingBox
  * @since 0.1.0
  * @constructor
- *
- * @requires util.isNumber
  *
  * @param {number} [xMin = 0] The x coord of the bottom left corner.
  * @param {number} [yMin = 0] The y coord of the bottom left corner.
@@ -76,7 +77,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if x is not a number.
+     * @throws {Error} Throws an error if x is not a number.
      */
     xMin : function (x)
     {
@@ -98,7 +99,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if x is not a number.
+     * @throws {Error} Throws an error if x is not a number.
      */
     xMax : function (x)
     {
@@ -121,7 +122,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if x is not a number.
+     * @throws {Error} Throws an error if x is not a number.
      */
     xCenter : function (x)
     {
@@ -144,7 +145,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if w is not a number or is less than 0.
+     * @throws {Error} Throws an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
@@ -167,7 +168,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if y is not a number.
+     * @throws {Error} Throws an error if y is not a number.
      */
     yMin : function (y)
     {
@@ -189,7 +190,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if y is not a number.
+     * @throws {Error} Throws an error if y is not a number.
      */
     yMax : function (y)
     {
@@ -211,7 +212,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if y is not a number.
+     * @throws {Error} Throws an error if y is not a number.
      */
     yCenter : function (y)
     {
@@ -233,7 +234,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [h] The height.
      * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if h is not a number or is less than 0.
+     * @throws {Error} Throws an error if h is not a number or is less than 0.
      */
     height : function (h)
     {
@@ -267,7 +268,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box is equal to this one, otherwise false.
-     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     equals : function (bBox)
     {
@@ -290,7 +291,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box intercepts this one, otherwise false.
-     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     intersects : function (bBox)
     {
@@ -313,7 +314,7 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if bounding box is contained within this one, otherwise false.
-     * @throws {Error} Will throw an error if bBox is undefined or is not a BoundingBox.
+     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     contains : function (bBox)
     {

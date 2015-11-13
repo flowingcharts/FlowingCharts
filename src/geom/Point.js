@@ -2,10 +2,11 @@
 'use strict';
 
 /**
- * @fileoverview Contains the Point class.
+ * @fileoverview Exports the {@link Point} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/Point 
+ * @requires util
  */
 
 // Required modules.
@@ -13,12 +14,13 @@ var util = require('../util');
 var isNumber = util.isNumber;
 
 /** 
- * @classdesc A Point defined by its <code>x</code>, <code>y</code> 
+ * @classdesc A Point defined by its <code>x</code> and <code>y</code> 
  * 
+ * @class
+ * @alias Point
  * @since 0.1.0
  * @constructor
  *
- * @requires util.isNumber
  *
  * @param {number} [x = 0] The x-coord.
  * @param {number} [y = 0] The y coord.
@@ -60,7 +62,7 @@ Point.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if coord is not a number.
+     * @throws {Error} Throws an error if coord is not a number.
      */
     x : function (coord)
     {
@@ -80,7 +82,7 @@ Point.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if coord is not a number.
+     * @throws {Error} Throws an error if coord is not a number.
      */
     y : function (coord)
     {

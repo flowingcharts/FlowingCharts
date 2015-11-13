@@ -11,7 +11,7 @@
 module.exports = 
 {
     /** 
-     * Check if n is a number. Returns false if n is equal to NaN, Infinity, -Infinity or a string eg '10'.
+     * Check if n is a valid number. Returns false if n is equal to NaN, Infinity, -Infinity or a string eg '10'.
      *
      * @param {*} n The number to test.
      * @return {boolean} true, if n is a number, otherwise false.
@@ -23,6 +23,29 @@ module.exports =
         // isFinite(n)              Reject infinite numbers.
         // !isNaN(n))               Reject NaN.
         return (typeof n == 'number') && isFinite(n) && !isNaN(n);
+    },
+
+    /** 
+     * Check if c is a valid color.
+     *
+     * @param {*} c The number to test.
+     * @return {boolean} true, if c is a number, otherwise false.
+     */
+    isColor : function (c)
+    {
+        // TODO test for rgb colors.
+        return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test('#ac3');
+    },
+
+    /** 
+     * Check if c is a valid color.
+     *
+     * @param {*} c The number to test.
+     * @return {boolean} true, if c is a number, otherwise false.
+     */
+    isHexColor : function (c)
+    {
+        return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test('#ac3');
     },
 
     /** 

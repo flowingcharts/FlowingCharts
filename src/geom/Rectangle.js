@@ -2,10 +2,11 @@
 'use strict';
 
 /**
- * @fileoverview Contains the Rectangle class.
+ * @fileoverview Exports the {@link Rectangle} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/Rectangle 
+ * @requires util
  */
 
 // Required modules.
@@ -16,10 +17,11 @@ var isNumber = util.isNumber;
  * @classdesc A rectangle defined by its <code>x</code>, <code>y</code> 
  * <code>width</code> and <code>height</code>.
  * 
+ * @class
+ * @alias Rectangle
  * @since 0.1.0
  * @constructor
  *
- * @requires util.isNumber
  *
  * @param {number} [x = 0] The x-coord of the top left corner.
  * @param {number} [y = 0] The y coord of the top left corner.
@@ -111,7 +113,7 @@ Rectangle.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|Rectangle} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Will throw an error if w is not a number or is less than 0.
+     * @throws {Error} Throws an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
