@@ -1,4 +1,5 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
@@ -229,13 +230,14 @@ Renderer.prototype =
 
      * @param {string} color The fill color.
      * @return {string|Renderer} The fill color if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if color is not a color.
      */
     fillColor : function (color)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isColor(color)) throw new Error('Renderer.fillColor(color): color must be a color.');
+            //</validation>
 
             this._fillColor = color;
             return this;
@@ -250,13 +252,14 @@ Renderer.prototype =
 
      * @param {string} opacity The fill opacity.
      * @return {number|Renderer} The fill opacity if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if opacity is not a number.
      */
     fillOpacity : function (opacity)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(opacity)) throw new Error('Renderer.fillOpacity(opacity): opacity must be a number.');
+            //</validation>
 
             opacity = Math.max(0, opacity);
             opacity = Math.min(1, opacity);
@@ -273,13 +276,14 @@ Renderer.prototype =
      * @since 0.1.0
      * @param {string} color The line color.
      * @return {string|Renderer} The line color if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if color is not a color.
      */
     lineColor : function (color)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isColor(color)) throw new Error('Renderer.lineColor(color): color must be a color.');
+            //</validation>
 
             this._lineColor = color;
             return this;
@@ -293,14 +297,15 @@ Renderer.prototype =
      * @since 0.1.0
      * @param {number} width The line width.
      * @return {number|Renderer} The line width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if width is not a number or is less than 0.
      */
     lineWidth : function (width)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(width)) throw new Error('Renderer.lineWidth(width): width must be a number.');
             if (width < 0)        throw new Error('Renderer.lineWidth(width): width must be > 0.');
+            //</validation>
 
             this._lineWidth = width;
             return this;
@@ -319,8 +324,10 @@ Renderer.prototype =
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (join !== "bevel" && join !== "round" && join !== "miter")
                  throw new Error('Renderer.lineJoin(join): join must one of "bevel", "round", "miter"');
+            //</validation>
           
             this._lineJoin = join;
             return this;
@@ -339,8 +346,10 @@ Renderer.prototype =
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (cap !== "butt" && cap !== "round" && cap !== "square")
                  throw new Error('Renderer.lineCap(cap): cap must one of "butt", "round", "square"');
+            //</validation>
 
             this._lineCap = cap;
             return this;
@@ -352,15 +361,16 @@ Renderer.prototype =
      * Get or set the line opacity.
      *
      * @since 0.1.0
-     * @param {string} opacity The line opacity.
+     * @param {string} opacity A value between 0 and 0..
      * @return {number|Renderer} The line opacity if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if opacity is not a number.
      */
     lineOpacity : function (opacity)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(opacity)) throw new Error('Renderer.lineOpacity(opacity): opacity must be a number.');
+            //</validation>
 
             this._lineOpacity = opacity;
             return this;

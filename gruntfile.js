@@ -32,9 +32,23 @@ module.exports = function (grunt)
         {
             all: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js']
         },
+        // Remove console statements, debugger and specific blocks of code.
+        // Removes blocks of code surrounded by //<validation>...//</validation>
+        // Generates 'gen_dist/<%= pkg.name %>.src.js' from 'gen_dist/<%= pkg.name %>.debug.js'.
+        groundskeeper: 
+        {
+            compile: 
+            {
+                files: 
+                {
+                    'gen_dist/<%= pkg.name %>.src.js': 'gen_dist/<%= pkg.name %>.debug.js', // 1:1 compile
+                }
+            }
+        },
         // Minimises the JavaScript source code file 'gen_dist/<%= pkg.name %>.src.js' into 'gen_dist/<%= pkg.name %>.js'.
         // Adds a banner displaying the project name, version and date to the minimised file.
         // Creates a source map file 'gen_dist/<%= pkg.name %>.map' for debugging the minimised code file.
+        // Removes DEBUG code from minimised code file.
         uglify: 
         {
             options: 
@@ -42,6 +56,15 @@ module.exports = function (grunt)
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */',
                 /*sourceMap: true,
                 sourceMapName: "gen_dist/<%= pkg.name %>.map"*/
+                compress: 
+                {
+                    // Remove debug code from minimised code.
+                    global_defs: 
+                    {
+                        "DEBUG": false
+                    },
+                    dead_code: true
+                }
             },
             build: 
             {
@@ -164,8 +187,8 @@ module.exports = function (grunt)
             }
         },
         // Browserify bundles up all of the project dependencies into a single JavaScript file.
-        // Generates a bundled file 'gen_dist/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
-        // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.src.js'.
+        // Generates a bundled file 'gen_dist/<%= pkg.name %>.debug.js' from the starting point 'src/main.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_dist/<%= pkg.name %>.debug.js'.
         browserify: 
         {
             options: 
@@ -173,7 +196,7 @@ module.exports = function (grunt)
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
                 browserifyOptions: 
                 {
-                    // Generates inline source maps as a comment at the bottom of 'gen_dist/<%= pkg.name %>.src.js' 
+                    // Generates inline source maps as a comment at the bottom of 'gen_dist/<%= pkg.name %>.debug.js' 
                     // to enable debugging of original JavaScript module files.
                     debug: true
                 }
@@ -182,14 +205,14 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    'gen_dist/<%= pkg.name %>.src.js': ['src/main.js']
+                    'gen_dist/<%= pkg.name %>.debug.js': ['src/main.js']
                 }
             }
         },
         // Processes and copies the demo files 'examples/', to 'gen_release/<%= pkg.version %>/examples/'.
         // Adds a banner to each file displaying the project name, version and date.
         // Replaces 
-        // <script type="text/javascript" src="../../gen_dist/flowingcharts.src.js"></script>
+        // <script type="text/javascript" src="../../gen_dist/flowingcharts.debug.js"></script>
         // with
         // <script type="text/javascript" src="../../flowingcharts.js"></script>
         processhtml: 
@@ -234,6 +257,7 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-groundskeeper');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-processhtml');
@@ -247,7 +271,7 @@ module.exports = function (grunt)
 
     // '>grunt build' 
     // Used for a quick build during development.
-    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'uglify']);      
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
 
     // '>grunt test' 
     // Carries out unit testing on the JavaScript module files and generates a test coverage file at 'gen_test_coverage/coverage.html'.

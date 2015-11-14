@@ -77,13 +77,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if x is not a number.
      */
     xMin : function (x)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(x)) throw new Error('BoundingBox.xMin(x): x must be a number.');
+            //</validation>
 
             this._xMin = x;
             this._width = Math.abs(this._xMax - this._xMin);
@@ -99,13 +100,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if x is not a number.
      */
     xMax : function (x)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(x)) throw new Error('BoundingBox.xMax(x): x must be a number.');
+            //</validation>
 
             this._xMax = x;
             this._width = Math.abs(this._xMax - this._xMin);
@@ -122,13 +124,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [x] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if x is not a number.
      */
     xCenter : function (x)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(x)) throw new Error('BoundingBox.xCenter(x): x must be a number.');
+            //</validation>
 
             this._xCenter = x;
             this._xMin  = this._xCenter - (this._width / 2);
@@ -145,14 +148,15 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [w] The width.
      * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if w is not a number or is less than 0.
      */
     width : function (w)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(w))  throw new Error('BoundingBox.width(w): w must be a number.');
             if (w < 0)         throw new Error('BoundingBox.width(w): w must be > 0.');
+            //</validation>
 
             this._width = w;
             this._xMax = this._xMin + this._width;
@@ -168,13 +172,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if y is not a number.
      */
     yMin : function (y)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(y)) throw new Error('BoundingBox.yMin(y): y must be a number.');
+            //</validation>
 
             this._yMin = y;
             this._height = Math.abs(this._yMax - this._yMin);
@@ -190,13 +195,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if y is not a number.
      */
     yMax : function (y)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(y)) throw new Error('BoundingBox.yMax(y): y must be a number.');
+            //</validation>
 
             this._yMax = y;
             this._height = Math.abs(this._yMax - this._yMin);
@@ -212,13 +218,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [y] The coordinate.
      * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if y is not a number.
      */
     yCenter : function (y)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(y)) throw new Error('BoundingBox.yCenter(y): y must be a number.');
+            //</validation>
 
             this._yCenter = y;
             this._yMin  = this._yCenter - (this._height / 2);
@@ -234,14 +241,15 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {number} [h] The height.
      * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if h is not a number or is less than 0.
      */
     height : function (h)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(h)) throw new Error('BoundingBox.height(h): h must be a number.');
             if (h < 0)        throw new Error('BoundingBox.height(h): h must be > 0.');
+            //</validation>
 
             this._height = h;
             this._yMax = this._yMin + this._height;
@@ -268,13 +276,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box is equal to this one, otherwise false.
-     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     equals : function (bBox)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.equals(bBox): bBox must be a BoundingBox.');
+            //</validation>
 
             if (bBox.getXMin() !== this._xMin) return false;
             if (bBox.getYMin() !== this._yMin) return false;
@@ -291,13 +300,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if the bounding box intercepts this one, otherwise false.
-     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     intersects : function (bBox)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.intersects(bBox): bBox must be a BoundingBox.');
+            //</validation>
 
             if (bBox.getXMin() > this._xMax) return false;
             if (bBox.getXMax() < this._xMin) return false;
@@ -314,13 +324,14 @@ BoundingBox.prototype =
      * @since 0.1.0
      * @param {BoundingBox} bBox The bounding box.
      * @return {boolean} true, if bounding box is contained within this one, otherwise false.
-     * @throws {Error} Throws an error if bBox is undefined or is not a BoundingBox.
      */
     contains : function (bBox)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.contains(bBox): bBox must be a BoundingBox.');
+            //</validation>
 
             if (bBox.getXMin() < this._xMin) return false;
             if (bBox.getXMax() > this._xMax) return false;

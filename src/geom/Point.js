@@ -1,4 +1,5 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
@@ -62,13 +63,14 @@ Point.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if coord is not a number.
      */
     x : function (coord)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(coord)) throw new Error('Point.x(coord): coord must be a number.');
+            //</validation>
 
             this._x = coord;
             return this;
@@ -82,13 +84,14 @@ Point.prototype =
      * @since 0.1.0
      * @param {number} [coord] The coordinate.
      * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
-     * @throws {Error} Throws an error if coord is not a number.
      */
     y : function (coord)
     {
         if (arguments.length > 0)
         {
+            //<validation>
             if (!isNumber(coord)) throw new Error('Point.y(coord): coord must be a number.');
+            //</validation>
 
             this._y = coord;
             return this;
