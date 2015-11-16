@@ -30,6 +30,16 @@ var isNumber = util.isNumber;
  */
 function BoundingBox (xMin, yMin, xMax, yMax)
 {
+    // Private variables.
+    this._xMin      = null; // The x-coord of the bottom left corner.
+    this._xMax      = null; // The x-coord of the top right corner.
+    this._xCenter   = null; // The x-coord of the center.
+    this._width     = null; // The width.
+    this._yMin      = null; // The y-coord of the bottom left corner.
+    this._yMax      = null; // The y-coord of the top right corner.
+    this._yCenter   = null; // The y-coord of the center.
+    this._height    = null; // The height.
+
     xMin = xMin !== undefined ? xMin : 0;
     yMin = yMin !== undefined ? yMin : 0;
     xMax = xMax !== undefined ? xMax : 100;
@@ -39,15 +49,6 @@ function BoundingBox (xMin, yMin, xMax, yMax)
 
 BoundingBox.prototype = 
 {
-    // Private variables.
-    _xMin       : null,     // The x-coord of the bottom left corner.
-    _xMax       : null,     // The x-coord of the top right corner.
-    _xCenter    : null,     // The x-coord of the center.
-    _width      : null,     // The width.
-    _yMin       : null,     // The y-coord of the bottom left corner.
-    _yMax       : null,     // The y-coord of the top right corner.
-    _yCenter    : null,     // The y-coord of the center.
-    _height     : null,     // The height.
 
     /** 
      * Set the coordinates.
