@@ -25,9 +25,10 @@ var isNumber = util.isNumber;
  * @augments Renderer
  * @since 0.1.0
  * @author J Clare
-  *
+ *
  * @param {Object} [options] The options.
- * @param {HTMLElement} [options.container] The html element that will contain the renderer.
+ * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
+ * @param {Renderer~onResize} [options.onResize] Function called when the canvas resizes. 
  */
 function SvgRenderer (options)
 {
