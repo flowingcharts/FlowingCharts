@@ -80,36 +80,41 @@ module.exports =
     },
 
     /** 
-     * Appends a child element to a parent element and have the child resize to fit the parent.
+     * Adjusts a bounding box to fit a rectangle in order to maintain the aspect ratio.
      *
-     * @param {HTMLElement} childElement The child element.
-     * @param {HTMLElement} parentElement The parent element.
-     * @param {function} onResize A function to call when the resize takes place.
+     * @private
+     * @param {BoundingBox} bBox The bounding box.
+     * @param {Rectangle} rect The rectangle.
      */
-    appendTo : function (childElement, parentElement, onResize)
+    fitBBoxToRect : function (bBox, rect)
     {
-        // http://stackoverflow.com/questions/2588181/canvas-is-stretched-when-using-css-but-normal-with-width-height-properties
-        childElement.setAttribute('width', parentElement.offsetWidth);
-        childElement.setAttribute('height', parentElement.offsetHeight);
-        parentElement.appendChild(childElement);
+        var sy = bBox.height() / rect.height();
+        var sx = bBox.height() / rect.width();
 
-        (function() // Execute immediately
-        { 
-            var svg = childElement;
-            var container = parentElement;
-            var resizeTimeout;
-            window.onresize = function ()
-            {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(function ()
-                {
-                    var w = parentElement.offsetWidth;
-                    var h = parentElement.offsetHeight;
-                    childElement.setAttribute('width', w);
-                    childElement.setAttribute('height', h);
-                    if (onResize) onResize.call(null, w, h);
-                }, 100);
-            };
-        })();
+        var sBBoxX, sBBoxY, sBBoxW, sBBoxH; 
+
+        if (sy > sx)
+        {
+            sBBoxY = bBox.yMin();
+            sBBoxH = bBox.height();
+            sBBoxW = (rect.width() / rect.height()) * sBBoxH;
+            sBBoxX = bBox.xMin() - ((sBBoxW - bBox.width()) / 2);
+        }
+        else if (sx > sy)
+        {
+            sBBoxX = bBox.xMin();
+            sBBoxW = bBox.width();
+            sBBoxH = (rect.height() / rect.width()) * sBBoxW;
+            sBBoxY = bBox.yMin() - ((sBBoxH - bBox.height()) / 2);
+        }
+        else
+        {
+            sBBoxX = bBox.xMin();
+            sBBoxY = bBox.yMin();
+            sBBoxW = bBox.width();
+            sBBoxH = bBox.height();
+        }
+
+        bBox.xMin(sBBoxX).yMin(sBBoxY).width(sBBoxW).height(sBBoxH);
     }
 };

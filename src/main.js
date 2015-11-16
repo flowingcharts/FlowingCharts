@@ -16,5 +16,3 @@ require('./plugins/jqueryplugin');
 
 // Replace/Create the global namespace
 window.flowingcharts = flowingcharts;
-
-var bb = new flowingcharts.BoundingBox('10');
