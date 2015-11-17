@@ -2,11 +2,11 @@
 'use strict';
 
 var $ = require('jQuery');
-var CartesianChart = require('../geom/CartesianChart');
+var CartesianCanvas = require('../canvas/CartesianCanvas');
 
 $.fn.flowingcharts = function (options) 
 {	
 	options.container = this[0];
-	var chart = new CartesianChart(options);
+	var chart = new CartesianCanvas(options);
 	return this;
 };

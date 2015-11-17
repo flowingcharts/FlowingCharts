@@ -3,48 +3,48 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link SvgRenderer} class.
+ * @fileoverview Exports the {@link SvgCanvas} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module renderers/SvgRenderer 
- * @requires renderers/Renderer
+ * @module renderers/SvgCanvas 
+ * @requires renderers/Canvas
  * @requires util
  */
 
 // Required modules.
-var Renderer = require('./Renderer');
-var util = require('../util');
+var Canvas      = require('./Canvas');
+var util        = require('../util');
 var extendClass = util.extendClass;
-var isNumber = util.isNumber;
+var isNumber    = util.isNumber;
 
 /** 
  * @classdesc A wrapper class for rendering to a HTML5 canvas.
  *
  * @class
- * @alias SvgRenderer
- * @augments Renderer
+ * @alias SvgCanvas
+ * @augments Canvas
  * @since 0.1.0
  * @author J Clare
  *
  * @param {Object} [options] The options.
  * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
- * @param {Renderer~onResize} [options.onResize] Function called when the canvas resizes. 
+ * @param {Canvas~onResize} [options.onResize] Function called when the canvas resizes. 
  */
-function SvgRenderer (options)
+function SvgCanvas (options)
 {
     // Private instance members.
-    this._svgNS         = "http://www.w3.org/2000/svg";                 // Namespace for SVG elements.
+    this._svgNS         = 'http://www.w3.org/2000/svg';                 // Namespace for SVG elements.
     this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
     this._svgElement    = null;                                         // The svg element that is part of the current drawing routine.
-
-    SvgRenderer.baseConstructor.call(this, options);
+    
+    SvgCanvas.baseConstructor.call(this, options);
 }
-extendClass(Renderer, SvgRenderer);
+extendClass(Canvas, SvgCanvas);
 
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.canvas = function ()
+SvgCanvas.prototype.canvasElement = function ()
 {
     return this._svg;
 };
@@ -52,24 +52,7 @@ SvgRenderer.prototype.canvas = function ()
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.setSize = function (w, h)
-{
-    //<validation>
-    if (!isNumber(w)) throw new Error('Renderer.setSize(w): w must be a number.');
-    if (w < 0)        throw new Error('Renderer.setSize(w): w must be > 0.');
-    if (!isNumber(h)) throw new Error('Renderer.setSize(h): h must be a number.');
-    if (h < 0)        throw new Error('Renderer.setSize(h): h must be > 0.');
-    //</validation>
-
-    var c = this.canvas();
-    c.setAttribute('width', w);
-    c.setAttribute('height', h);
-};
-
-/** 
- * @inheritdoc
- */
-SvgRenderer.prototype.clear = function ()
+SvgCanvas.prototype.clear = function ()
 {
     while (this._svg.firstChild) 
     {
@@ -81,7 +64,7 @@ SvgRenderer.prototype.clear = function ()
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.drawFill = function ()
+SvgCanvas.prototype.drawFill = function ()
 {
     this._svgElement.setAttribute('fill', this.fillColor());
     this._svgElement.setAttribute('fill-opacity', this.fillOpacity());
@@ -91,7 +74,7 @@ SvgRenderer.prototype.drawFill = function ()
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.drawStroke = function ()
+SvgCanvas.prototype.drawStroke = function ()
 {
     this._svgElement.setAttribute('stroke', this.lineColor());
     this._svgElement.setAttribute('stroke-width', this.lineWidth());
@@ -104,22 +87,7 @@ SvgRenderer.prototype.drawStroke = function ()
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.rect = function (x, y, w, h)
-{
-    var svgRect = document.createElementNS(this._svgNS, 'rect');
-    svgRect.setAttribute('x', x);
-    svgRect.setAttribute('y', y);
-    svgRect.setAttribute('width', w);
-    svgRect.setAttribute('height', h);
-    this._svg.appendChild(svgRect);
-    this._svgElement = svgRect;
-    return this;
-};
-
-/** 
- * @inheritdoc
- */
-SvgRenderer.prototype.circle = function (cx, cy, r)
+SvgCanvas.prototype.circle = function (cx, cy, r)
 {
     var svgCircle = document.createElementNS(this._svgNS, 'circle');
     svgCircle.setAttribute('cx', cx);
@@ -133,7 +101,7 @@ SvgRenderer.prototype.circle = function (cx, cy, r)
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.ellipse = function (cx, cy, rx, ry)
+SvgCanvas.prototype.ellipse = function (cx, cy, rx, ry)
 {
     var svgEllipse = document.createElementNS(this._svgNS, 'ellipse');
     svgEllipse.setAttribute('cx', cx);
@@ -148,7 +116,22 @@ SvgRenderer.prototype.ellipse = function (cx, cy, rx, ry)
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.line = function (x1, y1, x2, y2)
+SvgCanvas.prototype.rect = function (x, y, w, h)
+{
+    var svgRect = document.createElementNS(this._svgNS, 'rect');
+    svgRect.setAttribute('x', x);
+    svgRect.setAttribute('y', y);
+    svgRect.setAttribute('width', w);
+    svgRect.setAttribute('height', h);
+    this._svg.appendChild(svgRect);
+    this._svgElement = svgRect;
+    return this;
+};
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.line = function (x1, y1, x2, y2)
 {
     var svgLine = document.createElementNS(this._svgNS, 'line');
     svgLine.setAttribute('x1', x1);
@@ -163,19 +146,16 @@ SvgRenderer.prototype.line = function (x1, y1, x2, y2)
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.polyline = function (arrPoints)
+SvgCanvas.prototype.polyline = function (arrCoords)
 {
-    var svgPolyline = document.createElementNS(this._svgNS, 'polyline');
-    var n = arrPoints.length;
+    var n = arrCoords.length;
     var strPoints = '';
-    for (var i = 0; i < n; i++)
+    for (var i = 0; i < n - 1; i++)
     {
-        var arrPoint = arrPoints[i];
-        var x = arrPoint[0], y = arrPoint[1];
         if (i !== 0) strPoints += ',';
-        strPoints = '' + x + ' ' + y;
-        strPoints += strPoints;
+        strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
+    var svgPolyline = document.createElementNS(this._svgNS, 'polyline');
     svgPolyline.setAttribute('points', strPoints);
     this._svg.appendChild(svgPolyline);
     this._svgElement = svgPolyline;
@@ -185,23 +165,20 @@ SvgRenderer.prototype.polyline = function (arrPoints)
 /** 
  * @inheritdoc
  */
-SvgRenderer.prototype.polygon = function (arrPoints)
+SvgCanvas.prototype.polygon = function (arrCoords)
 {
-    var svgPolygon = document.createElementNS(this._svgNS, 'polygon');
-    var n = arrPoints.length;
+    var n = arrCoords.length;
     var strPoints = '';
-    for (var i = 0; i < n; i++)
+    for (var i = 0; i < n - 1; i++)
     {
-        var arrPoint = arrPoints[i];
-        var x = arrPoint[0], y = arrPoint[1];
         if (i !== 0) strPoints += ',';
-        strPoints = '' + x + ' ' + y;
-        strPoints += strPoints;
+        strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
+    var svgPolygon = document.createElementNS(this._svgNS, 'polygon');
     svgPolygon.setAttribute('points', strPoints);
     this._svg.appendChild(svgPolygon);
     this._svgElement = svgPolygon;
     return this;
 };
 
-module.exports = SvgRenderer;
+module.exports = SvgCanvas;

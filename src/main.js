@@ -7,9 +7,9 @@
 // will walk the dependency graph and load everything correctly.
 var flowingcharts = window.flowingcharts || 
 {
-    BoundingBox : require('./geom/BoundingBox'),
-    CartesianChart : require('./geom/CartesianChart'),
-    canvas : require('./canvas/util')
+    BoundingBox     : require('./geom/BoundingBox'),
+    CartesianCanvas : require('./canvas/CartesianCanvas'),
+    canvas          : require('./canvas/util')
 };
 
 require('./plugins/jqueryplugin');

@@ -11,8 +11,8 @@
  */
 
 // Required modules.
-var util = require('../util');
-var isNumber = util.isNumber;
+var util        = require('../util');
+var isNumber    = util.isNumber;
 
 /** 
  * @classdesc A Point defined by its <code>x</code> and <code>y</code> 
@@ -69,7 +69,6 @@ Point.prototype.x = function (coord)
         //<validation>
         if (!isNumber(coord)) throw new Error('Point.x(coord): coord must be a number.');
         //</validation>
-
         this._x = coord;
         return this;
     }
@@ -90,7 +89,6 @@ Point.prototype.y = function (coord)
         //<validation>
         if (!isNumber(coord)) throw new Error('Point.y(coord): coord must be a number.');
         //</validation>
-
         this._y = coord;
         return this;
     }

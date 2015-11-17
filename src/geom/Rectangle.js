@@ -11,8 +11,8 @@
  */
 
 // Required modules.
-var util = require('../util');
-var isNumber = util.isNumber;
+var util        = require('../util');
+var isNumber    = util.isNumber;
 
 /** 
  * @classdesc A rectangle defined by its <code>x</code>, <code>y</code> 
@@ -41,11 +41,11 @@ function Rectangle (x, y, width, height)
     y = y !== undefined ? y : 0;
     width = width !== undefined ? width : 100;
     height = height !== undefined ? height : 100;
-    this.setCoords(x, y, width, height);
+    this.setDimensions(x, y, width, height);
 }
 
 /** 
- * Set the coordinates.
+ * Set the dimensions.
  *
  * @since 0.1.0
  * @param {number} [x] The x coord of the top left corner.
@@ -54,7 +54,7 @@ function Rectangle (x, y, width, height)
  * @param {number} [h] The height.
  * @return {Rectangle} <code>this</code>.
  */
-Rectangle.prototype.setCoords = function (x, y, w, h)
+Rectangle.prototype.setDimensions = function (x, y, w, h)
 {
     if (arguments.length > 0)
     {
@@ -80,7 +80,6 @@ Rectangle.prototype.x = function (coord)
         //<validation>
         if (!isNumber(coord)) throw new Error('Rectangle.x(coord): coord must be a number.');
         //</validation>
-
         this._x = coord;
         return this;
     }
@@ -101,7 +100,6 @@ Rectangle.prototype.y = function (coord)
         //<validation>
         if (!isNumber(coord)) throw new Error('Rectangle.y(coord): coord must be a number.');
         //</validation>
-
         this._y = coord;
         return this;
     }
@@ -121,9 +119,8 @@ Rectangle.prototype.width = function (w)
     {
         //<validation>
         if (!isNumber(w)) throw new Error('Rectangle.width(w): w must be a number.');
-        if (w < 0)        throw new Error('Rectangle.width(w): w must be > 0.');
+        if (w < 0)        throw new Error('Rectangle.width(w): w must be >= 0.');
         //</validation>
-
         this._w = w;
         return this;
     }
@@ -143,9 +140,8 @@ Rectangle.prototype.height = function (h)
     {
         //<validation>
         if (!isNumber(h)) throw new Error('Rectangle.height(h): h must be a number.');
-        if (h < 0)        throw new Error('Rectangle.height(h): h must be > 0.');
+        if (h < 0)        throw new Error('Rectangle.height(h): h must be >= 0.');
         //</validation>
-
         this._h = h;
         return this;
     }

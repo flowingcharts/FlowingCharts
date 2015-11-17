@@ -10,8 +10,8 @@
  */
 
 // Required modules.
-var util = require('../util');
-var isNumber = util.isNumber;
+var util        = require('../util');
+var isNumber    = util.isNumber;
 
 /** 
  * @classdesc An area defined by its position, as indicated 
@@ -44,11 +44,11 @@ function BoundingBox (xMin, yMin, xMax, yMax)
     yMin = yMin !== undefined ? yMin : 0;
     xMax = xMax !== undefined ? xMax : 100;
     yMax = yMax !== undefined ? yMax : 100;
-    this.setCoords(xMin, yMin, xMax, yMax);
+    this.setDimensions(xMin, yMin, xMax, yMax);
 }
 
 /** 
- * Set the coordinates.
+ * Set the dimensions.
  *
  * @since 0.1.0
  * @param {number} [xMin] The x coord of the bottom left corner.
@@ -57,7 +57,7 @@ function BoundingBox (xMin, yMin, xMax, yMax)
  * @param {number} [yMax] The y coord of the top right corner.
  * @return {BoundingBox} <code>this</code>.
  */
-BoundingBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
+BoundingBox.prototype.setDimensions = function (xMin, yMin, xMax, yMax)
 {
     if (arguments.length > 0)
     {
@@ -83,7 +83,6 @@ BoundingBox.prototype.xMin = function (x)
         //<validation>
         if (!isNumber(x)) throw new Error('BoundingBox.xMin(x): x must be a number.');
         //</validation>
-
         this._xMin = x;
         this._width = Math.abs(this._xMax - this._xMin);
         this._xCenter = this._xMin + (this._width / 2); 
@@ -106,7 +105,6 @@ BoundingBox.prototype.xMax = function (x)
         //<validation>
         if (!isNumber(x)) throw new Error('BoundingBox.xMax(x): x must be a number.');
         //</validation>
-
         this._xMax = x;
         this._width = Math.abs(this._xMax - this._xMin);
         this._xCenter = this._xMin + (this._width / 2);
@@ -130,7 +128,6 @@ BoundingBox.prototype.xCenter = function (x)
         //<validation>
         if (!isNumber(x)) throw new Error('BoundingBox.xCenter(x): x must be a number.');
         //</validation>
-
         this._xCenter = x;
         this._xMin  = this._xCenter - (this._width / 2);
         this._xMax  = this._xCenter + (this._width / 2);
@@ -153,9 +150,8 @@ BoundingBox.prototype.width = function (w)
     {
         //<validation>
         if (!isNumber(w))  throw new Error('BoundingBox.width(w): w must be a number.');
-        if (w < 0)         throw new Error('BoundingBox.width(w): w must be > 0.');
+        if (w < 0)         throw new Error('BoundingBox.width(w): w must be >= 0.');
         //</validation>
-
         this._width = w;
         this._xMax = this._xMin + this._width;
         this._xCenter = this._xMin + (this._width / 2);
@@ -178,7 +174,6 @@ BoundingBox.prototype.yMin = function (y)
         //<validation>
         if (!isNumber(y)) throw new Error('BoundingBox.yMin(y): y must be a number.');
         //</validation>
-
         this._yMin = y;
         this._height = Math.abs(this._yMax - this._yMin);
         this._yCenter = this._yMin + (this._height / 2);
@@ -201,7 +196,6 @@ BoundingBox.prototype.yMax = function (y)
         //<validation>
         if (!isNumber(y)) throw new Error('BoundingBox.yMax(y): y must be a number.');
         //</validation>
-
         this._yMax = y;
         this._height = Math.abs(this._yMax - this._yMin);
         this._yCenter = this._yMin + (this._height / 2);
@@ -224,7 +218,6 @@ BoundingBox.prototype.yCenter = function (y)
         //<validation>
         if (!isNumber(y)) throw new Error('BoundingBox.yCenter(y): y must be a number.');
         //</validation>
-
         this._yCenter = y;
         this._yMin  = this._yCenter - (this._height / 2);
         this._yMax  = this._yCenter + (this._height / 2);
@@ -246,9 +239,8 @@ BoundingBox.prototype.height = function (h)
     {
         //<validation>
         if (!isNumber(h)) throw new Error('BoundingBox.height(h): h must be a number.');
-        if (h < 0)        throw new Error('BoundingBox.height(h): h must be > 0.');
+        if (h < 0)        throw new Error('BoundingBox.height(h): h must be >= 0.');
         //</validation>
-
         this._height = h;
         this._yMax = this._yMin + this._height;
         this._yCenter = this._yMin + (this._height / 2);
@@ -282,7 +274,6 @@ BoundingBox.prototype.equals = function (bBox)
         //<validation>
         if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.equals(bBox): bBox must be a BoundingBox.');
         //</validation>
-
         if (bBox.getXMin() !== this._xMin) return false;
         if (bBox.getYMin() !== this._yMin) return false;
         if (bBox.getXMax() !== this._xMax) return false;
@@ -306,7 +297,6 @@ BoundingBox.prototype.intersects = function (bBox)
         //<validation>
         if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.intersects(bBox): bBox must be a BoundingBox.');
         //</validation>
-
         if (bBox.getXMin() > this._xMax) return false;
         if (bBox.getXMax() < this._xMin) return false;
         if (bBox.getYMin() > this._yMax) return false;
@@ -330,7 +320,6 @@ BoundingBox.prototype.contains = function (bBox)
         //<validation>
         if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.contains(bBox): bBox must be a BoundingBox.');
         //</validation>
-
         if (bBox.getXMin() < this._xMin) return false;
         if (bBox.getXMax() > this._xMax) return false;
         if (bBox.getYMin() < this._yMin) return false;
