@@ -117,6 +117,8 @@ CartesianCanvas.prototype.render = function()
     this.dataRect(0, 0, 50, 50).fillColor('#00f500').fill();
     this.dataEllipse(0, 0, 50, 50).fillColor('#f50000').fill();
     this.dataCircle(0, 0, 50).fillColor('#0000f5').fill();
+    this.dataPolygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill();
+    //this.dataPolygon([372.5, 602, 745, 602, 745, 301]).fillColor('#0ff0f5').fill();
  
     /*for (var i = 0; i < 5; i++)
     {
@@ -470,10 +472,11 @@ CartesianCanvas.prototype.dataPoint = function (cx, cy, size, type)
  */
 CartesianCanvas.prototype.dataPolyline = function (arrCoords)
 {
+    var me = this;
     var arrPixelCoords = arrCoords.map(function (coord, index) 
     {
-        if (coord % 2 === 0)    return this.getPixelX(coord); // x.
-        else                    return this.getPixelY(coord); // y.
+        if (index % 2 === 0)    return me.getPixelX(coord); // x.
+        else                    return me.getPixelY(coord); // y.
     });
     return this.polyline(arrPixelCoords);
 };
@@ -487,10 +490,11 @@ CartesianCanvas.prototype.dataPolyline = function (arrCoords)
  */
 CartesianCanvas.prototype.dataPolygon = function (arrCoords)
 {
+    var me = this;
     var arrPixelCoords = arrCoords.map(function (coord, index) 
     {
-        if (coord % 2 === 0)    return this.getPixelX(coord); // x.
-        else                    return this.getPixelY(coord); // y.
+        if (index % 2 === 0)    return me.getPixelX(coord); // x.
+        else                    return me.getPixelY(coord); // y.
     });
     return this.polygon(arrPixelCoords);
 };

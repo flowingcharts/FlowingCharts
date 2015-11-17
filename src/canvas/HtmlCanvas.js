@@ -143,10 +143,9 @@ HtmlCanvas.prototype.polyline = function (arrCoords)
 {
     this._ctx.beginPath();
     var n = arrCoords.length;
-    for (var i = 0; i < n; i++)
+    for (var i = 0; i < n; i+=2)
     {
-        var arrCoord = arrCoords[i];
-        var x = arrCoord[0], y = arrCoord[1];
+        var x = arrCoords[i], y = arrCoords[i+1];
         if (i === 0)    this._ctx.moveTo(x, y);
         else            this._ctx.lineTo(x, y);
     }
