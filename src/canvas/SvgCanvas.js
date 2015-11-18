@@ -40,14 +40,18 @@ function SvgCanvas (options)
     // Private instance members.
     this._viewPort      = new Rectangle();                              // The rectangle defining the pixel coords.
     this._viewBox       = new ViewBox();                                // The viewBox defining the data coords.
+
     this._svgNS         = 'http://www.w3.org/2000/svg';                 // Namespace for SVG elements.
-    this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
     this._svgElement    = null;                                         // The svg element that is part of the current drawing routine.
-    
-this._svg.setAttribute('preserveAspectRatio', 'none');
+    this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
+    this._svg.setAttribute('preserveAspectRatio', 'none');
+
+    this._svgMarkers    = document.createElementNS(this._svgNS, 'svg'); // Svg element for drawing markers.
+    this._svgMarkers.setAttribute('preserveAspectRatio', 'none');
+    this._svg.appendChild(this._svgMarkers);
 
     this._g = document.createElementNS(this._svgNS, 'g');
-    this._svg.appendChild(this._g);
+    this._svg.appendChild(this._g);                                     // Svg element used for grouping.
 
     // Append canvas to container and set its initial size.
     if (this._options.container)
@@ -98,6 +102,8 @@ SvgCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
     {
         this._viewBox.setCoords(xMin, yMin, xMax, yMax);
         this._svg.setAttribute('viewBox', xMin + ' ' + xMin + ' ' + this._viewBox.width() + ' ' + this._viewBox.height());
+        this._svgMarkers.setAttribute('width', this._viewBox.width());
+        this._svgMarkers.setAttribute('height', this._viewBox.height());
         return this;
     }
     else return this._viewBox;
@@ -146,6 +152,7 @@ SvgCanvas.prototype.setSize = function (w, h)
         this._svg.setAttribute('width', w);
         this._svg.setAttribute('height', h);
         this._viewPort.setDimensions(0, 0, w, h);
+        this._svgMarkers.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
         if (this._viewBoxIsSet === false) this._viewBox.setCoords(0, 0, w, h);
     }
 };
@@ -193,11 +200,13 @@ SvgCanvas.prototype.drawStroke = function ()
  */
 SvgCanvas.prototype.circle = function (cx, cy, r)
 {
+    cy = this._invertY(cy);
+
     var svgCircle = document.createElementNS(this._svgNS, 'circle');
     svgCircle.setAttribute('cx', cx);
     svgCircle.setAttribute('cy', cy);
     svgCircle.setAttribute('r', r);
-    this._svg.appendChild(svgCircle);
+    this._svgMarkers.appendChild(svgCircle);
     this._svgElement = svgCircle;
     return this;
 };
@@ -207,6 +216,8 @@ SvgCanvas.prototype.circle = function (cx, cy, r)
  */
 SvgCanvas.prototype.ellipse = function (x, y, w, h)
 {
+    y = this._invertY(y) - h;
+
     var rx = w / 2;
     var ry = h / 2;
     var cx = x + rx;
@@ -226,6 +237,8 @@ SvgCanvas.prototype.ellipse = function (x, y, w, h)
  */
 SvgCanvas.prototype.rect = function (x, y, w, h)
 {
+    y = this._invertY(y) - h;
+
     var svgRect = document.createElementNS(this._svgNS, 'rect');
     svgRect.setAttribute('x', x);
     svgRect.setAttribute('y', y);
@@ -241,6 +254,9 @@ SvgCanvas.prototype.rect = function (x, y, w, h)
  */
 SvgCanvas.prototype.line = function (x1, y1, x2, y2)
 {
+    y1 = this._invertY(y1);
+    y2 = this._invertY(y2);
+
     var svgLine = document.createElementNS(this._svgNS, 'line');
     svgLine.setAttribute('x1', x1);
     svgLine.setAttribute('y1', y1);
@@ -256,16 +272,8 @@ SvgCanvas.prototype.line = function (x1, y1, x2, y2)
  */
 SvgCanvas.prototype.polyline = function (arrCoords)
 {
-    var n = arrCoords.length;
-    var strPoints = '';
-    for (var i = 0; i < n; i+=2)
-    {
-        var x = arrCoords[i], y = arrCoords[i+1];
-        if (i !== 0)    strPoints += ',';
-        strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
-    }
     var svgPolyline = document.createElementNS(this._svgNS, 'polyline');
-    svgPolyline.setAttribute('points', strPoints);
+    svgPolyline.setAttribute('points', this._getPointsAsString(arrCoords));
     this._svg.appendChild(svgPolyline);
     this._svgElement = svgPolyline;
     return this;
@@ -276,21 +284,47 @@ SvgCanvas.prototype.polyline = function (arrCoords)
  */
 SvgCanvas.prototype.polygon = function (arrCoords)
 {
-    var n = arrCoords.length;
-    var strPoints = '';
-    for (var i = 0; i < n; i+=2)
-    {
-        var x = arrCoords[i], y = arrCoords[i+1];
-        if (i !== 0)    strPoints += ',';
-        strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
-    }
     var svgPolygon = document.createElementNS(this._svgNS, 'polygon');
-    svgPolygon.setAttribute('points', strPoints);
+    svgPolygon.setAttribute('points', this._getPointsAsString(arrCoords));
     this._svg.appendChild(svgPolygon);
     this._svgElement = svgPolygon;
     return this;
 };
 
-// Mapping data coords to pixel coords in order to mimic SVG viewBox functionality.
+/** 
+ * Converts an array of coords [x1, y1, x2, y2, x3, y3, x4, y4, ...] 
+ * to a comma separated string of coords 'x1 y1, x2 y2, x3 y3, x4 y4, ...'.
+ * 
+ * @private
+ * @param {number[]} arrCoords The list of coords.
+ * @return {string} A string containing the list of coords.
+ */
+SvgCanvas.prototype._getPointsAsString = function (arrCoords)
+{
+    var n = arrCoords.length;
+    var strPoints = '';
+    for (var i = 0; i < n; i+=2)
+    {
+        if (i !== 0) strPoints += ',';
+        strPoints += '' + arrCoords[i] + ' ' + this._invertY(arrCoords[i+1]);
+    }
+    return strPoints;
+};
+
+/** 
+ * Inverts a y coord.
+ * 
+ * @private
+ * @param {number} dataY A y coord (data units).
+ * @return {number} The flipped y coord.
+ */
+SvgCanvas.prototype._invertY = function (dataY)
+{
+    //<validation>
+    if (!isNumber(dataY)) throw new Error('SvgCanvas._getPixelY(dataY): dataY must be a number.');
+    //</validation>
+    var yInverted =  this._viewBox.yMax() - (dataY - this._viewBox.yMin());
+    return yInverted;
+};
 
 module.exports = SvgCanvas;

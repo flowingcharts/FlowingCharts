@@ -59,8 +59,8 @@ Canvas.prototype.render = function()
     var h = this._viewBox.height();
 
     this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
-    this.ellipse(0, 0, 50, 50).fillColor('#f50000').lineWidth(15).fill().stroke();
-    this.circle(0, 0, 50).fillColor('#0000f5').fill().stroke();
+    this.ellipse(10, 10, 50, 50).fillColor('#f50000').lineWidth(15).fillOpacity(0.7).fill().stroke();
+    this.circle(0, 0, 50).fillColor('#0000f5').fill().stroke({width:12});
     this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
  
     /*for (var i = 0; i < 1; i++)
