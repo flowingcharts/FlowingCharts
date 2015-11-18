@@ -10,7 +10,7 @@
  * @requires geom/BoundingBox
  * @requires geom/Rectangle
  * @requires geom/Point
- * @requires renderers/CanvasRenderer
+ * @requires canvas/CanvasRenderer
  * @requires util
  */
 
@@ -18,7 +18,7 @@
 var BoundingBox     = require('../geom/BoundingBox');
 var Rectangle       = require('../geom/Rectangle');
 var Point           = require('../geom/Point');
-var Canvas          = require('./HtmlCanvas');
+var Canvas          = require('./SvgCanvas'); 
 var util            = require('../util');
 var extendClass     = util.extendClass;
 var extendObject    = util.extendObject;
@@ -101,7 +101,7 @@ extendClass(Canvas, CartesianCanvas);
 /** 
  * @inheritdoc
  */
-Canvas.prototype.onResize = function (w, h)
+CartesianCanvas.prototype.onResize = function (w, h)
 {
     this._rect.setDimensions(0, 0, w, h);
     this.render();
@@ -114,13 +114,12 @@ CartesianCanvas.prototype.render = function()
     var w = this._rect.width();
     var h = this._rect.height();
 
-    this.dataRect(0, 0, 50, 50).fillColor('#00f500').fill();
-    this.dataEllipse(0, 0, 50, 50).fillColor('#f50000').fill();
-    this.dataCircle(0, 0, 50).fillColor('#0000f5').fill();
-    this.dataPolygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill();
-    //this.dataPolygon([372.5, 602, 745, 602, 745, 301]).fillColor('#0ff0f5').fill();
+    this.dataRect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
+    this.dataEllipse(0, 0, 50, 50).fillColor('#f50000').lineWidth(15).fill().stroke();
+    this.dataCircle(0, 0, 50).fillColor('#0000f5').fill().stroke();
+    this.dataPolygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
  
-    /*for (var i = 0; i < 5; i++)
+    for (var i = 0; i < 5; i++)
     {
         this.rect(Math.random()*w, 
             Math.random()*h, 
@@ -143,7 +142,7 @@ CartesianCanvas.prototype.render = function()
         this.lineWidth(10).circle(Math.random()*w, 
             Math.random()*h, 
             Math.random()*50).stroke().fill();
-    }*/
+    }
 };
 
 // Methods for changing the pixel or data dimensions.

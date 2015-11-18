@@ -2,10 +2,10 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link BoundingBox} class.
+ * @fileoverview Exports the {@link ViewBox} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module geom/BoundingBox 
+ * @module geom/ViewBox 
  * @requires util
  */
 
@@ -19,7 +19,7 @@ var isNumber    = util.isNumber;
  * and top-right corner point (<code>xMax</code>, <code>yMax</code>).
  * 
  * @class
- * @alias BoundingBox
+ * @alias ViewBox
  * @since 0.1.0
  * @constructor
  *
@@ -28,7 +28,7 @@ var isNumber    = util.isNumber;
  * @param {number} [xMax = 100] The x coord of the top right corner.
  * @param {number} [yMax = 100] The y coord of the top right corner.
  */
-function BoundingBox (xMin, yMin, xMax, yMax)
+function ViewBox (xMin, yMin, xMax, yMax)
 {
     // Private instance members.
     this._xMin      = null; // The x coord of the bottom left corner.
@@ -55,9 +55,9 @@ function BoundingBox (xMin, yMin, xMax, yMax)
  * @param {number} [yMin] The y coord of the bottom left corner.
  * @param {number} [xMax] The x coord of the top right corner.
  * @param {number} [yMax] The y coord of the top right corner.
- * @return {BoundingBox} <code>this</code>.
+ * @return {ViewBox} <code>this</code>.
  */
-BoundingBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
+ViewBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
 {
     if (arguments.length > 0)
     {
@@ -74,14 +74,14 @@ BoundingBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
  *
  * @since 0.1.0
  * @param {number} [x] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.xMin = function (x)
+ViewBox.prototype.xMin = function (x)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('BoundingBox.xMin(x): x must be a number.');
+        if (!isNumber(x)) throw new Error('ViewBox.xMin(x): x must be a number.');
         //</validation>
         this._xMin = x;
         this._width = Math.abs(this._xMax - this._xMin);
@@ -96,14 +96,14 @@ BoundingBox.prototype.xMin = function (x)
  *
  * @since 0.1.0
  * @param {number} [x] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.xMax = function (x)
+ViewBox.prototype.xMax = function (x)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('BoundingBox.xMax(x): x must be a number.');
+        if (!isNumber(x)) throw new Error('ViewBox.xMax(x): x must be a number.');
         //</validation>
         this._xMax = x;
         this._width = Math.abs(this._xMax - this._xMin);
@@ -119,14 +119,14 @@ BoundingBox.prototype.xMax = function (x)
  *
  * @since 0.1.0
  * @param {number} [x] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.xCenter = function (x)
+ViewBox.prototype.xCenter = function (x)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('BoundingBox.xCenter(x): x must be a number.');
+        if (!isNumber(x)) throw new Error('ViewBox.xCenter(x): x must be a number.');
         //</validation>
         this._xCenter = x;
         this._xMin  = this._xCenter - (this._width / 2);
@@ -142,15 +142,15 @@ BoundingBox.prototype.xCenter = function (x)
  *
  * @since 0.1.0
  * @param {number} [w] The width.
- * @return {number|BoundingBox} The width if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The width if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.width = function (w)
+ViewBox.prototype.width = function (w)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(w))  throw new Error('BoundingBox.width(w): w must be a number.');
-        if (w < 0)         throw new Error('BoundingBox.width(w): w must be >= 0.');
+        if (!isNumber(w))  throw new Error('ViewBox.width(w): w must be a number.');
+        if (w < 0)         throw new Error('ViewBox.width(w): w must be >= 0.');
         //</validation>
         this._width = w;
         this._xMax = this._xMin + this._width;
@@ -165,14 +165,14 @@ BoundingBox.prototype.width = function (w)
  *
  * @since 0.1.0
  * @param {number} [y] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.yMin = function (y)
+ViewBox.prototype.yMin = function (y)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('BoundingBox.yMin(y): y must be a number.');
+        if (!isNumber(y)) throw new Error('ViewBox.yMin(y): y must be a number.');
         //</validation>
         this._yMin = y;
         this._height = Math.abs(this._yMax - this._yMin);
@@ -187,14 +187,14 @@ BoundingBox.prototype.yMin = function (y)
  *
  * @since 0.1.0
  * @param {number} [y] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.yMax = function (y)
+ViewBox.prototype.yMax = function (y)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('BoundingBox.yMax(y): y must be a number.');
+        if (!isNumber(y)) throw new Error('ViewBox.yMax(y): y must be a number.');
         //</validation>
         this._yMax = y;
         this._height = Math.abs(this._yMax - this._yMin);
@@ -209,14 +209,14 @@ BoundingBox.prototype.yMax = function (y)
  *
  * @since 0.1.0
  * @param {number} [y] The coordinate.
- * @return {number|BoundingBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.yCenter = function (y)
+ViewBox.prototype.yCenter = function (y)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('BoundingBox.yCenter(y): y must be a number.');
+        if (!isNumber(y)) throw new Error('ViewBox.yCenter(y): y must be a number.');
         //</validation>
         this._yCenter = y;
         this._yMin  = this._yCenter - (this._height / 2);
@@ -231,15 +231,15 @@ BoundingBox.prototype.yCenter = function (y)
  *
  * @since 0.1.0
  * @param {number} [h] The height.
- * @return {number|BoundingBox} The height if no arguments are supplied, otherwise <code>this</code>.
+ * @return {number|ViewBox} The height if no arguments are supplied, otherwise <code>this</code>.
  */
-BoundingBox.prototype.height = function (h)
+ViewBox.prototype.height = function (h)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(h)) throw new Error('BoundingBox.height(h): h must be a number.');
-        if (h < 0)        throw new Error('BoundingBox.height(h): h must be >= 0.');
+        if (!isNumber(h)) throw new Error('ViewBox.height(h): h must be a number.');
+        if (h < 0)        throw new Error('ViewBox.height(h): h must be >= 0.');
         //</validation>
         this._height = h;
         this._yMax = this._yMin + this._height;
@@ -250,83 +250,83 @@ BoundingBox.prototype.height = function (h)
 };
 
 /** 
- * Returns a clone of this bounding box.        
+ * Returns a clone of this ViewBox.        
  * 
  * @since 0.1.0
- * @return {BoundingBox} The bounding box.   
+ * @return {ViewBox} The ViewBox.   
  */
-BoundingBox.prototype.clone = function ()
+ViewBox.prototype.clone = function ()
 {
-    return new BoundingBox(this._xMin, this._yMin, this._xMax, this._yMax);
+    return new ViewBox(this._xMin, this._yMin, this._xMax, this._yMax);
 };
 
 /** 
- * Returns true if a bounding box equals to this one.
+ * Returns true if a ViewBox equals to this one.
  * 
  * @since 0.1.0
- * @param {BoundingBox} bBox The bounding box.
- * @return {boolean} true, if the bounding box is equal to this one, otherwise false.
+ * @param {ViewBox} vb The ViewBox.
+ * @return {boolean} true, if the ViewBox is equal to this one, otherwise false.
  */
-BoundingBox.prototype.equals = function (bBox)
+ViewBox.prototype.equals = function (vb)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.equals(bBox): bBox must be a BoundingBox.');
+        if (!(vb instanceof ViewBox)) throw new Error('ViewBox.equals(vb): vb must be a ViewBox.');
         //</validation>
-        if (bBox.getXMin() !== this._xMin) return false;
-        if (bBox.getYMin() !== this._yMin) return false;
-        if (bBox.getXMax() !== this._xMax) return false;
-        if (bBox.getYMax() !== this._yMax) return false;
+        if (vb.getXMin() !== this._xMin) return false;
+        if (vb.getYMin() !== this._yMin) return false;
+        if (vb.getXMax() !== this._xMax) return false;
+        if (vb.getYMax() !== this._yMax) return false;
         return true;
     }
-    else throw new Error('BoundingBox.equals(bBox): bBox has not been defined.');
+    else throw new Error('ViewBox.equals(vb): vb has not been defined.');
 };
 
 /** 
- * Returns true if a bounding box intersects this one.
+ * Returns true if a ViewBox intersects this one.
  * 
  * @since 0.1.0
- * @param {BoundingBox} bBox The bounding box.
- * @return {boolean} true, if the bounding box intercepts this one, otherwise false.
+ * @param {ViewBox} vb The ViewBox.
+ * @return {boolean} true, if the ViewBox intercepts this one, otherwise false.
  */
-BoundingBox.prototype.intersects = function (bBox)
+ViewBox.prototype.intersects = function (vb)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.intersects(bBox): bBox must be a BoundingBox.');
+        if (!(vb instanceof ViewBox)) throw new Error('ViewBox.intersects(vb): vb must be a ViewBox.');
         //</validation>
-        if (bBox.getXMin() > this._xMax) return false;
-        if (bBox.getXMax() < this._xMin) return false;
-        if (bBox.getYMin() > this._yMax) return false;
-        if (bBox.getYMax() < this._yMin) return false;
+        if (vb.getXMin() > this._xMax) return false;
+        if (vb.getXMax() < this._xMin) return false;
+        if (vb.getYMin() > this._yMax) return false;
+        if (vb.getYMax() < this._yMin) return false;
         return true;
     }
-    else throw new Error('BoundingBox.intersects(bBox): bBox has not been defined.');
+    else throw new Error('ViewBox.intersects(vb): vb has not been defined.');
 };
 
 /** 
- * Returns true if a bounding box is contained within this one.
+ * Returns true if a ViewBox is contained within this one.
  * 
  * @since 0.1.0
- * @param {BoundingBox} bBox The bounding box.
- * @return {boolean} true, if bounding box is contained within this one, otherwise false.
+ * @param {ViewBox} vb The ViewBox.
+ * @return {boolean} true, if the ViewBox is contained within this one, otherwise false.
  */
-BoundingBox.prototype.contains = function (bBox)
+ViewBox.prototype.contains = function (vb)
 {
     if (arguments.length > 0)
     {
         //<validation>
-        if (!(bBox instanceof BoundingBox)) throw new Error('BoundingBox.contains(bBox): bBox must be a BoundingBox.');
+        if (!(vb instanceof ViewBox)) throw new Error('ViewBox.contains(vb): vb must be a ViewBox.');
         //</validation>
-        if (bBox.getXMin() < this._xMin) return false;
-        if (bBox.getXMax() > this._xMax) return false;
-        if (bBox.getYMin() < this._yMin) return false;
-        if (bBox.getYMax() > this._yMax) return false;
+        if (vb.getXMin() < this._xMin) return false;
+        if (vb.getXMax() > this._xMax) return false;
+        if (vb.getYMin() < this._yMin) return false;
+        if (vb.getYMax() > this._yMax) return false;
         return true;
     }
-    else throw new Error('BoundingBox.contains(bBox): bBox has not been defined.');
+    else throw new Error('ViewBox.contains(vb): vb has not been defined.');
 };
 
-module.exports = BoundingBox;
+module.exports = ViewBox;

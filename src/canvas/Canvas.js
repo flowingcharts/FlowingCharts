@@ -6,7 +6,7 @@
  * @fileoverview Exports the {@link Canvas} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module renderers/Canvas 
+ * @module canvas/Canvas 
  * @requires util
  */
 
@@ -49,41 +49,48 @@ function Canvas (options)
 
     // TODO Do we need to add something here to handle no container?
     this._options = options !== undefined ? options : {};
-
-    // Append canvas to container and set its initial size.
-    if (this._options.container)
-    {
-        var canvasElement = this.canvasElement();
-        var container = this._options.container;
-        container.appendChild(canvasElement);
-
-        // Resize the canvas to fit its container (dont use setSize here).
-        canvasElement.setAttribute('width', container.offsetWidth);
-        canvasElement.setAttribute('height', container.offsetHeight);
-
-        // Resize the canvas to fit its container when the window resizes.
-        var me = this;
-        var resizeTimeout;
-        window.addEventListener('resize', function (event)
-        {
-            // Add a resizeTimeout to stop multiple calls.
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function ()
-            {        
-                me.setSize(container.offsetWidth, container.offsetHeight);
-            }, 100);
-        });
-    }
 }
 
-/** 
- * @callback Canvas~onResize
- * @param {number} w The width of the canvas.
- * @param {number} h The height of the canvas.
- */
+Canvas.prototype.render = function()
+{
+    this.clear();
+
+    var w = this._viewBox.width();
+    var h = this._viewBox.height();
+
+    this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
+    this.ellipse(0, 0, 50, 50).fillColor('#f50000').lineWidth(15).fill().stroke();
+    this.circle(0, 0, 50).fillColor('#0000f5').fill().stroke();
+    this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
+ 
+    /*for (var i = 0; i < 1; i++)
+    {
+        this.rect(Math.random()*w, 
+            Math.random()*h, 
+            Math.random()*50, 
+            Math.random()*50).fill({color:'#f5f5f5'}).stroke({color:'#cccccc'});
+
+        this.circle(Math.random()*w, 
+            Math.random()*h, 
+            Math.random()*50).fillColor('#ff0000').fill().stroke();
+
+        this.circle(Math.random()*w, 
+            Math.random()*h, 
+            Math.random()*50).fill({color:'#ccf5f5'}).stroke({color:'#ccccff', width:5});
+
+        this.lineColor('#0000ff').lineWidth(10).rect(Math.random()*w, 
+            Math.random()*h, 
+            Math.random()*50, 
+            Math.random()*50).fillColor('#ff00ff').stroke().fill();
+
+        this.lineWidth(10).circle(Math.random()*w, 
+            Math.random()*h, 
+            Math.random()*50).stroke().fill();
+    }*/
+};
 
 /** 
- * Subclasses should override this function and the html element that provides the canvas.
+ * The html element being used as the drawing canvas.
  *
  * @since 0.1.0
  * @return {HTMLElement} The canvas.
@@ -93,35 +100,20 @@ Canvas.prototype.canvasElement = function ()
     return null;
 };
 
-/** 
- * Subclasses should override this function and clear the canvas.
- *
- * @since 0.1.0
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.clear = function ()
-{
-    return this;
-};
+// Geometry.
 
 /** 
- * Subclasses should override this function and provide the fill drawing routine for the graphics library being used.
+ * The value of the viewBox specifies a rectangle in user space which is mapped to the bounds of the canvas. 
+ * The viewBox has its origin at the bottom left corner of the canvas with the 
+ * positive x-axis pointing towards the right, the positive y-axis pointing up.
  *
- * @since 0.1.0
- * @return {Canvas} <code>this</code>.
+ * @param {number} [xMin = 0] The x coord of the bottom left corner.
+ * @param {number} [yMin = 0] The y coord of the bottom left corner.
+ * @param {number} [xMax = 100] The x coord of the top right corner.
+ * @param {number} [yMax = 100] The y coord of the top right corner.
+ * @return {ViewBox|Canvas} The ViewBox if no arguments are supplied, otherwise <code>this</code>.
  */
-Canvas.prototype.drawFill = function ()
-{
-    return this;
-};
-
-/** 
- * Subclasses should override this function and provide the stroke drawing routine for the graphics library being used.
- *
- * @since 0.1.0
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.drawStroke = function ()
+Canvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
 {
     return this;
 };
@@ -134,7 +126,7 @@ Canvas.prototype.drawStroke = function ()
  */
 Canvas.prototype.width = function ()
 {
-    return parseInt(this.canvasElement().getAttribute('width'));
+
 };
 
 /** 
@@ -145,7 +137,7 @@ Canvas.prototype.width = function ()
  */
 Canvas.prototype.height = function ()
 {
-    return parseInt(this.canvasElement().getAttribute('height'));
+
 };
 
 /** 
@@ -157,33 +149,10 @@ Canvas.prototype.height = function ()
  */
 Canvas.prototype.setSize = function (w, h)
 {
-    //<validation>
-    if (!isNumber(w)) throw new Error('Canvas.setSize(w): w must be a number.');
-    if (w < 0)        throw new Error('Canvas.setSize(w): w must be >= 0.');
-    if (!isNumber(h)) throw new Error('Canvas.setSize(h): h must be a number.');
-    if (h < 0)        throw new Error('Canvas.setSize(h): h must be >= 0.');
-    //</validation>
-
-    if (w !== this.width() || h !== this.height())
-    {
-        var canvasElement = this.canvasElement();
-        canvasElement.setAttribute('width', w);
-        canvasElement.setAttribute('height', h);
-        this.onResize(w, h);
-    }
-};
-
-/** 
- * Called after the canvas is resized.
- *
- * @since 0.1.0
- * @param {number} w The width.
- * @param {number} h The height.
- */
-Canvas.prototype.onResize = function (w, h)
-{
 
 };
+
+// Styling.
 
 /** 
  * Defines the default stroke style. This can be overridden on a shape by 
@@ -456,6 +425,41 @@ Canvas.prototype.lineOpacity = function (opacity)
         return this;
     }
     else return this._lineOpacity;
+};
+
+// Drawing.
+
+/** 
+ * Clear the canvas.
+ *
+ * @since 0.1.0
+ * @return {Canvas} <code>this</code>.
+ */
+Canvas.prototype.clear = function ()
+{
+    return this;
+};
+
+/** 
+ * Provides the fill drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @return {Canvas} <code>this</code>.
+ */
+Canvas.prototype.drawFill = function ()
+{
+    return this;
+};
+
+/** 
+ * Provides the stroke drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @return {Canvas} <code>this</code>.
+ */
+Canvas.prototype.drawStroke = function ()
+{
+    return this;
 };
 
 /** 

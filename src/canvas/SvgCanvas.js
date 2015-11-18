@@ -6,13 +6,17 @@
  * @fileoverview Exports the {@link SvgCanvas} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module renderers/SvgCanvas 
+ * @module canvas/SvgCanvas 
+ * @requires geom/ViewBox
+ * @requires geom/Rectangle
  * @requires renderers/Canvas
  * @requires util
  */
 
 // Required modules.
 var Canvas      = require('./Canvas');
+var ViewBox     = require('../geom/ViewBox');
+var Rectangle   = require('../geom/Rectangle');
 var util        = require('../util');
 var extendClass = util.extendClass;
 var isNumber    = util.isNumber;
@@ -28,16 +32,50 @@ var isNumber    = util.isNumber;
  *
  * @param {Object} [options] The options.
  * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
- * @param {Canvas~onResize} [options.onResize] Function called when the canvas resizes. 
  */
 function SvgCanvas (options)
 {
+    SvgCanvas.baseConstructor.call(this, options);
+
     // Private instance members.
+    this._viewPort      = new Rectangle();                              // The rectangle defining the pixel coords.
+    this._viewBox       = new ViewBox();                                // The viewBox defining the data coords.
     this._svgNS         = 'http://www.w3.org/2000/svg';                 // Namespace for SVG elements.
     this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
     this._svgElement    = null;                                         // The svg element that is part of the current drawing routine.
     
-    SvgCanvas.baseConstructor.call(this, options);
+this._svg.setAttribute('preserveAspectRatio', 'none');
+
+    this._g = document.createElementNS(this._svgNS, 'g');
+    this._svg.appendChild(this._g);
+
+    // Append canvas to container and set its initial size.
+    if (this._options.container)
+    {
+        var container = this._options.container;
+        container.appendChild(this._svg);
+
+        // Resize the canvas to fit its container and do same when the window resizes.
+        this.setSize(container.offsetWidth, container.offsetHeight);
+        var me = this;
+        var resizeTimeout;
+        window.addEventListener('resize', function (event)
+        {
+            // Add a resizeTimeout to stop multiple calls to setSize().
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function ()
+            {        
+                me.setSize(container.offsetWidth, container.offsetHeight);
+            }, 100);
+        });
+    }
+
+    // Flip the y axis.
+    //this._svg.setAttribute('transform', 'scale(1,-1)');
+    this._viewPort.setDimensions(0, 0, this.width(), this.height());
+    //this._viewBox.setCoords(0, 0, this.width(), this.height());
+    this.viewBox(0, 0, 100, 100);
+    this.render();
 }
 extendClass(Canvas, SvgCanvas);
 
@@ -48,6 +86,71 @@ SvgCanvas.prototype.canvasElement = function ()
 {
     return this._svg;
 };
+
+// Geometry.
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
+{
+    if (arguments.length > 0)
+    {
+        this._viewBox.setCoords(xMin, yMin, xMax, yMax);
+        this._svg.setAttribute('viewBox', xMin + ' ' + xMin + ' ' + this._viewBox.width() + ' ' + this._viewBox.height());
+        return this;
+    }
+    else return this._viewBox;
+};
+
+/** 
+ * Get the width of the canvas.
+ *
+ * @since 0.1.0
+ * @return {number} The width.
+ */
+SvgCanvas.prototype.width = function ()
+{
+    return parseInt(this._svg.getAttribute('width'));
+};
+
+/** 
+ * Get the height of the canvas.
+ *
+ * @since 0.1.0
+ * @return {number} The height.
+ */
+SvgCanvas.prototype.height = function ()
+{
+    return parseInt(this._svg.getAttribute('height'));
+};
+
+/** 
+ * Set the size of the canvas.
+ *
+ * @since 0.1.0
+ * @param {number} w The width.
+ * @param {number} h The height.
+ */
+SvgCanvas.prototype.setSize = function (w, h)
+{
+    //<validation>
+    if (!isNumber(w)) throw new Error('Canvas.setSize(w): w must be a number.');
+    if (w < 0)        throw new Error('Canvas.setSize(w): w must be >= 0.');
+    if (!isNumber(h)) throw new Error('Canvas.setSize(h): h must be a number.');
+    if (h < 0)        throw new Error('Canvas.setSize(h): h must be >= 0.');
+    //</validation>
+
+    if (w !== this.width() || h !== this.height())
+    {
+        this._svg.setAttribute('width', w);
+        this._svg.setAttribute('height', h);
+        this._viewPort.setDimensions(0, 0, w, h);
+        if (this._viewBoxIsSet === false) this._viewBox.setCoords(0, 0, w, h);
+    }
+};
+
+// Drawing.
 
 /** 
  * @inheritdoc
@@ -76,6 +179,7 @@ SvgCanvas.prototype.drawFill = function ()
  */
 SvgCanvas.prototype.drawStroke = function ()
 {
+    this._svgElement.setAttribute('vector-effect','non-scaling-stroke'); // Preserve line width.
     this._svgElement.setAttribute('stroke', this.lineColor());
     this._svgElement.setAttribute('stroke-width', this.lineWidth());
     this._svgElement.setAttribute('stroke-linejoin', this.lineJoin());
@@ -101,8 +205,12 @@ SvgCanvas.prototype.circle = function (cx, cy, r)
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.ellipse = function (cx, cy, rx, ry)
+SvgCanvas.prototype.ellipse = function (x, y, w, h)
 {
+    var rx = w / 2;
+    var ry = h / 2;
+    var cx = x + rx;
+    var cy = y + ry;
     var svgEllipse = document.createElementNS(this._svgNS, 'ellipse');
     svgEllipse.setAttribute('cx', cx);
     svgEllipse.setAttribute('cy', cy);
@@ -150,9 +258,10 @@ SvgCanvas.prototype.polyline = function (arrCoords)
 {
     var n = arrCoords.length;
     var strPoints = '';
-    for (var i = 0; i < n - 1; i++)
+    for (var i = 0; i < n; i+=2)
     {
-        if (i !== 0) strPoints += ',';
+        var x = arrCoords[i], y = arrCoords[i+1];
+        if (i !== 0)    strPoints += ',';
         strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
     var svgPolyline = document.createElementNS(this._svgNS, 'polyline');
@@ -169,9 +278,10 @@ SvgCanvas.prototype.polygon = function (arrCoords)
 {
     var n = arrCoords.length;
     var strPoints = '';
-    for (var i = 0; i < n - 1; i++)
+    for (var i = 0; i < n; i+=2)
     {
-        if (i !== 0) strPoints += ',';
+        var x = arrCoords[i], y = arrCoords[i+1];
+        if (i !== 0)    strPoints += ',';
         strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
     var svgPolygon = document.createElementNS(this._svgNS, 'polygon');
@@ -180,5 +290,7 @@ SvgCanvas.prototype.polygon = function (arrCoords)
     this._svgElement = svgPolygon;
     return this;
 };
+
+// Mapping data coords to pixel coords in order to mimic SVG viewBox functionality.
 
 module.exports = SvgCanvas;
