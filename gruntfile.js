@@ -302,7 +302,7 @@ module.exports = function (grunt)
 
     // '>grunt build' 
     // Used for a quick build during development.
-    grunt.registerTask('build', ['todos', 'clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
 
     // '>grunt test' 
     // Carries out unit testing on the JavaScript module files and generates a test coverage file at 'gen_test_coverage/coverage.html'.

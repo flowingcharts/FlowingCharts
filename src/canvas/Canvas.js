@@ -51,42 +51,14 @@ function Canvas (options)
     this._options = options !== undefined ? options : {};
 }
 
+/** 
+ * Renders the graphics.
+ *
+ * @since 0.1.0
+ */
 Canvas.prototype.render = function()
 {
-    this.clear();
 
-    var w = this._viewBox.width();
-    var h = this._viewBox.height();
-
-    this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
-    this.ellipse(10, 10, 50, 50).fillColor('#f50000').lineWidth(15).fillOpacity(0.7).fill().stroke();
-    this.circle(0, 0, 50).fillColor('#0000f5').fill().stroke({width:12});
-    this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
- 
-    /*for (var i = 0; i < 1; i++)
-    {
-        this.rect(Math.random()*w, 
-            Math.random()*h, 
-            Math.random()*50, 
-            Math.random()*50).fill({color:'#f5f5f5'}).stroke({color:'#cccccc'});
-
-        this.circle(Math.random()*w, 
-            Math.random()*h, 
-            Math.random()*50).fillColor('#ff0000').fill().stroke();
-
-        this.circle(Math.random()*w, 
-            Math.random()*h, 
-            Math.random()*50).fill({color:'#ccf5f5'}).stroke({color:'#ccccff', width:5});
-
-        this.lineColor('#0000ff').lineWidth(10).rect(Math.random()*w, 
-            Math.random()*h, 
-            Math.random()*50, 
-            Math.random()*50).fillColor('#ff00ff').stroke().fill();
-
-        this.lineWidth(10).circle(Math.random()*w, 
-            Math.random()*h, 
-            Math.random()*50).stroke().fill();
-    }*/
 };
 
 /** 
@@ -101,22 +73,6 @@ Canvas.prototype.canvasElement = function ()
 };
 
 // Geometry.
-
-/** 
- * The value of the viewBox specifies a rectangle in user space which is mapped to the bounds of the canvas. 
- * The viewBox has its origin at the bottom left corner of the canvas with the 
- * positive x-axis pointing towards the right, the positive y-axis pointing up.
- *
- * @param {number} [xMin = 0] The x coord of the bottom left corner.
- * @param {number} [yMin = 0] The y coord of the bottom left corner.
- * @param {number} [xMax = 100] The x coord of the top right corner.
- * @param {number} [yMax = 100] The y coord of the top right corner.
- * @return {ViewBox|Canvas} The ViewBox if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
-{
-    return this;
-};
 
 /** 
  * Get the width of the canvas.
@@ -150,6 +106,36 @@ Canvas.prototype.height = function ()
 Canvas.prototype.setSize = function (w, h)
 {
 
+};
+
+/** 
+ * A rectangle that defines the drawing area (in pixels) within the canvas.
+ *
+ * @param {number} [x = 0] The x coord of the top left corner.
+ * @param {number} [y = 0] The y coord of the top left corner.
+ * @param {number} [width = 100] The width.
+ * @param {number} [height = 100] The height.
+ * @return {Rectangle|Canvas} A Rectangle that defineds the viewPort if no arguments are supplied, otherwise <code>this</code>.
+ */
+Canvas.prototype.viewPort = function (xMin, yMin, xMax, yMax)
+{
+    return this;
+};
+
+/** 
+ * The value of the viewBox specifies a rectangle in user space which is mapped to the bounds of the canvas. 
+ * The viewBox has its origin at the bottom left corner of the canvas with the 
+ * positive x-axis pointing towards the right, the positive y-axis pointing up.
+ *
+ * @param {number} [xMin = 0] The x coord of the bottom left corner.
+ * @param {number} [yMin = 0] The y coord of the bottom left corner.
+ * @param {number} [xMax = 100] The x coord of the top right corner.
+ * @param {number} [yMax = 100] The y coord of the top right corner.
+ * @return {ViewBox|Canvas} The ViewBox if no arguments are supplied, otherwise <code>this</code>.
+ */
+Canvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
+{
+    return this;
 };
 
 // Styling.

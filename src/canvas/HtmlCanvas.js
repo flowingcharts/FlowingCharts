@@ -44,7 +44,7 @@ function HtmlCanvas (options)
     // Private instance members.
     this._viewPort      = new Rectangle();                  // The rectangle defining the pixel coords.
     this._viewBox       = new ViewBox();                    // The viewBox defining the data coords.
-    this._viewBoxIsSet  = false;                            // Indicates if the viewBox has been set.
+    this._isViewBoxSet  = false;                            // Indicates if the viewBox has been set.
     this._canvas        = document.createElement('canvas'); // The drawing canvas.
     this._ctx           = this._canvas.getContext('2d');    // The drawing context.
     
@@ -66,16 +66,27 @@ function HtmlCanvas (options)
             resizeTimeout = setTimeout(function ()
             {        
                 me.setSize(container.offsetWidth, container.offsetHeight);
-            }, 100);
+            }, 0);
         });
     }
 
-    this._viewPort.setDimensions(0, 0, this.width(), this.height());
-    //this._viewBox.setCoords(0, 0, this.width(), this.height());
     this.viewBox(0, 0, 100, 100);
+
     this.render();
 }
 extendClass(Canvas, HtmlCanvas);
+
+/** 
+ * @inheritdoc
+ */
+HtmlCanvas.prototype.render = function()
+{
+    this.clear();
+    this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
+    this.ellipse(10, 10, 50, 50).fillColor('#f50000').lineWidth(15).fillOpacity(0.7).fill().stroke();
+    this.circle(50, 50, 50).fillColor('#0000f5').fill().stroke({width:12});
+    this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
+};
 
 /** 
  * @inheritdoc
@@ -86,20 +97,6 @@ HtmlCanvas.prototype.canvasElement = function ()
 }; 
 
 // Geometry.
-
-/** 
- * @inheritdoc
- */
-HtmlCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
-{
-    if (arguments.length > 0)
-    {
-        this._viewBoxIsSet = true;
-        this._viewBox.setCoords(xMin, yMin, xMax, yMax);
-        return this;
-    }
-    else return this._viewBox;
-};
 
 /** 
  * @inheritdoc
@@ -131,12 +128,54 @@ HtmlCanvas.prototype.setSize = function (w, h)
 
     if (w !== this.width() || h !== this.height())
     {
+        // Size canvas.
         this._canvas.setAttribute('width', w);
         this._canvas.setAttribute('height', h);
-        this._viewPort.setDimensions(0, 0, w, h);
-        if (this._viewBoxIsSet === false) this._viewBox.setCoords(0, 0, w, h);
+
+        // viewPort.
+        var leftMargin = 20;
+        var rightMargin = 20;
+        var topMargin = 20;
+        var bottomMargin = 20;
+        var x = leftMargin;
+        var y = topMargin;
+        var width = w - (leftMargin + rightMargin);
+        var height = h - (topMargin + bottomMargin);
+        this.viewPort(x, y, width, height);
+
+        // viewBox.        // Match the viewBox to the viewPort if it hasnt been specfically set using viewBox().
+        if (this._isViewBoxSet === false) this._viewBox.setCoords(0, 0, w, h);
+
         this.render();
     }
+};
+
+/** 
+ * @inheritdoc
+ */
+HtmlCanvas.prototype.viewPort = function (x, y, w, h)
+{
+    if (arguments.length > 0)
+    {
+        this._viewPort.setDimensions(x, y, w, h);
+        return this;
+    }
+    else return this._viewPort;
+};
+
+
+/** 
+ * @inheritdoc
+ */
+HtmlCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
+{
+    if (arguments.length > 0)
+    {
+        this._isViewBoxSet = true;
+        this._viewBox.setCoords(xMin, yMin, xMax, yMax);
+        return this;
+    }
+    else return this._viewBox;
 };
 
 // Drawing.
@@ -278,6 +317,7 @@ HtmlCanvas.prototype.polygon = function (arrCoords)
 /** 
  * Converts a point from data units to pixel units.
  * 
+ * @since 0.1.0
  * @private
  * @param {Point} dataPoint A point (data units).
  * @return {Point} A point (pixel units).
@@ -292,6 +332,7 @@ HtmlCanvas.prototype._getPixelPoint = function (dataPoint)
 /** 
  * Converts a bounding box (data units) to a rectangle (pixel units).
  * 
+ * @since 0.1.0
  * @private
  * @param {BoundingBox} viewBox A bounding box (data units).
  * @return {Rectangle} A rectangle (pixel units).
@@ -308,6 +349,7 @@ HtmlCanvas.prototype._getPixelRect = function (viewBox)
 /** 
  * Converts an x coord from data units to pixel units.
  * 
+ * @since 0.1.0
  * @private
  * @param {number} dataX An x coord (data units).
  * @return {number} The x coord (pixel units).
@@ -324,6 +366,7 @@ HtmlCanvas.prototype._getPixelX = function (dataX)
 /** 
  * Converts a y coord from data units to pixel units.
  * 
+ * @since 0.1.0
  * @private
  * @param {number} dataY A y coord (data units).
  * @return {number} The y coord (pixel units).
@@ -340,6 +383,7 @@ HtmlCanvas.prototype._getPixelY = function (dataY)
 /** 
  * Converts a width from data units to pixel units.
  * 
+ * @since 0.1.0
  * @private
  * @param {number} dataWidth A width (data units).
  * @return {number} The width (pixel units).
@@ -358,6 +402,7 @@ HtmlCanvas.prototype._getPixelWidth = function (dataWidth)
 /** 
  * Converts a height from data units to pixel units.
  * 
+ * @since 0.1.0
  * @private
  * @param {number} dataHeight A height (data units).
  * @return {number} The height (pixel units).

@@ -38,29 +38,25 @@ function SvgCanvas (options)
     SvgCanvas.baseConstructor.call(this, options);
 
     // Private instance members.
-    this._viewPort      = new Rectangle();                              // The rectangle defining the pixel coords.
-    this._viewBox       = new ViewBox();                                // The viewBox defining the data coords.
+    this._viewPort      = new Rectangle();              // The rectangle defining the pixel coords.
+    this._viewBox       = new ViewBox();                // The viewBox defining the data coords.
 
-    this._svgNS         = 'http://www.w3.org/2000/svg';                 // Namespace for SVG elements.
-    this._svgElement    = null;                                         // The svg element that is part of the current drawing routine.
-    this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
-    this._svg.setAttribute('preserveAspectRatio', 'none');
+    this._svgNS         = 'http://www.w3.org/2000/svg'; // Namespace for SVG elements.
+    this._svgElement    = null;                         // The svg element that is part of the current drawing routine.
+   
+    this._svg = this.createElement('svg');              // The main svg element.
 
-
-
+    this._svgShapes = this.createElement('svg',         // Svg element for holding shapes.
+    {
+        'preserveAspectRatio'   : 'none'
+    });
+    this._svg.appendChild(this._svgShapes);
         
-    this._svgMarkers    = document.createElementNS(this._svgNS, 'svg'); // Svg element for drawing markers.
-    this._svgMarkers.setAttribute('preserveAspectRatio', 'none');
-    this._svgMarkers.setAttribute('width', this._viewBox.width());
-    this._svgMarkers.setAttribute('height', this._viewBox.height());
+    this._svgMarkers = this.createElement('svg',        // Svg element for holding markers.
+    {
+        'preserveAspectRatio'   : 'xMidYMid meet'
+    });
     this._svg.appendChild(this._svgMarkers);
-
-    this._g = document.createElementNS(this._svgNS, 'g');
-    this._svg.appendChild(this._g);                                     // Svg element used for grouping.
-
-
-
-
 
     // Append canvas to container and set its initial size.
     if (this._options.container)
@@ -68,9 +64,9 @@ function SvgCanvas (options)
         var container = this._options.container;
         container.appendChild(this._svg);
 
-
         // Resize the canvas to fit its container and do same when the window resizes.
         this.setSize(container.offsetWidth, container.offsetHeight);
+
         var me = this;
         var resizeTimeout;
         window.addEventListener('resize', function (event)
@@ -80,21 +76,26 @@ function SvgCanvas (options)
             resizeTimeout = setTimeout(function ()
             {        
                 me.setSize(container.offsetWidth, container.offsetHeight);
-            }, 100);
+            }, 0);
         });
     }
 
-    // Flip the y axis.
-    //this._svg.setAttribute('transform', 'scale(1,-1)');
-    this._viewPort.setDimensions(0, 0, this.width(), this.height());
-    //this._viewBox.setCoords(0, 0, this.width(), this.height());
     this.viewBox(0, 0, 100, 100);
-
-
 
     this.render();
 }
 extendClass(Canvas, SvgCanvas);
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.render = function()
+{
+    this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
+    this.ellipse(10, 10, 50, 50).fillColor('#f50000').lineWidth(15).fillOpacity(0.7).fill().stroke();
+    this.circle(50, 50, 25).fillColor('#0000f5').fill().stroke({width:12});
+    this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
+};
 
 /** 
  * @inheritdoc
@@ -105,22 +106,6 @@ SvgCanvas.prototype.canvasElement = function ()
 };
 
 // Geometry.
-
-/** 
- * @inheritdoc
- */
-SvgCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
-{
-    if (arguments.length > 0)
-    {
-        this._viewBox.setCoords(xMin, yMin, xMax, yMax);
-        this._svg.setAttribute('viewBox', xMin + ' ' + xMin + ' ' + this._viewBox.width() + ' ' + this._viewBox.height());
-        this._svgMarkers.setAttribute('width', this._viewBox.width());
-        this._svgMarkers.setAttribute('height', this._viewBox.height());
-        return this;
-    }
-    else return this._viewBox;
-};
 
 /** 
  * Get the width of the canvas.
@@ -162,12 +147,73 @@ SvgCanvas.prototype.setSize = function (w, h)
 
     if (w !== this.width() || h !== this.height())
     {
+        // Size canvas.
         this._svg.setAttribute('width', w);
         this._svg.setAttribute('height', h);
-        this._viewPort.setDimensions(0, 0, w, h);
-        this._svgMarkers.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-        if (this._viewBoxIsSet === false) this._viewBox.setCoords(0, 0, w, h);
+
+        // viewPort.
+        var leftMargin = 20;
+        var rightMargin = 20;
+        var topMargin = 20;
+        var bottomMargin = 20;
+        var x = leftMargin;
+        var y = topMargin;
+        var width = w - (leftMargin + rightMargin);
+        var height = h - (topMargin + bottomMargin);
+        this.viewPort(x, y, width, height);
+
+        // viewBox.
+        // Match the viewBox to the viewPort if it hasnt been specfically set using viewBox().
+        if (this._isViewBoxSet === false) this._viewBox.setCoords(0, 0, w, h);
     }
+};
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.viewPort = function (x, y, w, h)
+{
+    if (arguments.length > 0)
+    {
+        this._viewPort.setDimensions(x, y, w, h);
+
+        this._svgShapes.setAttribute('x',       x);
+        this._svgShapes.setAttribute('y',       y);
+        this._svgShapes.setAttribute('width',   w);
+        this._svgShapes.setAttribute('height',  h);
+
+        this._svgMarkers.setAttribute('x',       x);
+        this._svgMarkers.setAttribute('y',       y);
+        this._svgMarkers.setAttribute('width',   w);
+        this._svgMarkers.setAttribute('height',  h);
+
+        //this._svgMarkers.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+
+        return this;
+    }
+    else return this._viewPort;
+};
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.viewBox = function (xMin, yMin, xMax, yMax)
+{
+    if (arguments.length > 0)
+    {
+        this._viewBox.setCoords(xMin, yMin, xMax, yMax);
+
+        this._svgShapes.setAttribute('viewBox', this._viewBox.xMin() + ' ' + this._viewBox.yMin()  + ' ' + this._viewBox.width() + ' ' + this._viewBox.height());
+    
+            this._svgMarkers.setAttribute('viewBox', this._viewBox.xMin() + ' ' + this._viewBox.yMin()  + ' ' + this._viewBox.width() + ' ' + this._viewBox.height());
+
+        //this._svgMarkers.setAttribute('width',   this._viewBox.width());
+       // this._svgMarkers.setAttribute('height',  this._viewBox.height());
+
+        return this;
+    }
+    else return this._viewBox;
 };
 
 // Drawing.
@@ -215,12 +261,16 @@ SvgCanvas.prototype.circle = function (cx, cy, r)
 {
     cy = this._invertY(cy);
 
-    var svgCircle = document.createElementNS(this._svgNS, 'circle');
-    svgCircle.setAttribute('cx', cx);
-    svgCircle.setAttribute('cy', cy);
-    svgCircle.setAttribute('r', r);
+    var svgCircle = this.createElement('circle',       
+    {
+        'cx'    : cx,
+        'cy'    : cy,
+        'r'     : r
+    });
+
     this._svgMarkers.appendChild(svgCircle);
     this._svgElement = svgCircle;
+
     return this;
 };
 
@@ -235,13 +285,18 @@ SvgCanvas.prototype.ellipse = function (x, y, w, h)
     var ry = h / 2;
     var cx = x + rx;
     var cy = y + ry;
-    var svgEllipse = document.createElementNS(this._svgNS, 'ellipse');
-    svgEllipse.setAttribute('cx', cx);
-    svgEllipse.setAttribute('cy', cy);
-    svgEllipse.setAttribute('rx', rx);
-    svgEllipse.setAttribute('ry', ry);
-    this._svg.appendChild(svgEllipse);
+
+    var svgEllipse = this.createElement('ellipse',       
+    {
+        'cx'    : cx,
+        'cy'    : cy,
+        'rx'    : rx,
+        'ry'    : ry
+    });
+
+    this._svgShapes.appendChild(svgEllipse);
     this._svgElement = svgEllipse;
+
     return this;
 };
 
@@ -252,13 +307,17 @@ SvgCanvas.prototype.rect = function (x, y, w, h)
 {
     y = this._invertY(y) - h;
 
-    var svgRect = document.createElementNS(this._svgNS, 'rect');
-    svgRect.setAttribute('x', x);
-    svgRect.setAttribute('y', y);
-    svgRect.setAttribute('width', w);
-    svgRect.setAttribute('height', h);
-    this._svg.appendChild(svgRect);
+    var svgRect = this.createElement('rect',       
+    {
+        'x'         : x,
+        'y'         : y,
+        'width'     : w,
+        'height'    : h
+    });
+
+    this._svgShapes.appendChild(svgRect);
     this._svgElement = svgRect;
+
     return this;
 };
 
@@ -270,13 +329,17 @@ SvgCanvas.prototype.line = function (x1, y1, x2, y2)
     y1 = this._invertY(y1);
     y2 = this._invertY(y2);
 
-    var svgLine = document.createElementNS(this._svgNS, 'line');
-    svgLine.setAttribute('x1', x1);
-    svgLine.setAttribute('y1', y1);
-    svgLine.setAttribute('x2', x2);
-    svgLine.setAttribute('y2', y2);
-    this._svg.appendChild(svgLine);
+    var svgLine = this.createElement('line',       
+    {
+        'x1' : x1,
+        'y1' : y1,
+        'x2' : x2,
+        'y2' : y2
+    });
+
+    this._svgShapes.appendChild(svgLine);
     this._svgElement = svgLine;
+
     return this;
 };
 
@@ -285,10 +348,14 @@ SvgCanvas.prototype.line = function (x1, y1, x2, y2)
  */
 SvgCanvas.prototype.polyline = function (arrCoords)
 {
-    var svgPolyline = document.createElementNS(this._svgNS, 'polyline');
-    svgPolyline.setAttribute('points', this._getPointsAsString(arrCoords));
-    this._svg.appendChild(svgPolyline);
+    var svgPolyline = this.createElement('polyline',       
+    {
+        'points' : this._getPointsAsString(arrCoords)
+    });
+
+    this._svgShapes.appendChild(svgPolyline);
     this._svgElement = svgPolyline;
+
     return this;
 };
 
@@ -297,10 +364,14 @@ SvgCanvas.prototype.polyline = function (arrCoords)
  */
 SvgCanvas.prototype.polygon = function (arrCoords)
 {
-    var svgPolygon = document.createElementNS(this._svgNS, 'polygon');
-    svgPolygon.setAttribute('points', this._getPointsAsString(arrCoords));
-    this._svg.appendChild(svgPolygon);
+    var svgPolygon = this.createElement('polygon',       
+    {
+        'points' : this._getPointsAsString(arrCoords)
+    });
+
+    this._svgShapes.appendChild(svgPolygon);
     this._svgElement = svgPolygon;
+
     return this;
 };
 
@@ -308,6 +379,7 @@ SvgCanvas.prototype.polygon = function (arrCoords)
  * Converts an array of coords [x1, y1, x2, y2, x3, y3, x4, y4, ...] 
  * to a comma separated string of coords 'x1 y1, x2 y2, x3 y3, x4 y4, ...'.
  * 
+ * @since 0.1.0
  * @private
  * @param {number[]} arrCoords The list of coords.
  * @return {string} A string containing the list of coords.
@@ -327,6 +399,7 @@ SvgCanvas.prototype._getPointsAsString = function (arrCoords)
 /** 
  * Inverts a y coord.
  * 
+ * @since 0.1.0
  * @private
  * @param {number} y A y coord (data units).
  * @return {number} The flipped y coord.
@@ -334,10 +407,31 @@ SvgCanvas.prototype._getPointsAsString = function (arrCoords)
 SvgCanvas.prototype._invertY = function (y)
 {
     //<validation>
-    if (!isNumber(y)) throw new Error('SvgCanvas._getPixelY(y): y must be a number.');
+    if (!isNumber(y)) throw new Error('SvgCanvas._invertY(y): y must be a number.');
     //</validation>
     var yInverted =  this._viewBox.yMax() - (y - this._viewBox.yMin());
     return yInverted;
+};
+
+/** 
+ * Creates an element with the given attributes.
+ * 
+ * @since 0.1.0
+ * @param {string} type The element type.
+ * @return {attr} attr The list of attributes.
+ */
+SvgCanvas.prototype.createElement = function (type, attr)
+{
+    var svgElement = document.createElementNS(this._svgNS, type);
+
+    for (var property in attr) 
+    {
+        if (attr.hasOwnProperty(property))  
+        {
+            svgElement.setAttribute(property, attr[property]);
+        }
+    }
+    return svgElement;
 };
 
 module.exports = SvgCanvas;
