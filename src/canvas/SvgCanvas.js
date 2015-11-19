@@ -46,18 +46,28 @@ function SvgCanvas (options)
     this._svg           = document.createElementNS(this._svgNS, 'svg'); // The parent svg element.
     this._svg.setAttribute('preserveAspectRatio', 'none');
 
+
+
+        
     this._svgMarkers    = document.createElementNS(this._svgNS, 'svg'); // Svg element for drawing markers.
     this._svgMarkers.setAttribute('preserveAspectRatio', 'none');
+    this._svgMarkers.setAttribute('width', this._viewBox.width());
+    this._svgMarkers.setAttribute('height', this._viewBox.height());
     this._svg.appendChild(this._svgMarkers);
 
     this._g = document.createElementNS(this._svgNS, 'g');
     this._svg.appendChild(this._g);                                     // Svg element used for grouping.
+
+
+
+
 
     // Append canvas to container and set its initial size.
     if (this._options.container)
     {
         var container = this._options.container;
         container.appendChild(this._svg);
+
 
         // Resize the canvas to fit its container and do same when the window resizes.
         this.setSize(container.offsetWidth, container.offsetHeight);
@@ -79,6 +89,9 @@ function SvgCanvas (options)
     this._viewPort.setDimensions(0, 0, this.width(), this.height());
     //this._viewBox.setCoords(0, 0, this.width(), this.height());
     this.viewBox(0, 0, 100, 100);
+
+
+
     this.render();
 }
 extendClass(Canvas, SvgCanvas);
@@ -315,15 +328,15 @@ SvgCanvas.prototype._getPointsAsString = function (arrCoords)
  * Inverts a y coord.
  * 
  * @private
- * @param {number} dataY A y coord (data units).
+ * @param {number} y A y coord (data units).
  * @return {number} The flipped y coord.
  */
-SvgCanvas.prototype._invertY = function (dataY)
+SvgCanvas.prototype._invertY = function (y)
 {
     //<validation>
-    if (!isNumber(dataY)) throw new Error('SvgCanvas._getPixelY(dataY): dataY must be a number.');
+    if (!isNumber(y)) throw new Error('SvgCanvas._getPixelY(y): y must be a number.');
     //</validation>
-    var yInverted =  this._viewBox.yMax() - (dataY - this._viewBox.yMin());
+    var yInverted =  this._viewBox.yMax() - (y - this._viewBox.yMin());
     return yInverted;
 };
 

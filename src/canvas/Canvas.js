@@ -545,5 +545,11 @@ Canvas.prototype.polygon = function (arrCoords)
     return this;
 };
 
+// TODO Event handlers.
+Canvas.prototype.on = function (strEvents, fncHandler)
+{
+    return this;
+};
+
 
 module.exports = Canvas;

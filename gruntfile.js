@@ -238,6 +238,36 @@ module.exports = function (grunt)
                     }
                 ]
             }
+        }, 
+        // Extracts and lists TODOs and FIXMEs from code.
+        todos: 
+        {
+            all: 
+            {
+                src: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+                options: 
+                {
+                    verbose: false,
+                    reporter: 
+                    {
+                        fileTasks: function (file, tasks) 
+                        {
+                            if (!tasks.length) 
+                            {
+                                return '';
+                            }
+                            var result = '';
+                            result += file + '\n';
+                            tasks.forEach(function (task) 
+                            {
+                                result += task.lineNumber + ': ' + task.line + '\n';
+                            });
+                            result += '\n';
+                            return result;
+                        }
+                    }
+                }
+            }
         },
         // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
         // Enable by typing '>grunt watch' into a command prompt.
@@ -261,6 +291,7 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-processhtml');
+    grunt.loadNpmTasks('grunt-todos');
 
     // Tasks that can be run from the command line.
     // Open command prompt in this directory (shift + right click > Open command window here) to run tasks.
@@ -271,7 +302,7 @@ module.exports = function (grunt)
 
     // '>grunt build' 
     // Used for a quick build during development.
-    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
+    grunt.registerTask('build', ['todos', 'clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
 
     // '>grunt test' 
     // Carries out unit testing on the JavaScript module files and generates a test coverage file at 'gen_test_coverage/coverage.html'.
