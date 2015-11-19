@@ -1,11 +1,11 @@
 var chai = require('chai');
 var expect = chai.expect;
-var BoundingBox = require('../../src/geom/BoundingBox');
+var ViewBox = require('../../src/geom/ViewBox');
 var util = require('../util');
 var shouldThrowErrorIfNotNumber = util.shouldThrowErrorIfNotNumber; 
 var shouldThrowErrorIfNotPositiveNumber = util.shouldThrowErrorIfNotPositiveNumber; 
 
-describe('BoundingBox', function () 
+describe('ViewBox', function () 
 {  
     'use strict';
     
@@ -13,7 +13,7 @@ describe('BoundingBox', function ()
     {  
         it('Should supply default values for xMin, yMin, xMax, yMax', function () 
         {
-            var bBox = new BoundingBox();
+            var bBox = new ViewBox();
             expect(bBox.xMin()).to.equal(0);
             expect(bBox.yMin()).to.equal(0);
             expect(bBox.xMax()).to.equal(100);
@@ -21,20 +21,20 @@ describe('BoundingBox', function ()
         });
         it('Arguments should be numbers or undefined', function () 
         {
-            expect(function(){new BoundingBox('1');}).to.throw(Error);
-            expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
-            expect(function(){new BoundingBox(1, '2', 3, 4);}).to.throw(Error);
-            expect(function(){new BoundingBox(1, 2, '3', 4);}).to.throw(Error);
-            expect(function(){new BoundingBox(1, 2, 3, '4');}).to.throw(Error);
-            expect(function(){new BoundingBox([1]);}).to.throw(Error);
-            expect(function(){new BoundingBox([1, 2, 3, 4]);}).to.throw(Error);
+            expect(function(){new ViewBox('1');}).to.throw(Error);
+            expect(function(){new ViewBox(1, '2', 3, 4);}).to.throw(Error);
+            expect(function(){new ViewBox(1, '2', 3, 4);}).to.throw(Error);
+            expect(function(){new ViewBox(1, 2, '3', 4);}).to.throw(Error);
+            expect(function(){new ViewBox(1, 2, 3, '4');}).to.throw(Error);
+            expect(function(){new ViewBox([1]);}).to.throw(Error);
+            expect(function(){new ViewBox([1, 2, 3, 4]);}).to.throw(Error);
 
-            expect(function(){new BoundingBox();}).to.not.throw(Error);
-            expect(function(){new BoundingBox(1);}).to.not.throw(Error);
-            expect(function(){new BoundingBox(1, 2);}).to.not.throw(Error);
-            expect(function(){new BoundingBox(1, 2, 3);}).to.not.throw(Error);
-            expect(function(){new BoundingBox(1, 2, 3, 4);}).to.not.throw(Error);
-            expect(function(){new BoundingBox(undefined, undefined, undefined, 4);}).to.not.throw(Error);
+            expect(function(){new ViewBox();}).to.not.throw(Error);
+            expect(function(){new ViewBox(1);}).to.not.throw(Error);
+            expect(function(){new ViewBox(1, 2);}).to.not.throw(Error);
+            expect(function(){new ViewBox(1, 2, 3);}).to.not.throw(Error);
+            expect(function(){new ViewBox(1, 2, 3, 4);}).to.not.throw(Error);
+            expect(function(){new ViewBox(undefined, undefined, undefined, 4);}).to.not.throw(Error);
         });
     });
 
@@ -43,14 +43,14 @@ describe('BoundingBox', function ()
         var bBox;
         beforeEach('Create a new bounding box', function() 
         {
-            bBox = new BoundingBox();
+            bBox = new ViewBox();
         });
 
         describe('xMin(x)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.xMin(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xMin(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.xMin()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -60,9 +60,9 @@ describe('BoundingBox', function ()
         });
         describe('xMax(x)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.xMax(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xMax(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.xMax()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -72,9 +72,9 @@ describe('BoundingBox', function ()
         });
         describe('xCenter(x)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.xCenter(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.xCenter(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.xCenter()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -84,9 +84,9 @@ describe('BoundingBox', function ()
         });
         describe('width(w)', function () 
         {
-            it('Should return the width if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the width if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.width(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.width(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.width()).to.equal(10);
             });
             it('The argument should be a positive number if its defined', function () 
@@ -96,9 +96,9 @@ describe('BoundingBox', function ()
         });
         describe('yMin(y)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.yMin(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yMin(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.yMin()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -108,9 +108,9 @@ describe('BoundingBox', function ()
         });
         describe('yMax(y)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.yMax(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yMax(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.yMax()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -120,9 +120,9 @@ describe('BoundingBox', function ()
         });
         describe('yCenter(y)', function () 
         {
-            it('Should return the coordinate if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the coordinate if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.yCenter(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.yCenter(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.yCenter()).to.equal(10);
             });
             it('The argument should be a number if its defined', function () 
@@ -132,9 +132,9 @@ describe('BoundingBox', function ()
         });
         describe('height(h)', function () 
         {
-            it('Should return the height if no arguments are supplied, otherwise the BoundingBox.', function () 
+            it('Should return the height if no arguments are supplied, otherwise the ViewBox.', function () 
             {
-                expect(bBox.height(10)).to.be.an.instanceof(BoundingBox);
+                expect(bBox.height(10)).to.be.an.instanceof(ViewBox);
                 expect(bBox.height()).to.equal(10);
             });
             it('The argument should be a positive number if its defined', function () 
