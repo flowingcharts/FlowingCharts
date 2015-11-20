@@ -19,6 +19,7 @@ Sync
 ### Rebuild the repo
 
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
 Install any new node project dependencies
@@ -34,6 +35,7 @@ grunt
 ### Running Grunt Tasks
 
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
 Run this to generate 'gen_build', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.
