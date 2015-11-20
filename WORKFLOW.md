@@ -36,12 +36,12 @@ grunt
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
-Run this to generate 'gen_dist', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.
+Run this to generate 'gen_build', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.
 ```
 grunt
 ```
 
-Run this during develpoment to generate the build files.
+Run this during development to generate the build files in 'gen_build'.
 ```
 grunt build
 ```
