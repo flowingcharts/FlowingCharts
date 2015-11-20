@@ -1,4 +1,4 @@
-# FlowingCharts Workflow
+# Workflow
 
 Use the following workflow when editing the flowingcharts repo.
 
