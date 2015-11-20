@@ -18,7 +18,7 @@ Sync
 
 ### Rebuild the repo
 
-Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+Open a command prompt in `C:\Work\GitHub\flowingcharts`.
 
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
@@ -34,7 +34,7 @@ grunt
 
 ### Running Grunt Tasks
 
-Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+Open a command prompt in `C:\Work\GitHub\flowingcharts`.
 
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
