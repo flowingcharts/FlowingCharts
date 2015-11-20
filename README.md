@@ -8,17 +8,16 @@ FlowingCharts is a JavaScript charting library that supports both HTML5 Canvas a
 
 # Getting Started
 
-
-
 ## GitHub
 
-Download and install GitHub Desktop For Windows from [https://desktop.github.com/](https://desktop.github.com/)
+Download and install  [GitHub Desktop For Windows](https://desktop.github.com/) 
 
 #### Options
 
-Open GitHub
+Open GitHub Desktop
 
-Go to `Settings` > `Options`
+Click 
+`Settings` > `Options`
 
 Clone path
 ```
@@ -31,18 +30,20 @@ JC
 flowingcharts.com@gmail.com
 ```
 
+Click
 `+ Add Account`
+
 Login
 ```
 username: flowingcharts
 password: *************
 ```
 
-#### Repository
+#### Repository (repo)
 
-Go to `+` > `clone` > `flowingcharts` > `ok`
+Click `+` > `clone` > `flowingcharts` > `ok`
 
-you should now see `flowingcharts` repository in `C:\Work\GitHub`
+you should now see the `flowingcharts` repo in `C:\Work\GitHub`
 
 ## Grunt
 
@@ -67,7 +68,7 @@ The job of the Grunt CLI (Grunts command line interface) is to run the version o
 Run the following command to install Grunt CLI in your system path, allowing it to be run from any directory.
 
 Open a command prompt as Administrator.
-For windows: click Start, in the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
+Windows: click Start, in the Start Search box, type cmd, and then press CTRL+SHIFT+ENTER.
 
 ```
 npm install -g grunt-cli
@@ -83,8 +84,8 @@ grunt --version
 
 Run the following command to install the project dependencies in the `node_modules` folder.
 
-Open a command prompt in the root directory of your project.
-For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
+Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
 ```
 npm install
@@ -92,8 +93,8 @@ npm install
 
 ##### Running Tasks
 
-Open a command prompt in the root directory of your project.
-For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
+Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
+Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
 Run this after installation to generate 'gen_dist', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.
 ```
