@@ -43,12 +43,17 @@ Run this to generate 'gen_build', 'gen_doc', 'gen_release' and 'gen_test_coverag
 grunt
 ```
 
-Run this during development to generate the build files in 'gen_build'.
+Run this to rebuild the repo during development.
 ```
 grunt build
 ```
 
-Carry out unit testing on the JavaScript module files and generate a test coverage file at 'gen_test_coverage/coverage.html'. 
+Run this to automatically rebuild the repo whenever a file is saved.
+```
+grunt watch
+```
+
+Carry out unit testing on the JavaScript module files and generate a test coverage file at 'gen_test_coverage/coverage.html'.
 ```
 grunt test
 ```
