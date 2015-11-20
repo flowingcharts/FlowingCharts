@@ -2,7 +2,7 @@
 
 Use the following workflow when editing the flowingcharts repo.
 
-##### Get the latest changes from the master branch
+### Get the latest changes from the master branch
 
 Open GitHub Desktop
 
@@ -16,7 +16,7 @@ Click
 Sync
 ```
 
-##### Rebuild the repo
+### Rebuild the repo
 
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
@@ -31,7 +31,7 @@ Rebuild the repo
 grunt
 ```
 
-##### Running Grunt Tasks
+### Running Grunt Tasks
 
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
@@ -61,7 +61,7 @@ Generate API documentation in 'gen_doc'.
 grunt doc
 ```
 
-##### Commit your changes
+### Commit your changes
 
 This should be done regularly as you make changes to the repo
 
@@ -89,7 +89,7 @@ Click
 Sync
 ```
 
-##### Sync your changes to the master branch
+### Sync your changes to the master branch
 
 At the end of the day
 Open GitHub Desktop
