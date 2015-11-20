@@ -6,7 +6,7 @@
  * @fileoverview Exports the {@link HtmlCanvas} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module canvas/SvgCanvas 
+ * @module canvas/HtmlCanvas 
  * @requires canvas/Canvas
  * @requires util
  */
@@ -28,9 +28,9 @@ var extendClass = util.extendClass;
  * @param {Object} [options] The options.
  * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
  */
-function HtmlCanvas (options)
+function HtmlCanvas (options, dataSpace)
 {
-    HtmlCanvas.baseConstructor.call(this, options);
+    HtmlCanvas.baseConstructor.call(this, options, dataSpace);
 }
 extendClass(Canvas, HtmlCanvas);
 
@@ -83,23 +83,18 @@ HtmlCanvas.prototype.drawStroke = function (options)
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.circle = function (cx, cy, r)
+HtmlCanvas.prototype.drawCircle = function (cx, cy, r)
 {
     this._ctx.beginPath();
-    this._ctx.arc(this.getPixelX(cx), this.getPixelY(cy), r, 0, 2 * Math.PI, false);
+    this._ctx.arc(cx, cy, r, 0, 2 * Math.PI, false);
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.ellipse = function (x, y, w, h)
+HtmlCanvas.prototype.drawEllipse = function (x, y, w, h)
 {
-    w = this.getPixelWidth(w);
-    h = this.getPixelHeight(h);
-    x = this.getPixelX(x);
-    y = this.getPixelY(y) - h;
-
     var kappa = 0.5522848,
     ox = (w / 2) * kappa, // control point offset horizontal.
     oy = (h / 2) * kappa, // control point offset vertical.
@@ -120,13 +115,8 @@ HtmlCanvas.prototype.ellipse = function (x, y, w, h)
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.rect = function (x, y, w, h)
+HtmlCanvas.prototype.drawRect = function (x, y, w, h)
 {
-    w = this.getPixelWidth(w);
-    h = this.getPixelHeight(h);
-    x = this.getPixelX(x);
-    y = this.getPixelY(y) - h;
-
     this._ctx.beginPath();
     this._ctx.rect(x, y, w, h);
     return this;
@@ -135,25 +125,25 @@ HtmlCanvas.prototype.rect = function (x, y, w, h)
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.line = function (x1, y1, x2, y2)
+HtmlCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 {
     this._ctx.beginPath();
-    this._ctx.moveTo(this.getPixelX(x1), this.getPixelY(y1));
-    this._ctx.lineTo(this.getPixelX(x2), this.getPixelY(y2));
+    this._ctx.moveTo(x1, y1);
+    this._ctx.lineTo(x2, y2);
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.polyline = function (arrCoords)
+HtmlCanvas.prototype.drawPolyline = function (arrCoords)
 {
     this._ctx.beginPath();
     var n = arrCoords.length;
     for (var i = 0; i < n; i+=2)
     {
-        var x = this.getPixelX(arrCoords[i]);
-        var y = this.getPixelY(arrCoords[i+1]);
+        var x = arrCoords[i];
+        var y = arrCoords[i+1];
         if (i === 0)    this._ctx.moveTo(x, y);
         else            this._ctx.lineTo(x, y);
     }
@@ -163,9 +153,9 @@ HtmlCanvas.prototype.polyline = function (arrCoords)
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.polygon = function (arrCoords)
+HtmlCanvas.prototype.drawPolygon = function (arrCoords)
 {
-    this.polyline(arrCoords);
+    this.drawPolyline(arrCoords);
     this._ctx.closePath();
     return this;
 };

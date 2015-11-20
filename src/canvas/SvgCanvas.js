@@ -28,9 +28,9 @@ var extendClass = util.extendClass;
  * @param {Object} [options] The options.
  * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
  */
-function SvgCanvas (options)
+function SvgCanvas (options, dataSpace)
 {
-    SvgCanvas.baseConstructor.call(this, options);
+    SvgCanvas.baseConstructor.call(this, options, dataSpace);
 }
 extendClass(Canvas, SvgCanvas);
 
@@ -91,122 +91,67 @@ SvgCanvas.prototype.drawStroke = function ()
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.circle = function (cx, cy, r)
+SvgCanvas.prototype.drawCircle = function (cx, cy, r)
 {
-    var svgCircle = this.createElement('circle',       
-    {
-        'cx'    : this.getPixelX(cx),
-        'cy'    : this.getPixelY(cy),
-        'r'     : r
-    });
-
+    var svgCircle = this.createElement('circle', {'cx':cx, 'cy':cy, 'r':r});
     this.canvas.appendChild(svgCircle);
     this._svgElement = svgCircle;
-
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.ellipse = function (x, y, w, h)
+SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
 {
-    w = this.getPixelWidth(w);
-    h = this.getPixelHeight(h);
-    x = this.getPixelX(x);
-    y = this.getPixelY(y) - h;
-
-    var rx = w / 2;
-    var ry = h / 2;
-    var cx = x + rx;
-    var cy = y + ry;
-
-    var svgEllipse = this.createElement('ellipse',       
-    {
-        'cx'    : cx,
-        'cy'    : cy,
-        'rx'    : rx,
-        'ry'    : ry
-    });
-
+    var rx = w / 2, ry = h / 2, cx = x + rx , cy = y + ry;
+    var svgEllipse = this.createElement('ellipse', {'cx':cx, 'cy':cy, 'rx':rx, 'ry': ry});
     this.canvas.appendChild(svgEllipse);
     this._svgElement = svgEllipse;
-
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.rect = function (x, y, w, h)
+SvgCanvas.prototype.drawRect = function (x, y, w, h)
 {
-    w = this.getPixelWidth(w);
-    h = this.getPixelHeight(h);
-    x = this.getPixelX(x);
-    y = this.getPixelY(y) - h;
-
-    var svgRect = this.createElement('rect',       
-    {
-        'x'         : x,
-        'y'         : y,
-        'width'     : w,
-        'height'    : h
-    });
-
+    var svgRect = this.createElement('rect', {'x':x, 'y':y, 'width':w, 'height':h});
     this.canvas.appendChild(svgRect);
     this._svgElement = svgRect;
-
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.line = function (x1, y1, x2, y2)
+SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 {
-    var svgLine = this.createElement('line',       
-    {
-        'x1' : this.getPixelX(x1),
-        'y1' : this.getPixelY(y1),
-        'x2' : this.getPixelX(x2),
-        'y2' : this.getPixelY(y2)
-    });
-
+    var svgLine = this.createElement('line', {'x1':x1, 'y1':y1, 'x2':x2, 'y2':y2});
     this.canvas.appendChild(svgLine);
     this._svgElement = svgLine;
-
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.polyline = function (arrCoords)
+SvgCanvas.prototype.drawPolyline = function (arrCoords)
 {
-    var svgPolyline = this.createElement('polyline',       
-    {
-        'points' : this.getPointsAsString(arrCoords)
-    });
-
+    var svgPolyline = this.createElement('polyline', {'points' : this.getCoordsAsString(arrCoords)});
     this.canvas.appendChild(svgPolyline);
     this._svgElement = svgPolyline;
-
     return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.polygon = function (arrCoords)
+SvgCanvas.prototype.drawPolygon = function (arrCoords)
 {
-    var svgPolygon = this.createElement('polygon',       
-    {
-        'points' : this.getPointsAsString(arrCoords)
-    });
-
+    var svgPolygon = this.createElement('polygon', {'points' : this.getCoordsAsString(arrCoords)});
     this.canvas.appendChild(svgPolygon);
     this._svgElement = svgPolygon;
-
     return this;
 };
 
@@ -218,14 +163,14 @@ SvgCanvas.prototype.polygon = function (arrCoords)
  * @param {number[]} arrCoords The list of coords.
  * @return {string} A string containing the list of coords.
  */
-SvgCanvas.prototype.getPointsAsString = function (arrCoords)
+SvgCanvas.prototype.getCoordsAsString = function (arrCoords)
 {
     var n = arrCoords.length;
     var strPoints = '';
     for (var i = 0; i < n; i+=2)
     {
         if (i !== 0) strPoints += ',';
-        strPoints += '' + this.getPixelX(arrCoords[i]) + ' ' + this.getPixelY(arrCoords[i+1]);
+        strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
     return strPoints;
 };
