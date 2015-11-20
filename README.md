@@ -81,7 +81,7 @@ grunt --version
 
 ##### Install project dependencies 
 
-Run the following command to install the project dependencies in a `node_modules` folder.
+Run the following command to install the project dependencies in the `node_modules` folder.
 
 Open a command prompt in the root directory of your project.
 For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
@@ -92,41 +92,7 @@ npm install
 
 ##### Running Tasks
 
+Open a command prompt in the root directory of your project.
+For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
 
-
-*Change to the project's root directory.
-Install project dependencies with npm install.
-Run Grunt with grunt.
-That's really all there is to it. Installed Grunt tasks can be listed by running grunt --help but it's usually a good idea to start with the project's documentation.
-
-
-
-
-
-* Install project dependencies with npm install
-Open command prompt in the root directory of your project (shift + right click > Open command window here)
-eg.
-> npm install grunt --save-dev
-> npm install grunt-contrib-concat --save-dev
-> npm install grunt-jsdoc --save-dev
-
-* Run the grunt tasks (see gruntfile.js)
-
-* http://stackoverflow.com/questions/23125338/how-do-i-use-browserify-with-external-dependencies
-This code was added so that the module code in jquery/plugin.js would use the jquery.js already loaded in the html file 
-because we can assume that people using the plugin will have loaded jquery already in a script tag so we dont
-need to include it again in our bundled flowingcharts.js file.
-
-add to package.json:
-
-```json
-"browserify": {
-    "transform": [ "browserify-shim" ]
-},
-"browserify-shim": {
-    "jQuery": "global:jQuery"
-},
-```
-
-* Include '/* jshint browserify: true */ at top of each js file to stop commonjs modules causing errors when jshint is run.
-The format for commonjs modules breaks alot of jshints tests - this tells jshint to ignore the commonjs specific code.
+Start by using the `grunt` command to build the repository.
