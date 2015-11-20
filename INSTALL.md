@@ -72,23 +72,21 @@ you should now see the `flowingcharts` repo in `C:\Work\GitHub`
 
 ## Install project dependencies 
 
-Run the following command to install the project dependencies in the `node_modules` folder.
-
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
+Run the following command to install the project dependencies in the `node_modules` folder.
 ```
 npm install
 ```
 
 ### Build the repo 
 
-Run the following command to install the project dependencies in the `node_modules` folder.
-
 Open a command prompt and go to `C:\Work\GitHub\flowingcharts`.
 Windows: open Windows Explorer > navigate to the `C:\Work\GitHub\flowingcharts` > shift + right click > Open command window here.
 
+Run the following command to generate the `gen_build`, `gen_doc`, `gen_release` and `gen_test_coverage` directories.
 ```
-npm install
-```
+grunt
+````
 
