@@ -4,7 +4,7 @@
 
 Download and install  [GitHub Desktop For Windows](https://desktop.github.com/) 
 
-#### Options
+#### Setup
 
 Open GitHub Desktop
 
@@ -31,7 +31,7 @@ username: flowingcharts
 password: *************
 ```
 
-#### Repository (repo)
+#### Clone the repository (repo)
 
 Click `+` > `clone` > `flowingcharts` > `ok`
 
