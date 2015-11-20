@@ -301,7 +301,7 @@ module.exports = function (grunt)
     grunt.registerTask('doc', ['clean:doc','jsdoc:doc']);           
 
     // '>grunt build' 
-    // Used for a quick build during development.
+    // Development build.
     grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
 
     // '>grunt test' 

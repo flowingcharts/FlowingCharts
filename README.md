@@ -95,4 +95,27 @@ npm install
 Open a command prompt in the root directory of your project.
 For windows: Navigate to the project directory in Windows Explorer > shift + right click > Open command window here.
 
-Start by using the `grunt` command to build the repository.
+Run this after installation to generate 'gen_dist', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.
+```
+grunt
+```
+
+Development build.
+```
+grunt build
+```
+
+Carry out unit testing on the JavaScript module files and generate a test coverage file at 'gen_test_coverage/coverage.html'. 
+```
+grunt test
+```
+
+Publish a release version to 'gen_release/<%= pkg.version %>/'. 
+```
+grunt publish
+```
+
+Generate API documentation in 'gen_doc'. 
+```
+grunt doc
+```
