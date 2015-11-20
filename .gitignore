@@ -52,8 +52,8 @@ gen_test_coverage
 # docs
 gen_doc
 
-# distribution files
-gen_dist
+# build files
+gen_build
 
 # release
 gen_release
