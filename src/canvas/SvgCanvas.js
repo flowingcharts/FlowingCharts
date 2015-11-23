@@ -17,7 +17,7 @@ var util        = require('../util');
 var extendClass = util.extendClass;
 
 /** 
- * @classdesc A wrapper class for rendering to a HTML5 canvas.
+ * @classdesc A wrapper class for rendering to an SVG canvas.
  *
  * @class
  * @alias SvgCanvas
@@ -25,12 +25,11 @@ var extendClass = util.extendClass;
  * @since 0.1.0
  * @author J Clare
  *
- * @param {Object} [options] The options.
- * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
+ * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
  */
-function SvgCanvas (options, dataSpace)
+function SvgCanvas (coords)
 {
-    SvgCanvas.baseConstructor.call(this, options, dataSpace);
+    SvgCanvas.baseConstructor.call(this, coords);
 }
 extendClass(Canvas, SvgCanvas);
 
@@ -39,11 +38,8 @@ extendClass(Canvas, SvgCanvas);
  */
 SvgCanvas.prototype.init = function()
 {
-    // Private instance members.
     this._svgNS         = 'http://www.w3.org/2000/svg'; // Namespace for SVG elements.
     this._svgElement    = null;                         // The svg element that is part of the current drawing routine.
-
-    // Public instance members.
     this.canvas         = this.createElement('svg');    // The main svg element.
 };
 

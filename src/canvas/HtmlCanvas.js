@@ -25,12 +25,11 @@ var extendClass = util.extendClass;
  * @since 0.1.0
  * @author J Clare
  *
- * @param {Object} [options] The options.
- * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
+ * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
  */
-function HtmlCanvas (options, dataSpace)
+function HtmlCanvas (coords)
 {
-    HtmlCanvas.baseConstructor.call(this, options, dataSpace);
+    HtmlCanvas.baseConstructor.call(this, coords);
 }
 extendClass(Canvas, HtmlCanvas);
 
@@ -39,10 +38,7 @@ extendClass(Canvas, HtmlCanvas);
  */
 HtmlCanvas.prototype.init = function()
 {
-    // Public instance members.
     this.canvas = document.createElement('canvas'); // The drawing canvas.
-
-    // Private instance members.
     this._ctx   = this.canvas.getContext('2d');     // The drawing context.
 };
 

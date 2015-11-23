@@ -3,10 +3,10 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link CartesianSpace} class.
+ * @fileoverview Exports the {@link PolarCoords} class.
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
- * @module geom/CartesianSpace 
+ * @module geom/PolarCoords 
  * @requires util
  * @requires geom/ViewBox
  * @requires geom/Rectangle
@@ -24,18 +24,18 @@ var isNumber    = util.isNumber;
  * @classdesc Maps a data space to a pixel space and vice versa.
  *
  * @class
- * @alias CartesianSpace
+ * @alias PolarCoords
  * @since 0.1.0
  * @constructor
  *
  * @param {Object} [options] The options.
  * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
  */
-function CartesianSpace ()
+function PolarCoords ()
 {
     // Private instance members.    
-    this._viewPort      = new Rectangle();  // The rectangle defining the pixel coords.
-    this._viewBox       = new ViewBox();    // The viewBox defining the data coords.
+    this._viewPort  = new Rectangle();  // The rectangle defining the pixel coords.
+    this._viewBox   = new ViewBox();    // The viewBox defining the data coords.
 
     /** 
      * If set to <code>true</code> the viewBox is adjusted to maintain the aspect ratio.
@@ -55,9 +55,9 @@ function CartesianSpace ()
  * @param {number} [y = 0] The y coord of the top left corner.
  * @param {number} [width = 100] The width.
  * @param {number} [height = 100] The height.
- * @return {Rectangle|CartesianSpace} A Rectangle that defineds the viewPort if no arguments are supplied, otherwise <code>this</code>.
+ * @return {Rectangle|PolarCoords} A Rectangle that defineds the viewPort if no arguments are supplied, otherwise <code>this</code>.
  */
-CartesianSpace.prototype.viewPort = function (x, y, width, height)
+PolarCoords.prototype.viewPort = function (x, y, width, height)
 {
     if (arguments.length > 0)
     {
@@ -77,9 +77,9 @@ CartesianSpace.prototype.viewPort = function (x, y, width, height)
  * @param {number} [yMin = 0] The y coord of the bottom left corner.
  * @param {number} [xMax = 100] The x coord of the top right corner.
  * @param {number} [yMax = 100] The y coord of the top right corner.
- * @return {ViewBox|CartesianSpace} The ViewBox if no arguments are supplied, otherwise <code>this</code>.
+ * @return {ViewBox|PolarCoords} The ViewBox if no arguments are supplied, otherwise <code>this</code>.
  */
-CartesianSpace.prototype.viewBox = function (xMin, yMin, xMax, yMax)
+PolarCoords.prototype.viewBox = function (xMin, yMin, xMax, yMax)
 {
     if (arguments.length > 0)
     {
@@ -98,7 +98,7 @@ CartesianSpace.prototype.viewBox = function (xMin, yMin, xMax, yMax)
  * @param {Point} dataPoint A point (data units).
  * @return {Point} A point (pixel units).
  */
-CartesianSpace.prototype.getPixelPoint = function (dataPoint)
+PolarCoords.prototype.getPixelPoint = function (dataPoint)
 {
     var x = this.getPixelX(dataPoint.x());
     var y = this.getPixelY(dataPoint.y());
@@ -112,7 +112,7 @@ CartesianSpace.prototype.getPixelPoint = function (dataPoint)
  * @param {ViewBox} viewBox A bounding box (data units).
  * @return {Rectangle} A rectangle (pixel units).
  */
-CartesianSpace.prototype.getPixelRect = function (viewBox)
+PolarCoords.prototype.getPixelRect = function (viewBox)
 {
     var x = this.getPixelX(viewBox.xMin());
     var y = this.getPixelY(viewBox.yMax());
@@ -128,7 +128,7 @@ CartesianSpace.prototype.getPixelRect = function (viewBox)
  * @param {number[]} arrData An array of coords (data units).
  * @return {number[]} An array of coords (pixel units).
  */
-CartesianSpace.prototype.getPixelArray = function (arrData)
+PolarCoords.prototype.getPixelArray = function (arrData)
 {
     var me = this;
     var arrPixel = arrData.map(function(num , index)
@@ -146,7 +146,7 @@ CartesianSpace.prototype.getPixelArray = function (arrData)
  * @param {number} dataX An x coord (data units).
  * @return {number} The x coord (pixel units).
  */
-CartesianSpace.prototype.getPixelX = function (dataX)
+PolarCoords.prototype.getPixelX = function (dataX)
 {
     //<validation>
     if (!isNumber(dataX)) throw new Error('HtmlCanvas.getPixelX(dataX): dataX must be a number.');
@@ -162,7 +162,7 @@ CartesianSpace.prototype.getPixelX = function (dataX)
  * @param {number} dataY A y coord (data units).
  * @return {number} The y coord (pixel units).
  */
-CartesianSpace.prototype.getPixelY = function (dataY)
+PolarCoords.prototype.getPixelY = function (dataY)
 {
     //<validation>
     if (!isNumber(dataY)) throw new Error('HtmlCanvas.getPixelY(dataY): dataY must be a number.');
@@ -178,7 +178,7 @@ CartesianSpace.prototype.getPixelY = function (dataY)
  * @param {number} dataWidth A width (data units).
  * @return {number} The width (pixel units).
  */
-CartesianSpace.prototype.getPixelWidth = function (dataWidth)
+PolarCoords.prototype.getPixelWidth = function (dataWidth)
 {
     //<validation>
     if (!isNumber(dataWidth)) throw new Error('HtmlCanvas.getPixelWidth(dataHeight): dataWidth must be a number.');
@@ -196,7 +196,7 @@ CartesianSpace.prototype.getPixelWidth = function (dataWidth)
  * @param {number} dataHeight A height (data units).
  * @return {number} The height (pixel units).
  */
-CartesianSpace.prototype.getPixelHeight = function (dataHeight)
+PolarCoords.prototype.getPixelHeight = function (dataHeight)
 {
     //<validation>
     if (!isNumber(dataHeight)) throw new Error('HtmlCanvas.getPixelHeight(dataHeight): dataHeight must be a number.');
@@ -213,7 +213,7 @@ CartesianSpace.prototype.getPixelHeight = function (dataHeight)
  * @param {Point} pixelPoint A point (pixel units).
  * @return {Point} A point (data units).
  */
-CartesianSpace.prototype.getDataPoint = function (pixelPoint)
+PolarCoords.prototype.getDataPoint = function (pixelPoint)
 {
     var x = this.getDataX(pixelPoint.x());
     var y = this.getDataY(pixelPoint.y());
@@ -226,7 +226,7 @@ CartesianSpace.prototype.getDataPoint = function (pixelPoint)
  * @param {Rectangle} pixelCoords A rectangle (pixel units).
  * @return {ViewBox} A viewBox (data units).
  */
-CartesianSpace.prototype.getDataCoords = function (pixelCoords)
+PolarCoords.prototype.getDataCoords = function (pixelCoords)
 {
     var xMin = this.getDataX(pixelCoords.x());
     var yMax = this.getDataY(pixelCoords.y());
@@ -242,7 +242,7 @@ CartesianSpace.prototype.getDataCoords = function (pixelCoords)
  * @param {number[]} arrPixel An array of coords (pixel units).
  * @return {number[]} An array of coords (data units).
  */
-CartesianSpace.prototype.getDataArray = function (arrPixel)
+PolarCoords.prototype.getDataArray = function (arrPixel)
 {
     var me = this;
     var arrData = arrPixel.map(function(num , index)
@@ -259,10 +259,10 @@ CartesianSpace.prototype.getDataArray = function (arrPixel)
  * @param {number} pixelX An x coord (pixel units).
  * @return {number} An x coord (data units).
  */
-CartesianSpace.prototype.getDataX = function (pixelX)
+PolarCoords.prototype.getDataX = function (pixelX)
 {
     //<validation>
-    if (!isNumber(pixelX)) throw new Error('CartesianSpace.getDataX(pixelX): pixelX must be a number.');
+    if (!isNumber(pixelX)) throw new Error('PolarCoords.getDataX(pixelX): pixelX must be a number.');
     //</validation>
     var dataX = this._viewBox.xMin() + this.getDataWidth(pixelX);
     return dataX;
@@ -274,10 +274,10 @@ CartesianSpace.prototype.getDataX = function (pixelX)
  * @param {number} pixelY A y coord (pixel units).
  * @return {number} A y coord (data units).
  */
-CartesianSpace.prototype.getDataY = function (pixelY)
+PolarCoords.prototype.getDataY = function (pixelY)
 {
     //<validation>
-    if (!isNumber(pixelY)) throw new Error('CartesianSpace.getDataY(pixelY): pixelY must be a number.');
+    if (!isNumber(pixelY)) throw new Error('PolarCoords.getDataY(pixelY): pixelY must be a number.');
     //</validation>
     var dataY = this._viewBox.yMin() + this.getDataHeight(this._viewPort.height() - pixelY);
     return dataY;
@@ -289,11 +289,11 @@ CartesianSpace.prototype.getDataY = function (pixelY)
  * @param {number} pixelWidth A width (pixel units).
  * @return {number} A width (data units).
  */
-CartesianSpace.prototype.getDataWidth = function (pixelWidth)
+PolarCoords.prototype.getDataWidth = function (pixelWidth)
 {
     //<validation>
-    if (!isNumber(pixelWidth)) throw new Error('CartesianSpace.getDataWidth(pixelWidth): pixelWidth must be a number.');
-    if (pixelWidth < 0)        throw new Error('CartesianSpace.getDataWidth(pixelWidth): pixelWidth must be >= 0.');
+    if (!isNumber(pixelWidth)) throw new Error('PolarCoords.getDataWidth(pixelWidth): pixelWidth must be a number.');
+    if (pixelWidth < 0)        throw new Error('PolarCoords.getDataWidth(pixelWidth): pixelWidth must be >= 0.');
     //</validation>
     if (pixelWidth === 0) return 0;
     var dataDistance = (pixelWidth / this._viewPort.width()) * this._viewBox.width();
@@ -306,11 +306,11 @@ CartesianSpace.prototype.getDataWidth = function (pixelWidth)
  * @param {number} pixelHeight A height (pixel units).
  * @return {number} A height (data units).
  */
-CartesianSpace.prototype.getDataHeight = function (pixelHeight)
+PolarCoords.prototype.getDataHeight = function (pixelHeight)
 {
     //<validation>
-    if (!isNumber(pixelHeight)) throw new Error('CartesianSpace.getDataHeight(pixelHeight): pixelHeight must be a number.');
-    if (pixelHeight < 0)        throw new Error('CartesianSpace.getDataHeight(pixelHeight): pixelHeight must be >= 0.');
+    if (!isNumber(pixelHeight)) throw new Error('PolarCoords.getDataHeight(pixelHeight): pixelHeight must be a number.');
+    if (pixelHeight < 0)        throw new Error('PolarCoords.getDataHeight(pixelHeight): pixelHeight must be >= 0.');
     //</validation>
     if (pixelHeight === 0) return 0;
     var dataDistance = (pixelHeight / this._viewPort.height()) * this._viewBox.height();
@@ -324,7 +324,7 @@ CartesianSpace.prototype.getDataHeight = function (pixelHeight)
  * @param {ViewBox} viewBox The bounding box.
  * @param {Rectangle} rect The rectangle.
  */
-CartesianSpace.prototype.fitViewBoxToViewPort = function (viewBox, rect)
+PolarCoords.prototype.fitViewBoxToViewPort = function (viewBox, rect)
 {
     var sy = viewBox.height() / rect.height();
     var sx = viewBox.height() / rect.width();
@@ -356,4 +356,4 @@ CartesianSpace.prototype.fitViewBoxToViewPort = function (viewBox, rect)
     viewBox.xMin(sBBoxX).yMin(sBBoxY).width(sBBoxW).height(sBBoxH);
 };
 
-module.exports = CartesianSpace;
+module.exports = PolarCoords;

@@ -8,8 +8,6 @@
  * @copyright FlowingCharts 2015
  * @module canvas/Canvas 
  * @requires util
- * @requires geom/Rectangle
- * @requires geom/Point
  */
 
 // Required modules.
@@ -27,13 +25,12 @@ var isNumber    = util.isNumber;
  * @since 0.1.0
  * @constructor
  *
- * @param {Object} [options] The options.
- * @param {HTMLElement} [options.container] The html element that will contain the renderer. 
+ * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
  */
-function Canvas (options, dataSpace)
+function Canvas (coords)
 {
     // Private instance members.  
-    this._ds = dataSpace;
+    this._coords = coords;
 
     // Default styles.
     this._defaultFillColor       = '#ffffff'; 
@@ -64,38 +61,20 @@ function Canvas (options, dataSpace)
      */
     this.canvas = null;
 
-    // TODO Do we need to add something here to handle no container?
-    this.options = options !== undefined ? options : {};
-
     // Initialise.   
     this.init();
-
-    // Append canvas to container and set its initial size.
-    if (this.options.container)
-    {
-        // Append canvas to parent container.
-        var container = this.options.container;
-        container.appendChild(this.canvas);
-
-        // Resize the canvas to fit its container and do same when the window resizes.
-        this.setSize(container.offsetWidth, container.offsetHeight);
-        var me = this;
-        var resizeTimeout;
-        window.addEventListener('resize', function (event)
-        {
-            // Add a resizeTimeout to stop multiple calls to setSize().
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function ()
-            {        
-                me.setSize(container.offsetWidth, container.offsetHeight);
-            }, 20);
-        });
-    }
-
-    // TODO Remove this.
-    this._ds.viewBox(0, 0, 100, 100);
-    this.render();
 }
+
+/** 
+ * Append the canvas to a html element.
+ *
+ * @since 0.1.0
+ * @return {HTMLElement} container The html element.
+ */
+Canvas.prototype.appendTo = function (container)
+{
+    container.appendChild(this.canvas);
+};
 
 // Geometry.
 
@@ -142,19 +121,6 @@ Canvas.prototype.setSize = function (w, h)
         // Canvas size.
         this.canvas.setAttribute('width', w);
         this.canvas.setAttribute('height', h);
-
-        // viewPort.
-        var leftMargin = 40;
-        var rightMargin = 40;
-        var topMargin = 40;
-        var bottomMargin = 40;
-        var x = leftMargin;
-        var y = topMargin;
-        var width = w - (leftMargin + rightMargin);
-        var height = h - (topMargin + bottomMargin);
-        this._ds.viewPort(x, y, width, height);
-
-        this.render();
     }
 };
 
@@ -436,24 +402,6 @@ Canvas.prototype.lineOpacity = function (opacity)
 // Drawing.
 
 /** 
- * Renders the graphics.
- *
- * @since 0.1.0
- */
-Canvas.prototype.render = function()
-{
-    // TODO For svg we dont want to clear - just change attributes of current dom.
-    this.clear();
-    this.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();
-    this.ellipse(10, 10, 80, 50).fillColor('#f50000').lineWidth(15).fillOpacity(0.7).fill().stroke();
-    this.circle(50, 50, 50).fillColor('#0000f5').fill().stroke({width:12});
-    this.polygon([50, 0, 100, 0, 100, 50]).fillColor('#0ff0f5').fill().stroke();
-
-    this.marker('square', 0, 0, 100).fillColor('#fff500').lineWidth(2).fill().stroke();
-    this.marker('circle', 0, 0, 100).fillColor('#ccf500').lineWidth(2).fill().stroke();
-};
-
-/** 
  * Draws a marker.
  *
  * @since 0.1.0
@@ -465,12 +413,12 @@ Canvas.prototype.render = function()
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
-    var px = this._ds.getPixelX(cx) - size/2;
-    var py = this._ds.getPixelY(cy) - size/2;
+    var px = this._coords.getPixelX(cx) - size/2;
+    var py = this._coords.getPixelY(cy) - size/2;
     switch(type)
     {
         case 'circle':
-            this.drawCircle(this._ds.getPixelX(cx), this._ds.getPixelY(cy), size/2);
+            this.drawCircle(this._coords.getPixelX(cx), this._coords.getPixelY(cy), size/2);
         break;
         case 'square':
             this.drawRect(px, py, size, size);
@@ -495,7 +443,7 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  */
 Canvas.prototype.circle = function (cx, cy, r)
 {
-    return this.drawCircle(this._ds.getPixelX(cx), this._ds.getPixelY(cy), r);
+    return this.drawCircle(this._coords.getPixelX(cx), this._coords.getPixelY(cy), r);
 };
 
 /** 
@@ -510,10 +458,10 @@ Canvas.prototype.circle = function (cx, cy, r)
  */
 Canvas.prototype.ellipse = function (x, y, w, h)
 {
-    w = this._ds.getPixelWidth(w);
-    h = this._ds.getPixelHeight(h);
-    x = this._ds.getPixelX(x);
-    y = this._ds.getPixelY(y) - h;
+    w = this._coords.getPixelWidth(w);
+    h = this._coords.getPixelHeight(h);
+    x = this._coords.getPixelX(x);
+    y = this._coords.getPixelY(y) - h;
     return this.drawEllipse(x, y, w, h);
 };
 
@@ -529,10 +477,10 @@ Canvas.prototype.ellipse = function (x, y, w, h)
  */
 Canvas.prototype.rect = function (x, y, w, h)
 {
-    w = this._ds.getPixelWidth(w);
-    h = this._ds.getPixelHeight(h);
-    x = this._ds.getPixelX(x);
-    y = this._ds.getPixelY(y) - h;
+    w = this._coords.getPixelWidth(w);
+    h = this._coords.getPixelHeight(h);
+    x = this._coords.getPixelX(x);
+    y = this._coords.getPixelY(y) - h;
     return this.drawRect(x, y, w, h);
 };
 
@@ -548,7 +496,7 @@ Canvas.prototype.rect = function (x, y, w, h)
  */
 Canvas.prototype.line = function (x1, y1, x2, y2)
 {
-    return this.drawLine(this._ds.getPixelX(x1), this._ds.getPixelY(y1), this._ds.getPixelX(x2), this._ds.getPixelY(y2));
+    return this.drawLine(this._coords.getPixelX(x1), this._coords.getPixelY(y1), this._coords.getPixelX(x2), this._coords.getPixelY(y2));
 };
 
 /** 
@@ -560,7 +508,7 @@ Canvas.prototype.line = function (x1, y1, x2, y2)
  */
 Canvas.prototype.polyline = function (arrCoords)
 {
-    return this.drawPolyline(this._ds.getPixelArray(arrCoords));
+    return this.drawPolyline(this._coords.getPixelArray(arrCoords));
 };
 
 /** 
@@ -572,13 +520,7 @@ Canvas.prototype.polyline = function (arrCoords)
  */
 Canvas.prototype.polygon = function (arrCoords)
 {
-    return this.drawPolygon(this._ds.getPixelArray(arrCoords));
-};
-
-// TODO Event handlers.
-Canvas.prototype.on = function (strEvents, fncHandler)
-{
-    return this;
+    return this.drawPolygon(this._coords.getPixelArray(arrCoords));
 };
 
 // Implemented by subclasses.
@@ -594,7 +536,7 @@ Canvas.prototype.init = function()
 };
 
 /** 
- * Check for support.
+ * Check for support of the graphics library.
  *
  * @since 0.1.0
  * @return {boolean} true if the browser supports the graphics library, otherwise false.
