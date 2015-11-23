@@ -594,6 +594,17 @@ Canvas.prototype.init = function()
 };
 
 /** 
+ * Check for support.
+ *
+ * @since 0.1.0
+ * @return {boolean} true if the browser supports the graphics library, otherwise false.
+ */
+Canvas.prototype.isSupported = function ()
+{
+    return false;
+};
+
+/** 
  * Clear the canvas.
  *
  * @since 0.1.0

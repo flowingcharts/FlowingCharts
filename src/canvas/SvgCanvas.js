@@ -50,6 +50,14 @@ SvgCanvas.prototype.init = function()
 /** 
  * @inheritdoc
  */
+SvgCanvas.prototype.isSupported = function ()
+{
+    return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Shape", "1.0");
+};
+
+/** 
+ * @inheritdoc
+ */
 SvgCanvas.prototype.clear = function ()
 {
     while (this.canvas.firstChild) 

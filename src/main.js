@@ -7,7 +7,7 @@
 // will walk the dependency graph and load everything correctly.
 var flowingcharts = window.flowingcharts || 
 {
-    util : require('./canvas/util')
+    canvas : require('./canvas/Canvas')
 };
 
 require('./plugins/jqueryplugin');

@@ -49,6 +49,14 @@ HtmlCanvas.prototype.init = function()
 /** 
  * @inheritdoc
  */
+HtmlCanvas.prototype.isSupported = function ()
+{
+    return !!document.createElement('canvas').getContext;
+};
+
+/** 
+ * @inheritdoc
+ */
 HtmlCanvas.prototype.clear = function ()
 {
     this._ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
