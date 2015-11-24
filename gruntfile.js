@@ -330,6 +330,10 @@ module.exports = function (grunt)
     // Tasks that can be run from the command line.
     // Open command prompt in this directory (shift + right click > Open command window here) to run tasks.
 
+    // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
+
+    // '>grunt todos' Extracts and lists TODOs and FIXMEs from code.
+
     // '>grunt doc' 
     // Generate API documentation in 'gen_doc'. 
     grunt.registerTask('doc', ['clean:doc','jsdoc:doc']);           
