@@ -12,7 +12,7 @@
 // Required modules.
 
 /** 
- * @classdesc A base class for charts.
+ * @classdesc A base class for series.
  *
  * @class
  * @alias Series

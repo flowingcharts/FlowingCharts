@@ -7,11 +7,11 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/Rectangle 
- * @requires util
+ * @requires utils/util
  */
 
 // Required modules.
-var util        = require('../util');
+var util        = require('../utils/util');
 var isNumber    = util.isNumber;
 
 /** 

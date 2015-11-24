@@ -12,7 +12,7 @@
  * @requires canvas/HtmlCanvas
  * @requires geom/CartesianCoords
  * @requires geom/PolarCoords
- * @requires util/Series
+ * @requires utils/util
  */
 
 // Required modules.
@@ -21,7 +21,7 @@ var SvgCanvas       = require('../canvas/SvgCanvas');
 var CartesianCoords = require('../geom/CartesianCoords');
 var PolarCoords     = require('../geom/PolarCoords');
 var Series          = require('../series/Series');
-var util            = require('../util');
+var util            = require('../utils/util');
 var isNumber        = util.isNumber;
 
 /** 
@@ -36,6 +36,7 @@ var isNumber        = util.isNumber;
  */
 function Chart (options)
 {
+    window.console.log("test");
     var container = options.container;
 
     // Coordinate system.

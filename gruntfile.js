@@ -15,7 +15,7 @@ module.exports = function (grunt)
             {
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
-            dist: 
+            build: 
             {
                 src: 
                 [
@@ -83,8 +83,8 @@ module.exports = function (grunt)
             coverage: {src: ['gen_test_coverage/']},
             // Deletes release.
             release: {src: ['gen_release/<%= pkg.version %>/']},
-            // Deletes distribution.
-            dist: {src: ['gen_build/']}
+            // Deletes build.
+            build: {src: ['gen_build/']}
         },
         // Copies files/directories.
         copy: 
@@ -201,7 +201,7 @@ module.exports = function (grunt)
                     debug: true
                 }
             },
-            dist: 
+            build: 
             {
                 files: 
                 {
@@ -224,7 +224,7 @@ module.exports = function (grunt)
                     banner: '<!-- <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> -->'
                 }
             },
-            dist: 
+            release: 
             {
 
                 files: 
@@ -269,10 +269,42 @@ module.exports = function (grunt)
                 }
             }
         },
+        // Zips up release files into 'gen_release/<%= pkg.name %>-<%= pkg.version %>.zip'.
+        compress: 
+        {
+            main: 
+            {
+                options: 
+                {
+                    archive: 'gen_release/<%= pkg.name %>-<%= pkg.version %>.zip'
+                },
+                expand: true,
+                cwd: 'gen_release/<%= pkg.version %>/',
+                src: ['**/*'],
+                dest: ''
+            }
+        },
+        // Opens the specified files.
+        open : 
+        {
+            dev : 
+            {
+                path: 'file:///C:/Work/GitHub/flowingcharts/examples/scatter/index.html',
+                app: 'Chrome'
+            },
+            release : 
+            {
+                path : 'file:///C:/Work/GitHub/flowingcharts/gen_release/0.1.0/examples/scatter/index.html',
+                app: 'Chrome'
+            }
+        },
         // '>grunt watch' Runs the 'build' task if changes are made to the JavaScript source files 'src/**/*.js'.
         // Enable by typing '>grunt watch' into a command prompt.
         watch:
         {
+            // livereload reloads any html pages that contain <script src="http://localhost:35729/livereload.js"></script>
+            // see http://stackoverflow.com/a/16430183
+            options: { livereload: true },
             files: ['src/**/*.js'],
             tasks: ['build']
         }
@@ -282,6 +314,7 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-blanket');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -290,6 +323,7 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-groundskeeper');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-todos');
 
@@ -302,7 +336,7 @@ module.exports = function (grunt)
 
     // '>grunt build' 
     // Run this to rebuild the repo during development.
-    grunt.registerTask('build', ['clean:dist', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
+    grunt.registerTask('build', ['clean:build', 'jshint', 'browserify', 'groundskeeper', 'uglify']);      
 
     // '>grunt test' 
     // Carry out unit testing on the JavaScript module files and generate a test coverage file at 'gen_test_coverage/coverage.html'.
@@ -310,7 +344,7 @@ module.exports = function (grunt)
 
     // '>grunt publish' 
     // Publish a release version to 'gen_release/<%= pkg.version %>/'.
-    grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release', 'processhtml']);      
+    grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release', 'processhtml', 'compress', 'open:release']);      
 
     // '>grunt' 
     // Run this after installation to generate 'gen_build', 'gen_doc', 'gen_release' and 'gen_test_coverage' directories.              

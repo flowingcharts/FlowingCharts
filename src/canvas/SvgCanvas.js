@@ -8,12 +8,12 @@
  * @copyright FlowingCharts 2015
  * @module canvas/SvgCanvas 
  * @requires canvas/Canvas
- * @requires util
+ * @requires utils/util
  */
 
 // Required modules.
 var Canvas      = require('./Canvas');
-var util        = require('../util');
+var util        = require('../utils/util');
 var extendClass = util.extendClass;
 
 /** 

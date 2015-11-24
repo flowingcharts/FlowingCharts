@@ -7,7 +7,7 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/CartesianCoords 
- * @requires util
+ * @requires utils/util
  * @requires geom/ViewBox
  * @requires geom/Rectangle
  * @requires geom/Point
@@ -17,7 +17,7 @@
 var ViewBox     = require('./ViewBox');
 var Rectangle   = require('./Rectangle');
 var Point       = require('./Point');
-var util        = require('../util');
+var util        = require('../utils/util');
 var isNumber    = util.isNumber;
 
 /** 

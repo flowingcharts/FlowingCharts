@@ -7,13 +7,13 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module canvas/Canvas 
- * @requires util
+ * @requires utils/util
  */
 
 // Required modules.
 var Rectangle   = require('../geom/Rectangle');
 var Point       = require('../geom/Point');
-var util        = require('../util');
+var util        = require('../utils/util');
 var isColor     = util.isColor;
 var isNumber    = util.isNumber;
 
@@ -66,7 +66,7 @@ function Canvas (coords)
 }
 
 /** 
- * Append the canvas to a html element.
+ * Appends the canvas to a html element.
  *
  * @since 0.1.0
  * @return {HTMLElement} container The html element.
