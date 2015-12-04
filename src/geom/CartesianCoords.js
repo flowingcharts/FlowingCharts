@@ -149,7 +149,7 @@ CartesianCoords.prototype.getPixelArray = function (arrData)
 CartesianCoords.prototype.getPixelX = function (dataX)
 {
     //<validation>
-    if (!isNumber(dataX)) throw new Error('HtmlCanvas.getPixelX(dataX): dataX must be a number.');
+    if (!isNumber(dataX)) throw new Error('CartesianCoords.getPixelX(dataX): dataX must be a number.');
     //</validation>
     var px = this._viewPort.x() + this.getPixelWidth(dataX - this._viewBox.xMin());
     return px;
@@ -165,7 +165,7 @@ CartesianCoords.prototype.getPixelX = function (dataX)
 CartesianCoords.prototype.getPixelY = function (dataY)
 {
     //<validation>
-    if (!isNumber(dataY)) throw new Error('HtmlCanvas.getPixelY(dataY): dataY must be a number.');
+    if (!isNumber(dataY)) throw new Error('CartesianCoords.getPixelY(dataY): dataY must be a number.');
     //</validation>
     var py =  this._viewPort.y() + this._viewPort.height() - this.getPixelHeight(dataY - this._viewBox.yMin());
     return py;
@@ -181,8 +181,8 @@ CartesianCoords.prototype.getPixelY = function (dataY)
 CartesianCoords.prototype.getPixelWidth = function (dataWidth)
 {
     //<validation>
-    if (!isNumber(dataWidth)) throw new Error('HtmlCanvas.getPixelWidth(dataHeight): dataWidth must be a number.');
-    if (dataWidth < 0)        throw new Error('HtmlCanvas.getPixelWidth(dataHeight): dataWidth must be >= 0.');
+    if (!isNumber(dataWidth)) throw new Error('CartesianCoords.getPixelWidth(dataHeight): dataWidth must be a number.');
+    if (dataWidth < 0)        throw new Error('CartesianCoords.getPixelWidth(dataHeight): dataWidth must be >= 0.');
     //</validation>
     if (dataWidth === 0) return 0;
     var pixelDistance  = (dataWidth / this._viewBox.width()) * this._viewPort.width();
@@ -199,8 +199,8 @@ CartesianCoords.prototype.getPixelWidth = function (dataWidth)
 CartesianCoords.prototype.getPixelHeight = function (dataHeight)
 {
     //<validation>
-    if (!isNumber(dataHeight)) throw new Error('HtmlCanvas.getPixelHeight(dataHeight): dataHeight must be a number.');
-    if (dataHeight < 0)        throw new Error('HtmlCanvas.getPixelHeight(dataHeight): dataHeight must be >= 0.');
+    if (!isNumber(dataHeight)) throw new Error('CartesianCoords.getPixelHeight(dataHeight): dataHeight must be a number.');
+    if (dataHeight < 0)        throw new Error('CartesianCoords.getPixelHeight(dataHeight): dataHeight must be >= 0.');
     //</validation>
     if (dataHeight === 0) return 0;
     var pixelDistance = (dataHeight / this._viewBox.height()) * this._viewPort.height();

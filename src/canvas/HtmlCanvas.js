@@ -9,12 +9,19 @@
  * @module canvas/HtmlCanvas 
  * @requires canvas/Canvas
  * @requires utils/util
+ * @requires utils/dom
+ * @requires utils/color
  */
 
 // Required modules.
-var Canvas      = require('./Canvas');
-var util        = require('../utils/util');
-var extendClass = util.extendClass;
+var Canvas              = require('./Canvas');
+var util                = require('../utils/util');
+var extendClass         = util.extendClass;
+var dom                 = require('../utils/dom');
+var createElement       = dom.createElement;
+var color               = require('../utils/color');
+var toRGBA              = color.toRGBA;
+var isRGBA              = color.isRGBA;
 
 /** 
  * @classdesc A wrapper class for rendering to a HTML5 canvas.
@@ -38,8 +45,16 @@ extendClass(Canvas, HtmlCanvas);
  */
 HtmlCanvas.prototype.init = function()
 {
-    this.canvas = document.createElement('canvas'); // The drawing canvas.
-    this._ctx   = this.canvas.getContext('2d');     // The drawing context.
+    this.graphics = createElement('canvas',     // The drawing canvas.
+    {
+        style :
+        {
+            position    : 'absolute',
+            left        : 0,
+            right       : 0 
+        }
+    });
+    this.ctx = this.graphics.getContext('2d');  // The drawing context.
 };
 
 /** 
@@ -55,7 +70,7 @@ HtmlCanvas.prototype.isSupported = function ()
  */
 HtmlCanvas.prototype.clear = function ()
 {
-    this._ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.clearRect(0, 0, this.graphics.width, this.graphics.height);
     return this;
 };
 
@@ -64,9 +79,11 @@ HtmlCanvas.prototype.clear = function ()
  */
 HtmlCanvas.prototype.drawFill = function ()
 {
-    // TODO opacity
-    this._ctx.fillStyle      = this.fillColor();
-    this._ctx.fill();
+    var rgbaColor = this.fillColor();
+    if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(this.fillColor(), this.fillOpacity());
+
+    this.ctx.fillStyle      = rgbaColor;     
+    this.ctx.fill();
     return this;
 };
 
@@ -75,12 +92,14 @@ HtmlCanvas.prototype.drawFill = function ()
  */
 HtmlCanvas.prototype.drawStroke = function (options)
 {
-    // TODO Opacity
-    this._ctx.strokeStyle    = this.lineColor();
-    this._ctx.lineWidth      = this.lineWidth();
-    this._ctx.lineJoin       = this.lineJoin();
-    this._ctx.lineCap        = this.lineCap();
-    this._ctx.stroke();
+    var rgbaColor = this.lineColor();
+    if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(this.lineColor(), this.lineOpacity());
+
+    this.ctx.strokeStyle    = rgbaColor;
+    this.ctx.lineWidth      = this.lineWidth();
+    this.ctx.lineJoin       = this.lineJoin();
+    this.ctx.lineCap        = this.lineCap();
+    this.ctx.stroke();
     return this;
 };
 
@@ -89,8 +108,8 @@ HtmlCanvas.prototype.drawStroke = function (options)
  */
 HtmlCanvas.prototype.drawCircle = function (cx, cy, r)
 {
-    this._ctx.beginPath();
-    this._ctx.arc(cx, cy, r, 0, 2 * Math.PI, false);
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, r, 0, 2 * Math.PI, false);
     return this;
 };
 
@@ -107,12 +126,12 @@ HtmlCanvas.prototype.drawEllipse = function (x, y, w, h)
     xm = x + w / 2,       // x-middle.
     ym = y + h / 2;       // y-middle.
 
-    this._ctx.beginPath();
-    this._ctx.moveTo(x, ym);
-    this._ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    this._ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    this._ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    this._ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, ym);
+    this.ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    this.ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    this.ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    this.ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     return this;
 };
 
@@ -121,8 +140,8 @@ HtmlCanvas.prototype.drawEllipse = function (x, y, w, h)
  */
 HtmlCanvas.prototype.drawRect = function (x, y, w, h)
 {
-    this._ctx.beginPath();
-    this._ctx.rect(x, y, w, h);
+    this.ctx.beginPath();
+    this.ctx.rect(x, y, w, h);
     return this;
 };
 
@@ -131,9 +150,9 @@ HtmlCanvas.prototype.drawRect = function (x, y, w, h)
  */
 HtmlCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 {
-    this._ctx.beginPath();
-    this._ctx.moveTo(x1, y1);
-    this._ctx.lineTo(x2, y2);
+    this.ctx.beginPath();
+    this.ctx.moveTo(x1, y1);
+    this.ctx.lineTo(x2, y2);
     return this;
 };
 
@@ -142,14 +161,14 @@ HtmlCanvas.prototype.drawLine = function (x1, y1, x2, y2)
  */
 HtmlCanvas.prototype.drawPolyline = function (arrCoords)
 {
-    this._ctx.beginPath();
+    this.ctx.beginPath();
     var n = arrCoords.length;
     for (var i = 0; i < n; i+=2)
     {
         var x = arrCoords[i];
         var y = arrCoords[i+1];
-        if (i === 0)    this._ctx.moveTo(x, y);
-        else            this._ctx.lineTo(x, y);
+        if (i === 0)    this.ctx.moveTo(x, y);
+        else            this.ctx.lineTo(x, y);
     }
     return this;
 };
@@ -160,7 +179,7 @@ HtmlCanvas.prototype.drawPolyline = function (arrCoords)
 HtmlCanvas.prototype.drawPolygon = function (arrCoords)
 {
     this.drawPolyline(arrCoords);
-    this._ctx.closePath();
+    this.ctx.closePath();
     return this;
 };
 

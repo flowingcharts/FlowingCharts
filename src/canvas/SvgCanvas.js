@@ -9,12 +9,16 @@
  * @module canvas/SvgCanvas 
  * @requires canvas/Canvas
  * @requires utils/util
+ * @requires utils/dom
  */
 
 // Required modules.
-var Canvas      = require('./Canvas');
-var util        = require('../utils/util');
-var extendClass = util.extendClass;
+var Canvas              = require('./Canvas');
+var util                = require('../utils/util');
+var extendClass         = util.extendClass;
+var dom                 = require('../utils/dom');
+var createSvgElement    = dom.createSvgElement;
+var attr                = dom.attr;
 
 /** 
  * @classdesc A wrapper class for rendering to an SVG canvas.
@@ -38,9 +42,8 @@ extendClass(Canvas, SvgCanvas);
  */
 SvgCanvas.prototype.init = function()
 {
-    this._svgNS         = 'http://www.w3.org/2000/svg'; // Namespace for SVG elements.
-    this._svgElement    = null;                         // The svg element that is part of the current drawing routine.
-    this.canvas         = this.createElement('svg');    // The main svg element.
+    this._svgElement    = null;                     // The svg element that is part of the current drawing routine.
+    this.graphics       = createSvgElement('g');    // The group element container.
 };
 
 /** 
@@ -56,9 +59,9 @@ SvgCanvas.prototype.isSupported = function ()
  */
 SvgCanvas.prototype.clear = function ()
 {
-    while (this.canvas.firstChild) 
+    while (this.graphics.firstChild) 
     {
-        this.canvas.removeChild(this.canvas.firstChild);
+        this.graphics.removeChild(this.graphics.firstChild);
     }
     return this;
 };
@@ -68,7 +71,7 @@ SvgCanvas.prototype.clear = function ()
  */
 SvgCanvas.prototype.drawFill = function ()
 {
-    this.attr(this._svgElement, 
+    attr(this._svgElement, 
     {
         'fill'            : this.fillColor(),
         'fill-opacity'    : this.fillOpacity()
@@ -81,7 +84,7 @@ SvgCanvas.prototype.drawFill = function ()
  */
 SvgCanvas.prototype.drawStroke = function ()
 {
-    this.attr(this._svgElement, 
+    attr(this._svgElement, 
     {
         'stroke'            : this.lineColor(),
         'stroke-width'      : this.lineWidth(),
@@ -97,8 +100,8 @@ SvgCanvas.prototype.drawStroke = function ()
  */
 SvgCanvas.prototype.drawCircle = function (cx, cy, r)
 {
-    var svgCircle = this.createElement('circle', {'cx':cx, 'cy':cy, 'r':r});
-    this.canvas.appendChild(svgCircle);
+    var svgCircle = createSvgElement('circle', {'cx':cx, 'cy':cy, 'r':r});
+    this.graphics.appendChild(svgCircle);
     this._svgElement = svgCircle;
     return this;
 };
@@ -109,8 +112,8 @@ SvgCanvas.prototype.drawCircle = function (cx, cy, r)
 SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
 {
     var rx = w / 2, ry = h / 2, cx = x + rx , cy = y + ry;
-    var svgEllipse = this.createElement('ellipse', {'cx':cx, 'cy':cy, 'rx':rx, 'ry': ry});
-    this.canvas.appendChild(svgEllipse);
+    var svgEllipse = createSvgElement('ellipse', {'cx':cx, 'cy':cy, 'rx':rx, 'ry': ry});
+    this.graphics.appendChild(svgEllipse);
     this._svgElement = svgEllipse;
     return this;
 };
@@ -120,8 +123,8 @@ SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
  */
 SvgCanvas.prototype.drawRect = function (x, y, w, h)
 {
-    var svgRect = this.createElement('rect', {'x':x, 'y':y, 'width':w, 'height':h});
-    this.canvas.appendChild(svgRect);
+    var svgRect = createSvgElement('rect', {'x':x, 'y':y, 'width':w, 'height':h});
+    this.graphics.appendChild(svgRect);
     this._svgElement = svgRect;
     return this;
 };
@@ -131,8 +134,8 @@ SvgCanvas.prototype.drawRect = function (x, y, w, h)
  */
 SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 {
-    var svgLine = this.createElement('line', {'x1':x1, 'y1':y1, 'x2':x2, 'y2':y2});
-    this.canvas.appendChild(svgLine);
+    var svgLine = createSvgElement('line', {'x1':x1, 'y1':y1, 'x2':x2, 'y2':y2});
+    this.graphics.appendChild(svgLine);
     this._svgElement = svgLine;
     return this;
 };
@@ -142,8 +145,8 @@ SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
  */
 SvgCanvas.prototype.drawPolyline = function (arrCoords)
 {
-    var svgPolyline = this.createElement('polyline', {'points' : this.getCoordsAsString(arrCoords)});
-    this.canvas.appendChild(svgPolyline);
+    var svgPolyline = createSvgElement('polyline', {'points' : getCoordsAsString(arrCoords)});
+    this.graphics.appendChild(svgPolyline);
     this._svgElement = svgPolyline;
     return this;
 };
@@ -153,8 +156,8 @@ SvgCanvas.prototype.drawPolyline = function (arrCoords)
  */
 SvgCanvas.prototype.drawPolygon = function (arrCoords)
 {
-    var svgPolygon = this.createElement('polygon', {'points' : this.getCoordsAsString(arrCoords)});
-    this.canvas.appendChild(svgPolygon);
+    var svgPolygon = createSvgElement('polygon', {'points' : getCoordsAsString(arrCoords)});
+    this.graphics.appendChild(svgPolygon);
     this._svgElement = svgPolygon;
     return this;
 };
@@ -167,7 +170,7 @@ SvgCanvas.prototype.drawPolygon = function (arrCoords)
  * @param {number[]} arrCoords The list of coords.
  * @return {string} A string containing the list of coords.
  */
-SvgCanvas.prototype.getCoordsAsString = function (arrCoords)
+function getCoordsAsString (arrCoords)
 {
     var n = arrCoords.length;
     var strPoints = '';
@@ -177,38 +180,6 @@ SvgCanvas.prototype.getCoordsAsString = function (arrCoords)
         strPoints += '' + arrCoords[i] + ' ' + arrCoords[i+1];
     }
     return strPoints;
-};
-
-/** 
- * Creates an element with the given attributes.
- * 
- * @since 0.1.0
- * @param {string} type The element type.
- * @return {attr} attr The list of attributes.
- */
-SvgCanvas.prototype.createElement = function (type, attr)
-{
-    var svgElement = document.createElementNS(this._svgNS, type);
-    this.attr(svgElement, attr);
-    return svgElement;
-};
-
-/** 
- * Sets the attributes for the given svg element.
- * 
- * @since 0.1.0
- * @param {SVGElement} svgElement The svg element.
- * @return {attr} attr The list of attributes.
- */
-SvgCanvas.prototype.attr = function (svgElement, attr)
-{
-    for (var property in attr) 
-    {
-        if (attr.hasOwnProperty(property))  
-        {
-            svgElement.setAttribute(property, attr[property]);
-        }
-    }
-};
+}
 
 module.exports = SvgCanvas;
