@@ -59,7 +59,7 @@ var extendClass = function(baseClass, subClass)
 
 module.exports = 
 {
-    isNumber : isNumber,
-    extendObject : extendObject,
-    extendClass : extendClass
+    isNumber        : isNumber,
+    extendObject    : extendObject,
+    extendClass     : extendClass
 };

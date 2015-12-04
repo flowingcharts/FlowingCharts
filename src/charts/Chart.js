@@ -58,6 +58,7 @@ function Chart (options)
  * @param {HTMLElement} options.container The html element that will contain the chart.
  * @param {string} [options.coordinateSystem = 'cartesian'] The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string} [options.renderer = 'canvas'] The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string} [options.renderRate = 250] The rate in ms that graphics are rendered when the chart is resized.
  * @return {Object|Series} The options if no arguments are supplied, otherwise <code>this</code>.
  */
 Chart.prototype.options = function(options)
@@ -69,7 +70,8 @@ Chart.prototype.options = function(options)
         {
             container           : null,
             coordinateSystem    : 'cartesian',
-            renderer            : 'canvas'
+            renderer            : 'canvas',
+            renderRate          : 20
         };
         // Extend default options with passed in options.
         extendObject(this._options, options);
@@ -79,9 +81,9 @@ Chart.prototype.options = function(options)
 
         // Coordinate system.
         if (options.coordinateSystem === 'polar')   
-            this.coords = new PolarCoords();                // Polar.
+            this.coords = new PolarCoords();     // Polar.
         else                                        
-            this.coords = new CartesianCoords();            // Cartesian.                     
+            this.coords = new CartesianCoords(); // Cartesian.                     
 
         // Series container.
         if (this._options.renderer === 'svg')       
@@ -129,7 +131,7 @@ Chart.prototype.options = function(options)
             resizeTimeout = setTimeout(function ()
             {        
                 me.setSize(container.offsetWidth, container.offsetHeight);
-            }, 20);
+            }, me._options.renderRate);
         });
 
         return this;
@@ -187,10 +189,7 @@ Chart.prototype.render = function()
     window.console.log("render");
 
     // Set the viewbox.
-    var xMin = Infinity;
-    var xMax = -Infinity;
-    var yMin = Infinity;
-    var yMax = -Infinity;
+    var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
     var n = this.series.length;
     for (var i = 0; i < n; i++)  
     {

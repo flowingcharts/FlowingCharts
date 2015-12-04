@@ -14,14 +14,14 @@
  */
 
 // Required modules.
-var Canvas              = require('./Canvas');
-var util                = require('../utils/util');
-var extendClass         = util.extendClass;
-var dom                 = require('../utils/dom');
-var createElement       = dom.createElement;
-var color               = require('../utils/color');
-var toRGBA              = color.toRGBA;
-var isRGBA              = color.isRGBA;
+var Canvas          = require('./Canvas');
+var util            = require('../utils/util');
+var extendClass     = util.extendClass;
+var dom             = require('../utils/dom');
+var createElement   = dom.createElement;
+var color           = require('../utils/color');
+var toRGBA          = color.toRGBA;
+var isRGBA          = color.isRGBA;
 
 /** 
  * @classdesc A wrapper class for rendering to a HTML5 canvas.

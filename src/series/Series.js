@@ -49,7 +49,8 @@ var extendObject    = util.extendObject;
 function Series (options)
 {
     // Private instance members.  
-    this._options = null; // The options.
+    this._options = null;   // The options.
+    this._items = [];       // The list of items belonging to the series.
 
     // Public instance members.  
 
@@ -154,99 +155,104 @@ Series.prototype.options = function(options)
         extendObject(this._options, options);
 
         // Process the data.
-        this.data(this._options.data);
+        this.update();
+
         return this;
     }
     else return this._options;
 };
 
 /** 
- * Get or set the data for the series.
+ * Updates the series.
  *
  * @since 0.1.0
- * @param {Object[]} [arrData] The data - an array of the form [{x:10, y:20}, {x:10, y:20}, {x:10, y:20}, ...].
- * @return {Object|Series} The data if no arguments are supplied, otherwise <code>this</code>.
+ * @return {Series} <code>this</code>.
  */
-Series.prototype.data = function(arrData)
+Series.prototype.update = function()
 {
-    if (arguments.length > 0)
+    this._items = [];
+
+    this.xMin = Infinity;
+    this.xMax = -Infinity;
+    this.yMin = Infinity;
+    this.yMax = -Infinity;
+
+    var n = this._options.data.length;
+    for (var i = 0; i < n; i++)  
     {
-        this._options.data = arrData.concat();
+        var dataItem = this._options.data[i];
+
+        // Add a new series item for each data item.
+        var item = 
+        {
+            id          : dataItem[this._options.idField]    !== undefined ? dataItem[this._options.idField]    : i,
+            name        : dataItem[this._options.nameField]  !== undefined ? dataItem[this._options.nameField]  : i,
+            markerSize  : dataItem[this._options.sizeField]  !== undefined ? dataItem[this._options.sizeField]  : this._options.markerSize,
+            shape       : dataItem[this._options.shapeField] !== undefined ? dataItem[this._options.shapeField] : this._options.shape,
+            x           : dataItem[this._options.xField],
+            y           : dataItem[this._options.yField],
+            fillColor   : dataItem[this._options.colorField] !== undefined ? dataItem[this._options.colorField] : this._options.fillColor,
+            fillOpacity : this._options.fillOpacity,
+            lineColor   : this._options.lineColor,  
+            lineWidth   : this._options.lineWidth, 
+            lineJoin    : this._options.lineJoin, 
+            lineCap     : this._options.lineCap, 
+            lineOpacity : this._options.lineOpacity
+        };
+        this._items.push(item);
 
         // Get the min and max values in the data.
-        this.xMin = Infinity;
-        this.xMax = -Infinity;
-        this.yMin = Infinity;
-        this.yMax = -Infinity;
-
-        var n = this._options.data.length;
-        for (var i = 0; i < n; i++)  
+        if (isNumber(item.x) && isNumber(item.y))
         {
-            var item    = this._options.data[i];
-            var x       = item[this._options.xField];
-            var y       = item[this._options.yField];
-
-            if (isNumber(x) && isNumber(y))
-            {
-                this.xMin = Math.min(this.xMin, x);
-                this.xMax = Math.max(this.xMax, x);
-                this.yMin = Math.min(this.yMin, y);
-                this.yMax = Math.max(this.yMax, y);
-            }
+            this.xMin = Math.min(this.xMin, item.x);
+            this.xMax = Math.max(this.xMax, item.x);
+            this.yMin = Math.min(this.yMin, item.y);
+            this.yMax = Math.max(this.yMax, item.y);
         }
-
-        return this;
     }
-    else return this._options.data;
+    return this;
 };
 
 /** 
  * Renders the graphics.
  *
  * @since 0.1.0
+ * @return {Series} <code>this</code>.
  */
 Series.prototype.render = function()
 {
     // TODO For svg we dont want to clear - just change attributes of current dom.
     this.canvas.clear();
 
-    var n = this._options.data.length;
+    var n = this._items.length;
     for (var i = 0; i < n; i++)  
     {
-        var item    = this._options.data[i];
-        var x       = item[this._options.xField];
-        var y       = item[this._options.yField];
-        var size    = item[this._options.sizeField];
-        var color   = item[this._options.colorField];
-        var shape   = item[this._options.shapeField];
+        var item = this._items[i];
 
-        if (isNumber(x) && isNumber(y))
+        if (isNumber(item.x) && isNumber(item.y))
         {
-            var markerSize  = size !== undefined ? size : this._options.markerSize;
-            var markerShape = shape !== undefined ? shape : this._options.shape;
-            var fillColor   = color !== undefined ? color : this._options.fillColor;
-
-            this.canvas.marker(markerShape, x, y, markerSize);
+            this.canvas.marker(item.shape, item.x, item.y, item.markerSize);
 
             this.canvas.fill(
             {
-                color   : fillColor,
-                opacity : this._options.fillOpacity
+                color   : item.fillColor,
+                opacity : item.fillOpacity
             });
 
             if (this._options.lineWidth > 0) 
             {
                 this.canvas.stroke(
                 {
-                    color   : this._options.lineColor,  
-                    width   : this._options.lineWidth, 
-                    join    : this._options.lineJoin, 
-                    cap     : this._options.lineCap, 
-                    opacity : this._options.lineOpacity
+                    color   : item.lineColor,
+                    width   : item.lineWidth,
+                    join    : item.lineJoin,
+                    cap     : item.lineCap,
+                    opacity : item.lineOpacity
                 });
             }
         }
     }
+    return this;
 
     /*
     this.canvas.rect(0, 0, 50, 50).fillColor('#00f500').lineWidth(15).fill().stroke();

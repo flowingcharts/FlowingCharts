@@ -61,6 +61,9 @@ function Canvas (coords)
      */
     this.graphics = null;
 
+    // List added items 
+    this.items = [];
+
     // Initialise.   
     this.init();
 }

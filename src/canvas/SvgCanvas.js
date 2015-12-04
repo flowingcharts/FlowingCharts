@@ -42,7 +42,6 @@ extendClass(Canvas, SvgCanvas);
  */
 SvgCanvas.prototype.init = function()
 {
-    this._svgElement    = null;                     // The svg element that is part of the current drawing routine.
     this.graphics       = createSvgElement('g');    // The group element container.
 };
 
@@ -59,6 +58,7 @@ SvgCanvas.prototype.isSupported = function ()
  */
 SvgCanvas.prototype.clear = function ()
 {
+    this.items = [];
     while (this.graphics.firstChild) 
     {
         this.graphics.removeChild(this.graphics.firstChild);
@@ -71,7 +71,7 @@ SvgCanvas.prototype.clear = function ()
  */
 SvgCanvas.prototype.drawFill = function ()
 {
-    attr(this._svgElement, 
+    attr(this.items[this.items.length-1], 
     {
         'fill'            : this.fillColor(),
         'fill-opacity'    : this.fillOpacity()
@@ -84,7 +84,7 @@ SvgCanvas.prototype.drawFill = function ()
  */
 SvgCanvas.prototype.drawStroke = function ()
 {
-    attr(this._svgElement, 
+    attr(this.items[this.items.length-1], 
     {
         'stroke'            : this.lineColor(),
         'stroke-width'      : this.lineWidth(),
@@ -101,8 +101,7 @@ SvgCanvas.prototype.drawStroke = function ()
 SvgCanvas.prototype.drawCircle = function (cx, cy, r)
 {
     var svgCircle = createSvgElement('circle', {'cx':cx, 'cy':cy, 'r':r});
-    this.graphics.appendChild(svgCircle);
-    this._svgElement = svgCircle;
+    this.addElement(svgCircle);
     return this;
 };
 
@@ -113,8 +112,7 @@ SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
 {
     var rx = w / 2, ry = h / 2, cx = x + rx , cy = y + ry;
     var svgEllipse = createSvgElement('ellipse', {'cx':cx, 'cy':cy, 'rx':rx, 'ry': ry});
-    this.graphics.appendChild(svgEllipse);
-    this._svgElement = svgEllipse;
+    this.addElement(svgEllipse);
     return this;
 };
 
@@ -124,8 +122,7 @@ SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
 SvgCanvas.prototype.drawRect = function (x, y, w, h)
 {
     var svgRect = createSvgElement('rect', {'x':x, 'y':y, 'width':w, 'height':h});
-    this.graphics.appendChild(svgRect);
-    this._svgElement = svgRect;
+    this.addElement(svgRect);
     return this;
 };
 
@@ -135,8 +132,7 @@ SvgCanvas.prototype.drawRect = function (x, y, w, h)
 SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 {
     var svgLine = createSvgElement('line', {'x1':x1, 'y1':y1, 'x2':x2, 'y2':y2});
-    this.graphics.appendChild(svgLine);
-    this._svgElement = svgLine;
+    this.addElement(svgLine);
     return this;
 };
 
@@ -146,8 +142,7 @@ SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
 SvgCanvas.prototype.drawPolyline = function (arrCoords)
 {
     var svgPolyline = createSvgElement('polyline', {'points' : getCoordsAsString(arrCoords)});
-    this.graphics.appendChild(svgPolyline);
-    this._svgElement = svgPolyline;
+    this.addElement(svgPolyline);
     return this;
 };
 
@@ -157,9 +152,20 @@ SvgCanvas.prototype.drawPolyline = function (arrCoords)
 SvgCanvas.prototype.drawPolygon = function (arrCoords)
 {
     var svgPolygon = createSvgElement('polygon', {'points' : getCoordsAsString(arrCoords)});
-    this.graphics.appendChild(svgPolygon);
-    this._svgElement = svgPolygon;
+    this.addElement(svgPolygon);
     return this;
+};
+
+/** 
+ * Adds an svg element to the canvas.
+ * 
+ * @since 0.1.0
+ * @param {SVGElement} svgElement The element to add.
+ */
+SvgCanvas.prototype.addElement = function (svgElement)
+{
+    this.graphics.appendChild(svgElement);
+    this.items.push(svgElement);
 };
 
 /** 

@@ -75,8 +75,8 @@ var createSvgElement = function (type, attributes)
 
 module.exports = 
 {
-    attr : attr,
-    style : style,
-    createElement : createElement,
-    createSvgElement : createSvgElement
+    attr                : attr,
+    style               : style,
+    createElement       : createElement,
+    createSvgElement    : createSvgElement
 };
