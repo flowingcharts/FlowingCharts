@@ -7,15 +7,17 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module canvas/Canvas 
+ * @requires canvas/CanvasItem
  * @requires utils/util
  * @requires utils/color
  */
 
 // Required modules.
-var util        = require('../utils/util');
-var isNumber    = util.isNumber;
-var color       = require('../utils/color');
-var isColor     = color.isColor;
+var CanvasItem      = require('./CanvasItem');
+var util            = require('../utils/util');
+var isNumber        = util.isNumber;
+var color           = require('../utils/color');
+var isColor         = color.isColor;
 
 /** 
  * @classdesc A base wrapper class for graphics libraries.
@@ -32,24 +34,6 @@ function Canvas (coords)
     // Private instance members.  
     this._coords = coords;
 
-    // Default styles.
-    this._defaultFillColor       = '#ffffff'; 
-    this._defaultFillOpacity     = 1;
-    this._defaultLineColor       = '#000000'; 
-    this._defaultLineWidth       = 1; 
-    this._defaultLineJoin        = 'round';
-    this._defaultLineCap         = 'butt';
-    this._defaultLineOpacity     = 1;
-
-    // Current styles override default styles.
-    this._fillColor             = '#ffffff'; 
-    this._fillOpacity           = 1;
-    this._lineColor             = '#000000';  
-    this._lineWidth             = 1; 
-    this._lineJoin              = 'round'; 
-    this._lineCap               = 'butt'; 
-    this._lineOpacity           = 1; 
-
     // Public instance members.  
 
     /** 
@@ -59,7 +43,7 @@ function Canvas (coords)
      * @type HTMLElement
      * @default null
      */
-    this.graphics = null;
+    this.graphicsElement = null;
 
     // List added items 
     this.items = [];
@@ -76,7 +60,7 @@ function Canvas (coords)
  */
 Canvas.prototype.appendTo = function (container)
 {
-    container.appendChild(this.graphics);
+    container.appendChild(this.graphicsElement);
 };
 
 // Geometry.
@@ -89,7 +73,7 @@ Canvas.prototype.appendTo = function (container)
  */
 Canvas.prototype.width = function ()
 {
-    return parseInt(this.graphics.getAttribute('width'));
+    return parseInt(this.graphicsElement.getAttribute('width'));
 };
 
 /** 
@@ -100,7 +84,7 @@ Canvas.prototype.width = function ()
  */
 Canvas.prototype.height = function ()
 {
-    return parseInt(this.graphics.getAttribute('height'));
+    return parseInt(this.graphicsElement.getAttribute('height'));
 };
 
 /** 
@@ -122,342 +106,223 @@ Canvas.prototype.setSize = function (w, h)
     if (w !== this.width() || h !== this.height())
     {
         // Canvas size.
-        this.graphics.setAttribute('width', w);
-        this.graphics.setAttribute('height', h);
+        this.graphicsElement.setAttribute('width', w);
+        this.graphicsElement.setAttribute('height', h);
     }
-};
-
-// Styling.
-
-/** 
- * Defines the default stroke style. This can be overridden on a shape by 
- * shape basis by calling [fillColor()]{@link Canvas#fillColor} or [fillOpacity()]{@link Canvas#fillOpacity}.  
- *
- * @since 0.1.0
- * @param {Object} [options] The fill properties.
- * @param {string} [options.color] The fill color.
- * @param {number} [options.opacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.fillStyle = function (options)
-{
-    if (options !== undefined) 
-    {
-        if (options.color !== undefined)    this._defaultFillColor     = options.color;
-        if (options.opacity !== undefined)  this._defaultFillOpacity   = options.opacity;
-    }
-    return this;
-};
-
-/** 
- * Draws a shape by filling its content area. 
- * Style precedence works in the following order:
- * default styles specified by fillStyle() 
- * override styles specified by methods eg fillColor() 
- * override styles specified in the options param 
- *
- * @since 0.1.0
- * @param {Object} [options] The fill properties.
- * @param {string} [options.color] The fill color.
- * @param {number} [options.opacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.fill = function (options)
-{
-    if (options !== undefined) 
-    {
-        if (options.color !== undefined)    this.fillColor(options.color);
-        if (options.opacity !== undefined)  this.fillOpacity(options.opacity);
-    }
-
-    // Call subclass fill routine.
-    this.drawFill();
-
-    // Reset to default stroke styles after fill() has completed.
-    this.fillColor(this._defaultFillColor).fillOpacity(this._defaultFillOpacity);
-    return this;
-};
-
-/** 
- * Defines the default fill style. This can be overridden on a shape by 
- * shape basis by calling {@link lineColor()}, {@link lineWidth()}, 
- * {@link lineJoin()}, {@link lineCap()} or {@link lineOpacity()}.  
- *
- * @since 0.1.0
- * @param {Object} [options] The stroke properties.
- * @param {string} [options.color] The line color.
- * @param {number} [options.width] The line width.
- * @param {string} [options.join] The line join, one of "bevel", "round", "miter".
- * @param {string} [options.cap] The line cap, one of "butt", "round", "square".
- * @param {number} [options.opacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.strokeStyle = function (options)
-{
-    if (arguments.length > 0)
-    {
-        if (options.color !== undefined)    this._defaultLineColor     = options.color;
-        if (options.width !== undefined)    this._defaultLineWidth     = options.width;
-        if (options.join !== undefined)     this._defaultLineJoin      = options.join;
-        if (options.cap !== undefined)      this._defaultLineCap       = options.cap;
-        if (options.opacity !== undefined)  this._defaultLineOpacity   = options.opacity;
-    }
-    return this;
-};
-
-/** 
- * Draws a shape by stroking its outline.
- * Style precedence works in the following order:
- * default styles specified by strokeStyle() 
- * override styles specified by methods eg lineColor() 
- * override styles specified in the options param 
- *
- * @since 0.1.0
- * @param {Object} [options] The stroke properties.
- * @param {string} [options.color] The line color.
- * @param {number} [options.width] The line width.
- * @param {string} [options.join] The line join, one of "bevel", "round", "miter".
- * @param {string} [options.cap] The line cap, one of "butt", "round", "square".
- * @param {number} [options.opacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @return {Canvas} <code>this</code>.
- */
-Canvas.prototype.stroke = function (options)
-{
-    // Style precedence works in the following order:
-    // default styles > method styles > option styles
-    if (options !== undefined) 
-    {
-        if (options.color !== undefined)    this.lineColor(options.color);
-        if (options.width !== undefined)    this.lineWidth(options.width);
-        if (options.join !== undefined)     this.lineJoin(options.join);
-        if (options.cap !== undefined)      this.lineCap(options.cap);
-        if (options.opacity !== undefined)  this.lineOpacity(options.opacity);
-    }
-
-    // Call subclass stroke routine.
-    this.drawStroke();
-
-    // Reset to default stroke styles after stroke() has completed.
-    this.lineColor(this._defaultLineColor)
-        .lineWidth(this._defaultLineWidth)
-        .lineJoin(this._defaultLineJoin)
-        .lineCap(this._defaultLineCap)
-        .lineOpacity(this._defaultLineOpacity);
-
-    return this;
-};
-
-/** 
- * Get or set the fill color.
- *
- * @since 0.1.0
-
- * @param {string} color The fill color.
- * @return {string|Canvas} The fill color if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.fillColor = function (color)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!isColor(color)) throw new Error('Canvas.fillColor(color): color must be a color.');
-        //</validation>
-
-        this._fillColor = color;
-        return this;
-    }
-    else return this._fillColor;
-};
-
-/** 
- * Get or set the fill opacity. This is overriden by the fillColor if it contains an alpha value.
- *
- * @since 0.1.0
-
- * @param {string} opacity The fill opacity.
- * @return {number|Canvas} The fill opacity if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.fillOpacity = function (opacity)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!isNumber(opacity)) throw new Error('Canvas.fillOpacity(opacity): opacity must be a number.');
-        //</validation>
-
-        opacity = Math.max(0, opacity);
-        opacity = Math.min(1, opacity);
-
-        this._fillOpacity = opacity;
-        return this;
-    }
-    else return this._fillOpacity;
-};
-
-/** 
- * Get or set the line color.
- *
- * @since 0.1.0
- * @param {string} color The line color.
- * @return {string|Canvas} The line color if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.lineColor = function (color)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!isColor(color)) throw new Error('Canvas.lineColor(color): color must be a color.');
-        //</validation>
-
-        this._lineColor = color;
-        return this;
-    }
-    else return this._lineColor;
-};
-
-/** 
- * Get or set the line width.
- *
- * @since 0.1.0
- * @param {number} width The line width.
- * @return {number|Canvas} The line width if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.lineWidth = function (width)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!isNumber(width)) throw new Error('Canvas.lineWidth(width): width must be a number.');
-        if (width < 0)        throw new Error('Canvas.lineWidth(width): width must be >= 0.');
-        //</validation>
-
-        this._lineWidth = width;
-        return this;
-    }
-    else return this._lineWidth;
-};
-
-/** 
- * Get or set the line join.
- *
- * @since 0.1.0
- * @param {string} join The line join, one of "bevel", "round", "miter".
- * @return {string|Canvas} The line join if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.lineJoin = function (join)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (join !== "bevel" && join !== "round" && join !== "miter")
-             throw new Error('Canvas.lineJoin(join): join must one of "bevel", "round", "miter"');
-        //</validation>
-      
-        this._lineJoin = join;
-        return this;
-    }
-    else return this._lineJoin;
-};
-
-/** 
- * Get or set the line cap.
- *
- * @since 0.1.0
- * @param {string} cap The line cap, one of "butt", "round", "square".
- * @return {string|Canvas} The line cap if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.lineCap = function (cap)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (cap !== "butt" && cap !== "round" && cap !== "square")
-             throw new Error('Canvas.lineCap(cap): cap must one of "butt", "round", "square"');
-        //</validation>
-
-        this._lineCap = cap;
-        return this;
-    }
-    else return this._lineCap;
-};
-
-/** 
- * Get or set the line opacity. This is overriden by the lineColor if it contains an alpha value.
- *
- * @since 0.1.0
- * @param {string} opacity A value between 0 and 1.
- * @return {number|Canvas} The line opacity if no arguments are supplied, otherwise <code>this</code>.
- */
-Canvas.prototype.lineOpacity = function (opacity)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!isNumber(opacity)) throw new Error('Canvas.lineOpacity(opacity): opacity must be a number.');
-        //</validation>
-
-        this._lineOpacity = opacity;
-        return this;
-    }
-    else return this._lineOpacity;
 };
 
 // Drawing.
 
 /** 
- * Draws a marker using data coordinates.
+ * Draws an item.
  *
  * @since 0.1.0
- * @param {string} type The shape type.
+ * @param {CanvasItem} item The canvas element.
+ */
+Canvas.prototype.renderItem = function (item) 
+{
+    if (item.type === 'polygon' || item.type === 'polyline' || item.type === 'line' )  
+    {
+        this.drawPath(item.points);
+    }    
+    else
+    {
+        if (item.marker === true)
+            this.drawMarker(item.type, item.x, item.y, item.w);
+        else
+            this.drawShape(item.type, item.x, item.y, item.w, item.h);
+    } 
+
+    this.drawFill(item);
+    this.drawStroke(item);
+};
+
+/** 
+ * Adds a marker using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The marker type.
  * @param {number} cx The x position of the centre of the marker (data units).
  * @param {number} cy The y position of the centre of the marker (data units).
  * @param {number} size The size of the marker in (pixel units).
- * @return {Canvas} <code>this</code>.
+ * @return {CanvasItem} item The canvas element.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
-    //<validation>
-    if (!isNumber(cx)) throw new Error('Canvas.marker(type, cx, cy, size): cx must be a number.');
-    if (!isNumber(cy)) throw new Error('Canvas.marker(type, cx, cy, size): cy must be a number.');
-    //</validation>
-
-    var px = this._coords.getPixelX(cx) - size/2;
-    var py = this._coords.getPixelY(cy) - size/2;
+    var item;
     switch(type)
     {
         case 'circle':
-            this.drawCircle(this._coords.getPixelX(cx), this._coords.getPixelY(cy), size/2);
+            item = this.circle(cx, cy, size, size);
         break;
-        case 'square':
+        case 'rect':
+            item = this.rect(cx, cy, size, size);
+        break;
+        case 'ellipse':
+            item = this.ellipse(cx, cy, size, size);
+        break;
+        default:
+            item = this.circle(cx, cy, size, size);
+    }
+    item.marker = true;
+    return item;
+};
+
+/** 
+ * Adds a shape using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The shape type.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y coord of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ * @return {CanvasItem} item The canvas element.
+ */
+Canvas.prototype.shape = function (type, x, y, w, h)
+{
+    var item;
+    switch(type)
+    {
+        case 'rect':
+            item = this.rect(x, y, w, h);
+        break;
+        case 'ellipse':
+            item = this.ellipse(x, y, w, h);
+        break;
+        default:
+            item = this.rect(x, y, w, h);
+    }
+    return item;
+};
+
+/** 
+ * Adds a path using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The path type.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @return {CanvasItem} item The canvas element.
+ */
+Canvas.prototype.path = function (type, arrCoords)
+{
+    var item;
+    switch(type)
+    {
+        case 'polygon':
+            item = this.polygon(arrCoords);
+        break;
+        case 'polyline':
+            item = this.polyline(arrCoords);
+        break;
+        case 'line':
+            item = this.line(arrCoords);
+        break;
+        default:
+            item = this.polygon(arrCoords);
+    }
+    return item;
+};
+
+/** 
+ * Draws a marker using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The marker type.
+ * @param {number} cx The x position of the centre of the circle.
+ * @param {number} cy The y position of the centre of the circle.
+ * @param {number} size The marker size.
+ */
+Canvas.prototype.drawMarker = function (type, cx, cy, size)
+{
+    var px = this._coords.getPixelX(cx) - size/2;
+    var py = this._coords.getPixelY(cy) - size/2;
+    
+    switch(type)
+    {
+        case 'circle':
+            this.drawCircle(px, py, size, size);
+        break;
+        case 'rect':
             this.drawRect(px, py, size, size);
         break;
         case 'ellipse':
             this.drawEllipse(px, py, size, size);
         break;
         default:
-            this.drawCircle(this._coords.getPixelX(cx), this._coords.getPixelY(cy), size/2);
+            this.drawRect(px, py, size, size);
     }
+};
 
-    return this;
+/** 
+ * Draws a shape using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The shape type.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y coord of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ */
+Canvas.prototype.drawShape = function (type, x, y, w, h)
+{
+    var pw = this._coords.getPixelWidth(w);
+    var ph = this._coords.getPixelHeight(h);
+    var py = this._coords.getPixelX(x);
+    var px = this._coords.getPixelY(y) - ph;
+
+    switch(type)
+    {
+        case 'rect':
+            this.drawRect(px, py, pw, ph);
+        break;
+        case 'ellipse':
+            this.drawEllipse(px, py, pw, ph);
+        break;
+        default:
+            this.drawRect(px, py, pw, ph);
+    }
+};
+
+/** 
+ * Draws a path using data coordinates.
+ *
+ * @since 0.1.0
+ * @param {string} type The shape type.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ */
+Canvas.prototype.drawPath = function (type, arrCoords)
+{
+    var points = this._coords.getPixelArray(arrCoords);
+
+    switch(type)
+    {
+        case 'polygon':
+            this.drawPolygon(points);
+        break;
+        case 'polyline':
+            this.drawPolyline(points);
+        break;
+        default:
+            this.drawPolygon(points);
+    }
 };
 
 /** 
  * Draws a circle using data coordinates.
  *
  * @since 0.1.0
- * @param {number} cx The x position of the centre of the circle.
- * @param {number} cy The y position of the centre of the circle.
- * @param {number} r The circle radius.
- * @return {Canvas} <code>this</code>.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y coord of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ * @return {CanvasItem} item The canvas element.
  */
-Canvas.prototype.circle = function (cx, cy, r)
+Canvas.prototype.circle = function (x, y, w, h)
 {
-    //<validation>
-    if (!isNumber(cx)) throw new Error('Canvas.circle(cx, cy, r): cx must be a number.');
-    if (!isNumber(cy)) throw new Error('Canvas.circle(cx, cy, r): cy must be a number.');
-    //</validation>
-
-    return this.drawCircle(this._coords.getPixelX(cx), this._coords.getPixelY(cy), r);
+    var item = new ShapeItem('circle', x, y, w, h);
+    this.items.push(item);
+    return item;
 };
 
 /** 
@@ -468,24 +333,13 @@ Canvas.prototype.circle = function (cx, cy, r)
  * @param {number} y The y coord of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {Canvas} <code>this</code>.
+ * @return {CanvasItem} item The canvas element.
  */
 Canvas.prototype.ellipse = function (x, y, w, h)
 {
-    //<validation>
-    if (!isNumber(x)) throw new Error('Canvas.ellipse(x, y, w, h): x must be a number.');
-    if (!isNumber(y)) throw new Error('Canvas.ellipse(x, y, w, h): y must be a number.');
-    if (!isNumber(w)) throw new Error('Canvas.ellipse(x, y, w, h): w must be a number.');
-    if (!isNumber(h)) throw new Error('Canvas.ellipse(x, y, w, h): h must be a number.');
-    if (w < 0)        throw new Error('Canvas.ellipse(x, y, w, h): w must be >= 0.');
-    if (h < 0)        throw new Error('Canvas.ellipse(x, y, w, h): h must be >= 0.');
-    //</validation>
-
-    w = this._coords.getPixelWidth(w);
-    h = this._coords.getPixelHeight(h);
-    x = this._coords.getPixelX(x);
-    y = this._coords.getPixelY(y) - h;
-    return this.drawEllipse(x, y, w, h);
+    var item = new ShapeItem('ellipse', x, y, w, h);
+    this.items.push(item);
+    return item;
 };
 
 /** 
@@ -496,46 +350,27 @@ Canvas.prototype.ellipse = function (x, y, w, h)
  * @param {number} y The y coord of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {Canvas} <code>this</code>.
+ * @return {CanvasItem} item The canvas element.
  */
 Canvas.prototype.rect = function (x, y, w, h)
 {
-    //<validation>
-    if (!isNumber(x)) throw new Error('Canvas.rect(x, y, w, h): x must be a number.');
-    if (!isNumber(y)) throw new Error('Canvas.rect(x, y, w, h): y must be a number.');
-    if (!isNumber(w)) throw new Error('Canvas.rect(x, y, w, h): w must be a number.');
-    if (!isNumber(h)) throw new Error('Canvas.rect(x, y, w, h): h must be a number.');
-    if (w < 0)        throw new Error('Canvas.rect(x, y, w, h): w must be >= 0.');
-    if (h < 0)        throw new Error('Canvas.rect(x, y, w, h): h must be >= 0.');
-    //</validation>
-
-    w = this._coords.getPixelWidth(w);
-    h = this._coords.getPixelHeight(h);
-    x = this._coords.getPixelX(x);
-    y = this._coords.getPixelY(y) - h;
-    return this.drawRect(x, y, w, h);
+    var item = new ShapeItem('rect', x, y, w, h);
+    this.items.push(item);
+    return item;
 };
 
 /** 
  * Draws a line using data coordinates.
  *
  * @since 0.1.0
- * @param {number} x1 The x position of point 1.
- * @param {number} y1 The y position of point 1.
- * @param {number} x2 The x position of point 2.
- * @param {number} y2 The y position of point 2.
- * @return {Canvas} <code>this</code>.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2].
+ * @return {CanvasItem} item The canvas element.
  */
-Canvas.prototype.line = function (x1, y1, x2, y2)
+Canvas.prototype.line = function (arrCoords)
 {
-    //<validation>
-    if (!isNumber(x1)) throw new Error('Canvas.line(x1, y1, x2, y2): x1 must be a number.');
-    if (!isNumber(y1)) throw new Error('Canvas.line(x1, y1, x2, y2): y1 must be a number.');
-    if (!isNumber(x2)) throw new Error('Canvas.line(x1, y1, x2, y2): x2 must be a number.');
-    if (!isNumber(y2)) throw new Error('Canvas.line(x1, y1, x2, y2): y2 must be a number.');
-    //</validation>
-
-    return this.drawLine(this._coords.getPixelX(x1), this._coords.getPixelY(y1), this._coords.getPixelX(x2), this._coords.getPixelY(y2));
+    var item = new PathItem('line', arrCoords);
+    this.items.push(item);
+    return item;
 };
 
 /** 
@@ -543,11 +378,13 @@ Canvas.prototype.line = function (x1, y1, x2, y2)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {Canvas} <code>this</code>.
+ * @return {CanvasItem} item The canvas element.
  */
 Canvas.prototype.polyline = function (arrCoords)
 {
-    return this.drawPolyline(this._coords.getPixelArray(arrCoords));
+    var item = new PathItem('polyline', arrCoords);
+    this.items.push(item);
+    return item;
 };
 
 /** 
@@ -555,11 +392,13 @@ Canvas.prototype.polyline = function (arrCoords)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {Canvas} <code>this</code>.
+ * @return {CanvasItem} item The canvas element.
  */
 Canvas.prototype.polygon = function (arrCoords)
 {
-    return this.drawPolygon(this._coords.getPixelArray(arrCoords));
+    var item = new PathItem('polygon', arrCoords);
+    this.items.push(item);
+    return item;
 };
 
 // Implemented by subclasses.
@@ -569,10 +408,7 @@ Canvas.prototype.polygon = function (arrCoords)
  *
  * @since 0.1.0
  */
-Canvas.prototype.init = function()
-{
-    return this;
-};
+Canvas.prototype.init = function () {};
 
 /** 
  * Check for support of the graphics library.
@@ -580,57 +416,48 @@ Canvas.prototype.init = function()
  * @since 0.1.0
  * @return {boolean} true if the browser supports the graphics library, otherwise false.
  */
-Canvas.prototype.isSupported = function ()
-{
-    return false;
-};
+Canvas.prototype.isSupported = function () {return false;};
+
+/** 
+ * Renders the canvas.
+ *
+ * @since 0.1.0
+ */
+Canvas.prototype.render = function () {};
 
 /** 
  * Clear the canvas.
  *
  * @since 0.1.0
- * @return {Canvas} <code>this</code>.
  */
-Canvas.prototype.clear = function ()
-{
-    return this;
-};
+Canvas.prototype.clear = function () {};
 
 /** 
  * Provides the fill drawing routine for the graphics library being used.
  *
  * @since 0.1.0
- * @return {Canvas} <code>this</code>.
+ * @param {CanvasItem} item The canvas element.
  */
-Canvas.prototype.drawFill = function ()
-{
-    return this;
-};
+Canvas.prototype.drawFill = function (item) {};
 
 /** 
  * Provides the stroke drawing routine for the graphics library being used.
  *
  * @since 0.1.0
- * @return {Canvas} <code>this</code>.
+ * @param {CanvasItem} item The canvas element.
  */
-Canvas.prototype.drawStroke = function ()
-{
-    return this;
-};
+Canvas.prototype.drawStroke = function (item) {};
 
 /** 
  * Draws a circle.
  *
  * @since 0.1.0
- * @param {number} cx The x position of the centre of the circle.
- * @param {number} cy The y position of the centre of the circle.
- * @param {number} r The circle radius.
- * @return {Canvas} <code>this</code>.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y coord of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
  */
-Canvas.prototype.drawCircle = function (cx, cy, r)
-{
-    return this;
-};
+Canvas.prototype.drawCircle = function (x, y, w, h) {};
 
 /** 
  * Draws an ellipse.
@@ -640,12 +467,8 @@ Canvas.prototype.drawCircle = function (cx, cy, r)
  * @param {number} y The y coord of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {Canvas} <code>this</code>.
  */
-Canvas.prototype.drawEllipse = function (x, y, w, h)
-{
-    return this;
-};
+Canvas.prototype.drawEllipse = function (x, y, w, h) {};
 
 /** 
  * Draws a rectangle.
@@ -655,50 +478,31 @@ Canvas.prototype.drawEllipse = function (x, y, w, h)
  * @param {number} y The y coord of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {Canvas} <code>this</code>.
  */
-Canvas.prototype.drawRect = function (x, y, w, h)
-{
-    return this;
-};
+Canvas.prototype.drawRect = function (x, y, w, h) {};
 
 /** 
  * Draws a line.
  *
  * @since 0.1.0
- * @param {number} x1 The x position of point 1.
- * @param {number} y1 The y position of point 1.
- * @param {number} x2 The x position of point 2.
- * @param {number} y2 The y position of point 2.
- * @return {Canvas} <code>this</code>.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2].
  */
-Canvas.prototype.drawLine = function (x1, y1, x2, y2)
-{
-    return this;
-};
+Canvas.prototype.drawLine = function (arrCoords) {};
 
 /** 
  * Draws a polyline.
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {Canvas} <code>this</code>.
  */
-Canvas.prototype.drawPolyline = function (arrCoords)
-{
-    return this;
-};
+Canvas.prototype.drawPolyline = function (arrCoords) {};
 
 /** 
  * Draws a polygon.
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {Canvas} <code>this</code>.
  */
-Canvas.prototype.drawPolygon = function (arrCoords)
-{
-    return this;
-};
+Canvas.prototype.drawPolygon = function (arrCoords) {};
 
 module.exports = Canvas;

@@ -42,7 +42,11 @@ extendClass(Canvas, SvgCanvas);
  */
 SvgCanvas.prototype.init = function()
 {
-    this.graphics       = createSvgElement('g');    // The group element container.
+    // Private instance members.  
+    this._activeElement = null; // The active svg element.
+
+    // Public instance members.  
+    this.graphicsElement = createSvgElement('g');    // The group element container.
 };
 
 /** 
@@ -50,7 +54,7 @@ SvgCanvas.prototype.init = function()
  */
 SvgCanvas.prototype.isSupported = function ()
 {
-    return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Shape", "1.0");
+    return document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Shape', '1.0');
 };
 
 /** 
@@ -59,50 +63,76 @@ SvgCanvas.prototype.isSupported = function ()
 SvgCanvas.prototype.clear = function ()
 {
     this.items = [];
-    while (this.graphics.firstChild) 
+    while (this.graphicsElement.firstChild) 
     {
-        this.graphics.removeChild(this.graphics.firstChild);
+        this.graphicsElement.removeChild(this.graphicsElement.firstChild);
     }
-    return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawFill = function ()
+SvgCanvas.prototype.render = function ()
 {
-    attr(this.items[this.items.length-1], 
+    var n = this.items.length;
+    for (var i = 0; i < n; i++)  
     {
-        'fill'            : this.fillColor(),
-        'fill-opacity'    : this.fillOpacity()
-    });
-    return this;
+        var item = this.items[i];
+
+        this._activeElement = item.element;
+        if (this._activeElement === undefined)
+        {
+            this._activeElement = createSvgElement(item.type);
+            this.graphicsElement.appendChild(this._activeElement);
+            item.element = this._activeElement;
+        }
+
+        this.renderItem(item);
+    }
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawStroke = function ()
+SvgCanvas.prototype.drawFill = function (item)
 {
-    attr(this.items[this.items.length-1], 
+    attr(this._activeElement, 
     {
-        'stroke'            : this.lineColor(),
-        'stroke-width'      : this.lineWidth(),
-        'stroke-linejoin'   : this.lineJoin(),
-        'stroke-linecap'    : this.lineCap(),
-        'stroke-opacity'    : this.lineOpacity()
+        'fill'            : item.fillColor(),
+        'fill-opacity'    : item.fillOpacity()
     });
-    return this;
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawCircle = function (cx, cy, r)
+SvgCanvas.prototype.drawStroke = function (item)
 {
-    var svgCircle = createSvgElement('circle', {'cx':cx, 'cy':cy, 'r':r});
-    this.addElement(svgCircle);
-    return this;
+    attr(this._activeElement, 
+    {
+        'stroke'            : item.lineColor(),
+        'stroke-width'      : item.lineWidth(),
+        'stroke-linejoin'   : item.lineJoin(),
+        'stroke-linecap'    : item.lineCap(),
+        'stroke-opacity'    : item.lineOpacity()
+    });
+};
+
+/** 
+ * @inheritdoc
+ */
+SvgCanvas.prototype.drawCircle = function (x, y, w, h)
+{
+    var r = w / 2;
+    var cx = x + r;
+    var cy = y + r;
+
+    attr(this._activeElement, 
+    {
+        cx : cx,
+        cy : cy,
+        r  : r
+    });
 };
 
 /** 
@@ -111,9 +141,13 @@ SvgCanvas.prototype.drawCircle = function (cx, cy, r)
 SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
 {
     var rx = w / 2, ry = h / 2, cx = x + rx , cy = y + ry;
-    var svgEllipse = createSvgElement('ellipse', {'cx':cx, 'cy':cy, 'rx':rx, 'ry': ry});
-    this.addElement(svgEllipse);
-    return this;
+    attr(this._activeElement, 
+    {
+        cx : cx,
+        cy : cy,
+        rx  : rx,
+        ry  : ry,
+    });
 };
 
 /** 
@@ -121,19 +155,27 @@ SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
  */
 SvgCanvas.prototype.drawRect = function (x, y, w, h)
 {
-    var svgRect = createSvgElement('rect', {'x':x, 'y':y, 'width':w, 'height':h});
-    this.addElement(svgRect);
-    return this;
+    attr(this._activeElement, 
+    {
+        x       : x,
+        y       : y,
+        width   : w,
+        height  : h,
+    });
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
+SvgCanvas.prototype.drawLine = function (arrCoords)
 {
-    var svgLine = createSvgElement('line', {'x1':x1, 'y1':y1, 'x2':x2, 'y2':y2});
-    this.addElement(svgLine);
-    return this;
+    attr(this._activeElement, 
+    {
+        x1 : arrCoords[0],
+        y1 : arrCoords[1],
+        x2 : arrCoords[2],
+        y2 : arrCoords[3],
+    });
 };
 
 /** 
@@ -141,9 +183,10 @@ SvgCanvas.prototype.drawLine = function (x1, y1, x2, y2)
  */
 SvgCanvas.prototype.drawPolyline = function (arrCoords)
 {
-    var svgPolyline = createSvgElement('polyline', {'points' : getCoordsAsString(arrCoords)});
-    this.addElement(svgPolyline);
-    return this;
+    attr(this._activeElement, 
+    {
+        points : getCoordsAsString(arrCoords)
+    });
 };
 
 /** 
@@ -151,21 +194,10 @@ SvgCanvas.prototype.drawPolyline = function (arrCoords)
  */
 SvgCanvas.prototype.drawPolygon = function (arrCoords)
 {
-    var svgPolygon = createSvgElement('polygon', {'points' : getCoordsAsString(arrCoords)});
-    this.addElement(svgPolygon);
-    return this;
-};
-
-/** 
- * Adds an svg element to the canvas.
- * 
- * @since 0.1.0
- * @param {SVGElement} svgElement The element to add.
- */
-SvgCanvas.prototype.addElement = function (svgElement)
-{
-    this.graphics.appendChild(svgElement);
-    this.items.push(svgElement);
+    attr(this._activeElement, 
+    {
+        points : getCoordsAsString(arrCoords)
+    });
 };
 
 /** 

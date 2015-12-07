@@ -104,14 +104,15 @@ Chart.prototype.options = function(options)
         {
             for (var i = 0; i < this._options.series.length; i++)  
             {
-                var s = new Series(this._options.series[i]);
-
+                var seriesCanvas;
                 if (this._options.renderer === 'svg')   
-                    s.canvas = new SvgCanvas(this.coords);  // SVG.
+                    seriesCanvas = new SvgCanvas(this.coords);  // SVG.
                 else                                    
-                    s.canvas = new HtmlCanvas(this.coords); // Canvas.
+                    seriesCanvas = new HtmlCanvas(this.coords); // Canvas.
 
-                s.canvas.appendTo(this._seriesContainer);   
+                var s = new Series(seriesCanvas, this._options.series[i]);
+
+                seriesCanvas.appendTo(this._seriesContainer);   
                 this.series.push(s);                    
             }
         }

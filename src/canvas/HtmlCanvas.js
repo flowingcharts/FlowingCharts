@@ -45,7 +45,8 @@ extendClass(Canvas, HtmlCanvas);
  */
 HtmlCanvas.prototype.init = function()
 {
-    this.graphics = createElement('canvas',     // The drawing canvas.
+    // Public instance members.  
+    this.graphicsElement = createElement('canvas',     // The drawing canvas.
     {
         style :
         {
@@ -54,7 +55,7 @@ HtmlCanvas.prototype.init = function()
             right       : 0 
         }
     });
-    this.ctx = this.graphics.getContext('2d');  // The drawing context.
+    this.ctx = this.graphicsElement.getContext('2d');  // The drawing context.
 };
 
 /** 
@@ -70,47 +71,65 @@ HtmlCanvas.prototype.isSupported = function ()
  */
 HtmlCanvas.prototype.clear = function ()
 {
-    this.ctx.clearRect(0, 0, this.graphics.width, this.graphics.height);
-    return this;
+    this.ctx.clearRect(0, 0, this.graphicsElement.width, this.graphicsElement.height);
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.drawFill = function ()
+HtmlCanvas.prototype.render = function ()
 {
-    var rgbaColor = this.fillColor();
-    if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(this.fillColor(), this.fillOpacity());
+    this.clear();
+
+    var n = this.items.length;
+    for (var i = 0; i < n; i++)  
+    {
+        var item = this.items[i];
+        this.renderItem(item);
+    }
+};
+
+/** 
+ * @inheritdoc
+ */
+HtmlCanvas.prototype.drawFill = function (item)
+{
+    var rgbaColor = item.fillColor();
+    if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(item.fillColor(), item.fillOpacity());
 
     this.ctx.fillStyle      = rgbaColor;     
     this.ctx.fill();
-    return this;
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.drawStroke = function (options)
+HtmlCanvas.prototype.drawStroke = function (item)
 {
-    var rgbaColor = this.lineColor();
-    if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(this.lineColor(), this.lineOpacity());
+    if (item.lineWidth() > 0)
+    {
+        var rgbaColor = item.lineColor();
+        if (isRGBA(rgbaColor) === false) rgbaColor = toRGBA(item.lineColor(), item.lineOpacity());
 
-    this.ctx.strokeStyle    = rgbaColor;
-    this.ctx.lineWidth      = this.lineWidth();
-    this.ctx.lineJoin       = this.lineJoin();
-    this.ctx.lineCap        = this.lineCap();
-    this.ctx.stroke();
-    return this;
+        this.ctx.strokeStyle    = rgbaColor;
+        this.ctx.lineWidth      = item.lineWidth();
+        this.ctx.lineJoin       = item.lineJoin();
+        this.ctx.lineCap        = item.lineCap();
+        this.ctx.stroke();
+    }
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.drawCircle = function (cx, cy, r)
+HtmlCanvas.prototype.drawCircle = function (x, y, w, h)
 {
+    var r = w / 2;
+    var cx = x + r;
+    var cy = y + r;
+
     this.ctx.beginPath();
     this.ctx.arc(cx, cy, r, 0, 2 * Math.PI, false);
-    return this;
 };
 
 /** 
@@ -132,7 +151,6 @@ HtmlCanvas.prototype.drawEllipse = function (x, y, w, h)
     this.ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
     this.ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     this.ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    return this;
 };
 
 /** 
@@ -142,18 +160,16 @@ HtmlCanvas.prototype.drawRect = function (x, y, w, h)
 {
     this.ctx.beginPath();
     this.ctx.rect(x, y, w, h);
-    return this;
 };
 
 /** 
  * @inheritdoc
  */
-HtmlCanvas.prototype.drawLine = function (x1, y1, x2, y2)
+HtmlCanvas.prototype.drawLine = function (arrCoords)
 {
     this.ctx.beginPath();
-    this.ctx.moveTo(x1, y1);
-    this.ctx.lineTo(x2, y2);
-    return this;
+    this.ctx.moveTo(arrCoords[0], arrCoords[1]);
+    this.ctx.lineTo(arrCoords[2], arrCoords[3]);
 };
 
 /** 
@@ -170,7 +186,6 @@ HtmlCanvas.prototype.drawPolyline = function (arrCoords)
         if (i === 0)    this.ctx.moveTo(x, y);
         else            this.ctx.lineTo(x, y);
     }
-    return this;
 };
 
 /** 
@@ -180,7 +195,6 @@ HtmlCanvas.prototype.drawPolygon = function (arrCoords)
 {
     this.drawPolyline(arrCoords);
     this.ctx.closePath();
-    return this;
 };
 
 module.exports = HtmlCanvas;
