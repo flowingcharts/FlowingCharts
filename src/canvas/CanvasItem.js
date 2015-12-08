@@ -24,10 +24,13 @@ var isColor     = color.isColor;
  * @alias CanvasItem
  * @since 0.1.0
  * @constructor
+ *
+ * @param {string} type The shape type.
  */
-function CanvasItem (options)
+function CanvasItem (type)
 {
     // Private instance members.
+    this._type          = type; // The shape type.
 
     // Styles.
     this._fillColor     = '#ffffff'; 
@@ -36,16 +39,19 @@ function CanvasItem (options)
     this._lineWidth     = 1; 
     this._lineJoin      = 'round'; 
     this._lineCap       = 'butt'; 
-    this._lineOpacity   = 1; 
-
-    for (var property in options) 
-    {
-        if (options.hasOwnProperty(property))  
-        {
-            this[property] = options[property];
-        }
-    }
+    this._lineOpacity   = 1;
 }
+
+/** 
+ * Get the type.
+ *
+ * @since 0.1.0
+ * @return {string} The shape type.
+ */
+CanvasItem.prototype.type = function ()
+{
+    return this._type;
+};
 
 /** 
  * Defines the stroke style.

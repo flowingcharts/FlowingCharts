@@ -42,9 +42,6 @@ extendClass(Canvas, SvgCanvas);
  */
 SvgCanvas.prototype.init = function()
 {
-    // Private instance members.  
-    this._activeElement = null; // The active svg element.
-
     // Public instance members.  
     this.graphicsElement = createSvgElement('g');    // The group element container.
 };
@@ -72,23 +69,10 @@ SvgCanvas.prototype.clear = function ()
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.render = function ()
+SvgCanvas.prototype.appendElement = function (item)
 {
-    var n = this.items.length;
-    for (var i = 0; i < n; i++)  
-    {
-        var item = this.items[i];
-
-        this._activeElement = item.element;
-        if (this._activeElement === undefined)
-        {
-            this._activeElement = createSvgElement(item.type);
-            this.graphicsElement.appendChild(this._activeElement);
-            item.element = this._activeElement;
-        }
-
-        this.renderItem(item);
-    }
+    item.element = createSvgElement(item.type());
+    this.graphicsElement.appendChild(item.element);
 };
 
 /** 
@@ -96,10 +80,10 @@ SvgCanvas.prototype.render = function ()
  */
 SvgCanvas.prototype.drawFill = function (item)
 {
-    attr(this._activeElement, 
+    attr(item.element, 
     {
-        'fill'            : item.fillColor(),
-        'fill-opacity'    : item.fillOpacity()
+        'fill'         : item.fillColor(),
+        'fill-opacity' : item.fillOpacity()
     });
 };
 
@@ -108,96 +92,62 @@ SvgCanvas.prototype.drawFill = function (item)
  */
 SvgCanvas.prototype.drawStroke = function (item)
 {
-    attr(this._activeElement, 
+    attr(item.element, 
     {
-        'stroke'            : item.lineColor(),
-        'stroke-width'      : item.lineWidth(),
-        'stroke-linejoin'   : item.lineJoin(),
-        'stroke-linecap'    : item.lineCap(),
-        'stroke-opacity'    : item.lineOpacity()
+        'stroke'          : item.lineColor(),
+        'stroke-width'    : item.lineWidth(),
+        'stroke-linejoin' : item.lineJoin(),
+        'stroke-linecap'  : item.lineCap(),
+        'stroke-opacity'  : item.lineOpacity()
     });
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawCircle = function (x, y, w, h)
+SvgCanvas.prototype.drawCircle = function (item, cx, cy, r)
 {
-    var r = w / 2;
-    var cx = x + r;
-    var cy = y + r;
-
-    attr(this._activeElement, 
-    {
-        cx : cx,
-        cy : cy,
-        r  : r
-    });
+    attr(item.element, {cx:cx, cy:cy, r:r});
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawEllipse = function (x, y, w, h)
+SvgCanvas.prototype.drawEllipse = function (item, cx, cy, rx, ry)
 {
-    var rx = w / 2, ry = h / 2, cx = x + rx , cy = y + ry;
-    attr(this._activeElement, 
-    {
-        cx : cx,
-        cy : cy,
-        rx  : rx,
-        ry  : ry,
-    });
+    attr(item.element, {cx:cx, cy:cy, rx:rx, ry:ry});
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawRect = function (x, y, w, h)
+SvgCanvas.prototype.drawRect = function (item, x, y, w, h)
 {
-    attr(this._activeElement, 
-    {
-        x       : x,
-        y       : y,
-        width   : w,
-        height  : h,
-    });
+    attr(item.element, {x:x, y:y, width:w, height:h});
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawLine = function (arrCoords)
+SvgCanvas.prototype.drawLine = function (item, x1, y1, x2, y2)
 {
-    attr(this._activeElement, 
-    {
-        x1 : arrCoords[0],
-        y1 : arrCoords[1],
-        x2 : arrCoords[2],
-        y2 : arrCoords[3],
-    });
+    attr(item.element, {x1:x1, y1:y1, x2:x2, y2:y2});
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawPolyline = function (arrCoords)
+SvgCanvas.prototype.drawPolyline = function (item, arrCoords)
 {
-    attr(this._activeElement, 
-    {
-        points : getCoordsAsString(arrCoords)
-    });
+    attr(item.element, {points:getCoordsAsString(arrCoords)});
 };
 
 /** 
  * @inheritdoc
  */
-SvgCanvas.prototype.drawPolygon = function (arrCoords)
-{
-    attr(this._activeElement, 
-    {
-        points : getCoordsAsString(arrCoords)
-    });
+SvgCanvas.prototype.drawPolygon = function (item, arrCoords)
+{    
+    attr(item.element, {points:getCoordsAsString(arrCoords)});
 };
 
 /** 

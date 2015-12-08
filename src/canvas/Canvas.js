@@ -7,13 +7,15 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module canvas/Canvas 
- * @requires canvas/CanvasItem
+ * @requires canvas/ShapeItem
+ * @requires canvas/PathItem
  * @requires utils/util
  * @requires utils/color
  */
 
 // Required modules.
-var CanvasItem      = require('./CanvasItem');
+var ShapeItem       = require('./ShapeItem');
+var PathItem        = require('./PathItem');
 var util            = require('../utils/util');
 var isNumber        = util.isNumber;
 var color           = require('../utils/color');
@@ -111,294 +113,318 @@ Canvas.prototype.setSize = function (w, h)
     }
 };
 
-// Drawing.
+// Create canvas items.
 
 /** 
- * Draws an item.
- *
- * @since 0.1.0
- * @param {CanvasItem} item The canvas element.
- */
-Canvas.prototype.renderItem = function (item) 
-{
-    if (item.type === 'polygon' || item.type === 'polyline' || item.type === 'line' )  
-    {
-        this.drawPath(item.points);
-    }    
-    else
-    {
-        if (item.marker === true)
-            this.drawMarker(item.type, item.x, item.y, item.w);
-        else
-            this.drawShape(item.type, item.x, item.y, item.w, item.h);
-    } 
-
-    this.drawFill(item);
-    this.drawStroke(item);
-};
-
-/** 
- * Adds a marker using data coordinates.
+ * Creates a marker.
  *
  * @since 0.1.0
  * @param {string} type The marker type.
- * @param {number} cx The x position of the centre of the marker (data units).
- * @param {number} cy The y position of the centre of the marker (data units).
- * @param {number} size The size of the marker in (pixel units).
- * @return {CanvasItem} item The canvas element.
+ * @param {number} cx The x position of the center of the marker.
+ * @param {number} cy The y position of the center of the marker.
+ * @param {number} size The size of the marker.
+ * @return {ShapeItem} A shape item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
-    var item;
+    var item, r = size / 2;
     switch(type)
     {
         case 'circle':
-            item = this.circle(cx, cy, size, size);
+            item = this.circle(cx + r, cy + r, r);
+        break;
+        case 'ellipse':
+            item = this.ellipse(cx + r, cy + r, r, r);
         break;
         case 'rect':
             item = this.rect(cx, cy, size, size);
         break;
-        case 'ellipse':
-            item = this.ellipse(cx, cy, size, size);
-        break;
-        default:
-            item = this.circle(cx, cy, size, size);
     }
     item.marker = true;
     return item;
 };
 
 /** 
- * Adds a shape using data coordinates.
+ * Creates a shape.
  *
  * @since 0.1.0
  * @param {string} type The shape type.
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
+ * @param {number} x The x position of the bottom left corner.
+ * @param {number} y The y position of the bottom left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {CanvasItem} item The canvas element.
+ * @return {ShapeItem} A shape item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
     var item;
     switch(type)
     {
+        case 'ellipse':
+            var rx = w / 2, ry = h / 2, cx = x + rx, cy = y + ry;
+            item = this.ellipse(cx, cy, rx, ry);
+        break;
         case 'rect':
             item = this.rect(x, y, w, h);
         break;
-        case 'ellipse':
-            item = this.ellipse(x, y, w, h);
-        break;
-        default:
-            item = this.rect(x, y, w, h);
     }
     return item;
 };
 
 /** 
- * Adds a path using data coordinates.
+ * Creates a path.
  *
  * @since 0.1.0
  * @param {string} type The path type.
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {CanvasItem} item The canvas element.
+ * @return {ShapeItem} A path item.
  */
 Canvas.prototype.path = function (type, arrCoords)
 {
     var item;
     switch(type)
     {
-        case 'polygon':
-            item = this.polygon(arrCoords);
+        case 'line':
+            item = this.line(arrCoords[0], arrCoords[1], arrCoords[2], arrCoords[3]);
         break;
         case 'polyline':
             item = this.polyline(arrCoords);
         break;
-        case 'line':
-            item = this.line(arrCoords);
-        break;
-        default:
-            item = this.polygon(arrCoords);
-    }
-    return item;
-};
-
-/** 
- * Draws a marker using data coordinates.
- *
- * @since 0.1.0
- * @param {string} type The marker type.
- * @param {number} cx The x position of the centre of the circle.
- * @param {number} cy The y position of the centre of the circle.
- * @param {number} size The marker size.
- */
-Canvas.prototype.drawMarker = function (type, cx, cy, size)
-{
-    var px = this._coords.getPixelX(cx) - size/2;
-    var py = this._coords.getPixelY(cy) - size/2;
-    
-    switch(type)
-    {
-        case 'circle':
-            this.drawCircle(px, py, size, size);
-        break;
-        case 'rect':
-            this.drawRect(px, py, size, size);
-        break;
-        case 'ellipse':
-            this.drawEllipse(px, py, size, size);
-        break;
-        default:
-            this.drawRect(px, py, size, size);
-    }
-};
-
-/** 
- * Draws a shape using data coordinates.
- *
- * @since 0.1.0
- * @param {string} type The shape type.
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
- */
-Canvas.prototype.drawShape = function (type, x, y, w, h)
-{
-    var pw = this._coords.getPixelWidth(w);
-    var ph = this._coords.getPixelHeight(h);
-    var py = this._coords.getPixelX(x);
-    var px = this._coords.getPixelY(y) - ph;
-
-    switch(type)
-    {
-        case 'rect':
-            this.drawRect(px, py, pw, ph);
-        break;
-        case 'ellipse':
-            this.drawEllipse(px, py, pw, ph);
-        break;
-        default:
-            this.drawRect(px, py, pw, ph);
-    }
-};
-
-/** 
- * Draws a path using data coordinates.
- *
- * @since 0.1.0
- * @param {string} type The shape type.
- * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- */
-Canvas.prototype.drawPath = function (type, arrCoords)
-{
-    var points = this._coords.getPixelArray(arrCoords);
-
-    switch(type)
-    {
         case 'polygon':
-            this.drawPolygon(points);
+            item = this.polygon(arrCoords);
         break;
-        case 'polyline':
-            this.drawPolyline(points);
-        break;
-        default:
-            this.drawPolygon(points);
     }
-};
-
-/** 
- * Draws a circle using data coordinates.
- *
- * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
- * @return {CanvasItem} item The canvas element.
- */
-Canvas.prototype.circle = function (x, y, w, h)
-{
-    var item = new ShapeItem('circle', x, y, w, h);
-    this.items.push(item);
     return item;
 };
 
 /** 
- * Draws an ellipse using data coordinates.
+ * Creates a circle.
  *
  * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
- * @return {CanvasItem} item The canvas element.
+ * @param {number} cx The x position of the center of the circle.
+ * @param {number} cy The y position of the center of the circle
+ * @param {number} r The radius of the circle.
+ * @return {ShapeItem} A shape item.
  */
-Canvas.prototype.ellipse = function (x, y, w, h)
+Canvas.prototype.circle = function (cx, cy, r)
 {
-    var item = new ShapeItem('ellipse', x, y, w, h);
-    this.items.push(item);
-    return item;
+    var size = r * 2, x = cx - r, y = cy - r;
+    return this.getShapeItem('circle', x, y, size, size);
 };
 
 /** 
- * Draws a rectangle using data coordinates.
+ * Creates an ellipse.
  *
  * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
+ * @param {number} cx The x position of the center of the ellipse.
+ * @param {number} cy The y position of the center of the ellipse
+ * @param {number} rx The x radius of the ellipse.
+ * @param {number} ry The y radius of the ellipse.
+ * @return {ShapeItem} A shape item.
+ */
+Canvas.prototype.ellipse = function (cx, cy, rx, ry)
+{
+    var x = cx - rx, y = cy - ry, w = rx * 2, h = ry * 2;
+    return this.getShapeItem('ellipse', x, y, w, h);
+};
+
+/** 
+ * Creates a rectangle.
+ *
+ * @since 0.1.0
+ * @param {number} x The x position of the bottom left corner.
+ * @param {number} y The y position of the bottom left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {CanvasItem} item The canvas element.
+ * @return {ShapeItem} A shape item.
  */
 Canvas.prototype.rect = function (x, y, w, h)
 {
-    var item = new ShapeItem('rect', x, y, w, h);
-    this.items.push(item);
-    return item;
+    return this.getShapeItem('rect', x, y, w, h);
 };
 
 /** 
- * Draws a line using data coordinates.
+ * Creates a line.
  *
  * @since 0.1.0
- * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2].
- * @return {CanvasItem} item The canvas element.
+ * @param {number} x1 The x position of point 1.
+ * @param {number} y1 The y position of point 1.
+ * @param {number} x2 The x position of point 2.
+ * @param {number} y2 The y position of point 2.
+ * @return {PathItem} A path item.
  */
-Canvas.prototype.line = function (arrCoords)
+Canvas.prototype.line = function (x1, y1, x2, y2)
 {
-    var item = new PathItem('line', arrCoords);
-    this.items.push(item);
-    return item;
+    return this.getPathItem('line', [x1, y1, x2, y2]);
 };
 
 /** 
- * Draws a polyline using data coordinates.
+ * Creates a polyline.
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {CanvasItem} item The canvas element.
+ * @return {PathItem} A path item.
  */
 Canvas.prototype.polyline = function (arrCoords)
 {
-    var item = new PathItem('polyline', arrCoords);
+    return this.getPathItem('polyline', arrCoords);
+};
+
+/** 
+ * Creates a polygon.
+ *
+ * @since 0.1.0
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @return {PathItem} A path item.
+ */
+Canvas.prototype.polygon = function (arrCoords)
+{
+    return this.getPathItem('polygon', arrCoords);
+};
+
+/** 
+ * Creates a shape item.
+ *
+ * @since 0.1.0
+ * @param {string} type The shape type.
+ * @param {number} x The x position of the bottom left corner.
+ * @param {number} y The y position of the bottom left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ * @return {ShapeItem} A shape item.
+ * @private
+ */
+Canvas.prototype.getShapeItem = function (type, x, y, w, h)
+{
+    var item = new ShapeItem(type, x, y, w, h);
     this.items.push(item);
     return item;
 };
 
 /** 
- * Draws a polygon using data coordinates.
+ * Creates a path item.
  *
  * @since 0.1.0
+ * @param {string} type The path type.
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {CanvasItem} item The canvas element.
+ * @return {PathItem} A path item.
+ * @private
  */
-Canvas.prototype.polygon = function (arrCoords)
+Canvas.prototype.getPathItem = function (type, arrCoords)
 {
-    var item = new PathItem('polygon', arrCoords);
+    var item = new PathItem(type, arrCoords);
     this.items.push(item);
     return item;
+};
+
+// Draw canvas items.
+
+/** 
+ * Renders the canvas.
+ *
+ * @since 0.1.0
+ */
+Canvas.prototype.render = function ()
+{
+    var n = this.items.length;
+    for (var i = 0; i < n; i++)  
+    {
+        var item = this.items[i];
+
+        if (item.element === undefined) this.appendElement(item);
+
+        if (item.type() === 'polygon' || item.type() === 'polyline' || item.type() === 'line')  
+        {
+            this.drawPath(item);
+        }    
+        else
+        {
+            if (item.marker === true)   this.drawMarker(item);
+            else                        this.drawShape(item);
+        } 
+
+        this.drawFill(item);
+        this.drawStroke(item);
+    }
+};
+
+/** 
+ * Draws a marker.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @private
+ */
+Canvas.prototype.drawMarker = function (item)
+{
+    var size = item.width();
+    var r    = size / 2;
+    var px   = this._coords.getPixelX(item.x()) - r;
+    var py   = this._coords.getPixelY(item.y()) - r;
+
+    switch(item.type())
+    {
+        case 'circle':
+            this.drawCircle(item, px + r, py + r, r);
+        break;
+        case 'ellipse':
+            this.drawEllipse(item, px + r, py + r, r, r);
+        break;
+        case 'rect':
+            this.drawRect(item, px, py, size, size);
+        break;
+    }
+};
+
+/** 
+ * Draws a shape.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @private
+ */
+Canvas.prototype.drawShape = function (item)
+{
+    var pw = this._coords.getPixelWidth(item.width());
+    var ph = this._coords.getPixelHeight(item.height());
+    var px = this._coords.getPixelX(item.x());
+    var py = this._coords.getPixelY(item.y()) - ph;
+
+    switch(item.type())
+    {
+        case 'rect':
+            this.drawRect(item, px, py, pw, ph);
+        break;
+        case 'ellipse':
+            var rx = pw / 2, ry = ph / 2;
+            this.drawEllipse(item, px + rx, py + ry, rx, ry);
+        break;
+    }
+};
+
+/** 
+ * Draws a path.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @private
+ */
+Canvas.prototype.drawPath = function (item)
+{
+    var arrPixelCoords = this._coords.getPixelArray(item.points());
+
+    switch(item.type())
+    {
+        case 'line':
+            this.drawLine(item, arrPixelCoords[0], arrPixelCoords[1], arrPixelCoords[2], arrPixelCoords[3]);
+        break;
+        case 'polygon':
+            this.drawPolygon(item, arrPixelCoords);
+        break;
+        case 'polyline':
+            this.drawPolyline(item, arrPixelCoords);
+        break;
+    }
 };
 
 // Implemented by subclasses.
@@ -407,6 +433,7 @@ Canvas.prototype.polygon = function (arrCoords)
  * Initialisation code.
  *
  * @since 0.1.0
+ * @private
  */
 Canvas.prototype.init = function () {};
 
@@ -419,13 +446,6 @@ Canvas.prototype.init = function () {};
 Canvas.prototype.isSupported = function () {return false;};
 
 /** 
- * Renders the canvas.
- *
- * @since 0.1.0
- */
-Canvas.prototype.render = function () {};
-
-/** 
  * Clear the canvas.
  *
  * @since 0.1.0
@@ -433,10 +453,20 @@ Canvas.prototype.render = function () {};
 Canvas.prototype.clear = function () {};
 
 /** 
+ * Creates a graphic element for the passed item.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
+ */
+Canvas.prototype.appendElement = function (item) {};
+
+/** 
  * Provides the fill drawing routine for the graphics library being used.
  *
  * @since 0.1.0
- * @param {CanvasItem} item The canvas element.
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 Canvas.prototype.drawFill = function (item) {};
 
@@ -444,7 +474,8 @@ Canvas.prototype.drawFill = function (item) {};
  * Provides the stroke drawing routine for the graphics library being used.
  *
  * @since 0.1.0
- * @param {CanvasItem} item The canvas element.
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 Canvas.prototype.drawStroke = function (item) {};
 
@@ -452,57 +483,71 @@ Canvas.prototype.drawStroke = function (item) {};
  * Draws a circle.
  *
  * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the circle.
+ * @param {number} cy The y position of the center of the circle.
+ * @param {number} r The circle radius.
+ * @private
  */
-Canvas.prototype.drawCircle = function (x, y, w, h) {};
+Canvas.prototype.drawCircle = function (item, cx, cy, r) {};
 
 /** 
  * Draws an ellipse.
  *
  * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the ellipse.
+ * @param {number} cy The y position of the center of the ellipse
+ * @param {number} rx The x radius of the ellipse.
+ * @param {number} ry The y radius of the ellipse.
+ * @private
  */
-Canvas.prototype.drawEllipse = function (x, y, w, h) {};
+Canvas.prototype.drawEllipse = function (item, cx, cy, rx, ry) {};
 
 /** 
  * Draws a rectangle.
  *
  * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
  * @param {number} x The x position of the top left corner.
- * @param {number} y The y coord of the top left corner.
+ * @param {number} y The y position of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
+ * @private
  */
-Canvas.prototype.drawRect = function (x, y, w, h) {};
+Canvas.prototype.drawRect = function (item, x, y, w, h) {};
 
 /** 
  * Draws a line.
  *
  * @since 0.1.0
- * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2].
+ * @param {PathItem} item A path item.
+ * @param {number} x1 The x position of point 1.
+ * @param {number} y1 The y position of point 1.
+ * @param {number} x2 The x position of point 2.
+ * @param {number} y2 The y position of point 2.
+ * @private
  */
-Canvas.prototype.drawLine = function (arrCoords) {};
+Canvas.prototype.drawLine = function (item, x1, y1, x2, y2) {};
 
 /** 
  * Draws a polyline.
  *
  * @since 0.1.0
+ * @param {PathItem} item A path item.
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
-Canvas.prototype.drawPolyline = function (arrCoords) {};
+Canvas.prototype.drawPolyline = function (item, arrCoords) {};
 
 /** 
  * Draws a polygon.
  *
  * @since 0.1.0
+ * @param {PathItem} item A path item.
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
-Canvas.prototype.drawPolygon = function (arrCoords) {};
+Canvas.prototype.drawPolygon = function (item, arrCoords) {};
 
 module.exports = Canvas;

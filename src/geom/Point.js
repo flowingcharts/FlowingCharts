@@ -22,7 +22,6 @@ var isNumber    = util.isNumber;
  * @since 0.1.0
  * @constructor
  *
- *
  * @param {number} [x = 0] The x coord.
  * @param {number} [y = 0] The y coord.
  */
