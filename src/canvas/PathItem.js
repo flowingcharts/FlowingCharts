@@ -16,7 +16,7 @@ var util        = require('../utils/util');
 var extendClass = util.extendClass;
 
 /** 
- * @classdesc An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @classdesc A path item contains an array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
  * 
  * @class
  * @alias PathItem

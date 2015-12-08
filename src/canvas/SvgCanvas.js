@@ -38,7 +38,10 @@ function SvgCanvas (coords)
 extendClass(Canvas, SvgCanvas);
 
 /** 
- * @inheritdoc
+ * Initialisation code.
+ *
+ * @since 0.1.0
+ * @private
  */
 SvgCanvas.prototype.init = function()
 {
@@ -47,7 +50,10 @@ SvgCanvas.prototype.init = function()
 };
 
 /** 
- * @inheritdoc
+ * Check for support of the graphics library.
+ *
+ * @since 0.1.0
+ * @return {boolean} true if the browser supports the graphics library, otherwise false.
  */
 SvgCanvas.prototype.isSupported = function ()
 {
@@ -55,7 +61,9 @@ SvgCanvas.prototype.isSupported = function ()
 };
 
 /** 
- * @inheritdoc
+ * Clear the canvas.
+ *
+ * @since 0.1.0
  */
 SvgCanvas.prototype.clear = function ()
 {
@@ -67,16 +75,11 @@ SvgCanvas.prototype.clear = function ()
 };
 
 /** 
- * @inheritdoc
- */
-SvgCanvas.prototype.appendElement = function (item)
-{
-    item.element = createSvgElement(item.type());
-    this.graphicsElement.appendChild(item.element);
-};
-
-/** 
- * @inheritdoc
+ * Provides the fill drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 SvgCanvas.prototype.drawFill = function (item)
 {
@@ -88,7 +91,11 @@ SvgCanvas.prototype.drawFill = function (item)
 };
 
 /** 
- * @inheritdoc
+ * Provides the stroke drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 SvgCanvas.prototype.drawStroke = function (item)
 {
@@ -103,51 +110,111 @@ SvgCanvas.prototype.drawStroke = function (item)
 };
 
 /** 
- * @inheritdoc
+ * Draws a circle.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the circle.
+ * @param {number} cy The y position of the center of the circle.
+ * @param {number} r The circle radius.
+ * @private
  */
 SvgCanvas.prototype.drawCircle = function (item, cx, cy, r)
 {
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {cx:cx, cy:cy, r:r});
 };
 
 /** 
- * @inheritdoc
+ * Draws an ellipse.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the ellipse.
+ * @param {number} cy The y position of the center of the ellipse
+ * @param {number} rx The x radius of the ellipse.
+ * @param {number} ry The y radius of the ellipse.
+ * @private
  */
 SvgCanvas.prototype.drawEllipse = function (item, cx, cy, rx, ry)
 {
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {cx:cx, cy:cy, rx:rx, ry:ry});
 };
 
 /** 
- * @inheritdoc
+ * Draws a rectangle.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y position of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ * @private
  */
 SvgCanvas.prototype.drawRect = function (item, x, y, w, h)
 {
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {x:x, y:y, width:w, height:h});
 };
 
 /** 
- * @inheritdoc
+ * Draws a line.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number} x1 The x position of point 1.
+ * @param {number} y1 The y position of point 1.
+ * @param {number} x2 The x position of point 2.
+ * @param {number} y2 The y position of point 2.
+ * @private
  */
 SvgCanvas.prototype.drawLine = function (item, x1, y1, x2, y2)
 {
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {x1:x1, y1:y1, x2:x2, y2:y2});
 };
 
 /** 
- * @inheritdoc
+ * Draws a polyline.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
 SvgCanvas.prototype.drawPolyline = function (item, arrCoords)
 {
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {points:getCoordsAsString(arrCoords)});
 };
 
 /** 
- * @inheritdoc
+ * Draws a polygon.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
 SvgCanvas.prototype.drawPolygon = function (item, arrCoords)
 {    
+    if (item.element === undefined) this.appendElement(item);
     attr(item.element, {points:getCoordsAsString(arrCoords)});
+};
+
+/** 
+ * Creates and appends a graphic element for the passed item.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
+ */
+SvgCanvas.prototype.appendElement = function (item)
+{
+    item.element = createSvgElement(item.type());
+    this.graphicsElement.appendChild(item.element);
 };
 
 /** 

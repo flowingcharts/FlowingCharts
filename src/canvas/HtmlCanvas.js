@@ -41,25 +41,26 @@ function HtmlCanvas (coords)
 extendClass(Canvas, HtmlCanvas);
 
 /** 
- * @inheritdoc
+ * Initialisation code.
+ *
+ * @since 0.1.0
+ * @private
  */
 HtmlCanvas.prototype.init = function()
 {
     // Public instance members.  
     this.graphicsElement = createElement('canvas',     // The drawing canvas.
     {
-        style :
-        {
-            position    : 'absolute',
-            left        : 0,
-            right       : 0 
-        }
+        style : {position:'absolute', left:0, right:0}
     });
     this.ctx = this.graphicsElement.getContext('2d');  // The drawing context.
 };
 
 /** 
- * @inheritdoc
+ * Check for support of the graphics library.
+ *
+ * @since 0.1.0
+ * @return {boolean} true if the browser supports the graphics library, otherwise false.
  */
 HtmlCanvas.prototype.isSupported = function ()
 {
@@ -67,7 +68,9 @@ HtmlCanvas.prototype.isSupported = function ()
 };
 
 /** 
- * @inheritdoc
+ * Clear the canvas.
+ *
+ * @since 0.1.0
  */
 HtmlCanvas.prototype.clear = function ()
 {
@@ -76,7 +79,11 @@ HtmlCanvas.prototype.clear = function ()
 };
 
 /** 
- * @inheritdoc
+ * Provides the fill drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 HtmlCanvas.prototype.drawFill = function (item)
 {
@@ -88,7 +95,11 @@ HtmlCanvas.prototype.drawFill = function (item)
 };
 
 /** 
- * @inheritdoc
+ * Provides the stroke drawing routine for the graphics library being used.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
  */
 HtmlCanvas.prototype.drawStroke = function (item)
 {
@@ -106,7 +117,14 @@ HtmlCanvas.prototype.drawStroke = function (item)
 };
 
 /** 
- * @inheritdoc
+ * Draws a circle.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the circle.
+ * @param {number} cy The y position of the center of the circle.
+ * @param {number} r The circle radius.
+ * @private
  */
 HtmlCanvas.prototype.drawCircle = function (item, cx, cy, r)
 {
@@ -115,32 +133,44 @@ HtmlCanvas.prototype.drawCircle = function (item, cx, cy, r)
 };
 
 /** 
- * @inheritdoc
+ * Draws an ellipse.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} cx The x position of the center of the ellipse.
+ * @param {number} cy The y position of the center of the ellipse
+ * @param {number} rx The x radius of the ellipse.
+ * @param {number} ry The y radius of the ellipse.
+ * @private
  */
 HtmlCanvas.prototype.drawEllipse = function (item, cx, cy, rx, ry)
 {
     var kappa = 0.5522848,
-    x = cx - rx, 
-    y = cy - ry, 
-    w = rx * 2, 
-    h = ry * 2,
-    ox = (w / 2) * kappa, // Control point offset horizontal.
-    oy = (h / 2) * kappa, // Control point offset vertical.
-    xe = x + w,           // x-end.
-    ye = y + h,           // y-end.
-    xm = x + w / 2,       // x-middle.
-    ym = y + h / 2;       // y-middle.
+    x  = cx - rx, 
+    y  = cy - ry, 
+    ox = rx * kappa,    // Control point offset horizontal.
+    oy = ry * kappa,    // Control point offset vertical.
+    xe = x + (rx * 2),  // x-end.
+    ye = y + (ry * 2);  // y-end.
 
     this.ctx.beginPath();
-    this.ctx.moveTo(x, ym);
-    this.ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    this.ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    this.ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    this.ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    this.ctx.moveTo(x, cy);
+    this.ctx.bezierCurveTo(x, cy - oy, cx - ox, y, cx, y);
+    this.ctx.bezierCurveTo(cx + ox, y, xe, cy - oy, xe, cy);
+    this.ctx.bezierCurveTo(xe, cy + oy, cx + ox, ye, cx, ye);
+    this.ctx.bezierCurveTo(cx - ox, ye, x, cy + oy, x, cy);
 };
 
 /** 
- * @inheritdoc
+ * Draws a rectangle.
+ *
+ * @since 0.1.0
+ * @param {ShapeItem} item A shape item.
+ * @param {number} x The x position of the top left corner.
+ * @param {number} y The y position of the top left corner.
+ * @param {number} w The width.
+ * @param {number} h The height.
+ * @private
  */
 HtmlCanvas.prototype.drawRect = function (item, x, y, w, h)
 {
@@ -149,7 +179,15 @@ HtmlCanvas.prototype.drawRect = function (item, x, y, w, h)
 };
 
 /** 
- * @inheritdoc
+ * Draws a line.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number} x1 The x position of point 1.
+ * @param {number} y1 The y position of point 1.
+ * @param {number} x2 The x position of point 2.
+ * @param {number} y2 The y position of point 2.
+ * @private
  */
 HtmlCanvas.prototype.drawLine = function (item, x1, y1, x2, y2)
 {
@@ -159,7 +197,12 @@ HtmlCanvas.prototype.drawLine = function (item, x1, y1, x2, y2)
 };
 
 /** 
- * @inheritdoc
+ * Draws a polyline.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
 HtmlCanvas.prototype.drawPolyline = function (item, arrCoords)
 {
@@ -175,7 +218,12 @@ HtmlCanvas.prototype.drawPolyline = function (item, arrCoords)
 };
 
 /** 
- * @inheritdoc
+ * Draws a polygon.
+ *
+ * @since 0.1.0
+ * @param {PathItem} item A path item.
+ * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @private
  */
 HtmlCanvas.prototype.drawPolygon = function (item, arrCoords)
 {

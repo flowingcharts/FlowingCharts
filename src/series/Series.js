@@ -52,7 +52,7 @@ var extendObject    = util.extendObject;
 function Series (canvas, options)
 {
     // Private instance members.  
-    this._options =             // Default options.
+    this._options = // Default options.
     {
         data        : [],
         idField     : 'id',
@@ -74,7 +74,7 @@ function Series (canvas, options)
         lineCap     : 'butt', 
         lineOpacity : 1
     };   
-    this._items = [];           // The list of items belonging to the series.
+    this._items = []; // The list of items belonging to the series.
 
     // Public instance members.  
 

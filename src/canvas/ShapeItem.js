@@ -18,7 +18,7 @@ var extendClass = util.extendClass;
 var isNumber    = util.isNumber;
 
 /** 
- * @classdesc A shape item defined by its <code>x</code>, <code>y</code> 
+ * @classdesc A shape item is defined by its <code>x</code>, <code>y</code> 
  * <code>width</code> and <code>height</code>.
  * 
  * @class
