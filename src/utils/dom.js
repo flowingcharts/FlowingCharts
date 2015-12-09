@@ -9,10 +9,24 @@
  */
 
 /** 
+ * Empties a html element.
+ * 
+ * @since 0.1.0
+ * @param {HTMLElement} element The html element.
+ */
+var empty = function (element)
+{
+    while (element.hasChildNodes()) 
+    {
+        element.removeChild(element.firstChild);
+    }
+};
+
+/** 
  * Sets the attributes for the given html element.
  * 
  * @since 0.1.0
- * @param {HTMLElement} htmlElement The html element.
+ * @param {HTMLElement} element The html element.
  * @return {object} attributes The list of attributes.
  */
 var attr = function (element, attributes)
@@ -30,7 +44,7 @@ var attr = function (element, attributes)
  * Sets the style for the given html element.
  * 
  * @since 0.1.0
- * @param {HTMLElement} htmlElement The html element.
+ * @param {HTMLElement} element The html element.
  * @return {object} attributes The list of style attributes.
  */
 var style = function (element, attributes)
@@ -75,6 +89,7 @@ var createSvgElement = function (type, attributes)
 
 module.exports = 
 {
+    empty               : empty,
     attr                : attr,
     style               : style,
     createElement       : createElement,

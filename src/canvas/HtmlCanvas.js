@@ -146,12 +146,12 @@ HtmlCanvas.prototype.drawCircle = function (item, cx, cy, r)
 HtmlCanvas.prototype.drawEllipse = function (item, cx, cy, rx, ry)
 {
     var kappa = 0.5522848,
-    x  = cx - rx, 
-    y  = cy - ry, 
+    x  = cx - rx,       // x-start.
+    y  = cy - ry,       // y-start.
+    xe = cx + rx,       // x-end.
+    ye = cy + ry,       // y-end.
     ox = rx * kappa,    // Control point offset horizontal.
-    oy = ry * kappa,    // Control point offset vertical.
-    xe = x + (rx * 2),  // x-end.
-    ye = y + (ry * 2);  // y-end.
+    oy = ry * kappa;    // Control point offset vertical.
 
     this.ctx.beginPath();
     this.ctx.moveTo(x, cy);

@@ -28,6 +28,7 @@ var extendObject        = util.extendObject;
 var dom                 = require('../utils/dom');
 var createSvgElement    = dom.createSvgElement;
 var createElement       = dom.createElement;
+var empty               = dom.empty;
 
 /** 
  * @classdesc A base class for charts.
@@ -45,7 +46,40 @@ var createElement       = dom.createElement;
 function Chart (options)
 {
     // Private instance members.  
-    this._options = null; // The options.
+    this._options = // Default options.
+    {
+        container           : undefined,
+        coordinateSystem    : 'cartesian',
+        renderer            : 'canvas',
+        renderRate          : 20,
+        padding             : 50,
+        paddingTop          : undefined,
+        paddingRight        : undefined,
+        paddingBottom       : undefined,
+        paddingLeft         : undefined,
+        border              : 1,
+        borderTop           : undefined,
+        borderRight         : undefined,
+        borderBottom        : undefined,
+        borderLeft          : undefined
+    };
+
+    // Parent html element.
+    var container = options.container;
+    empty(container);
+
+    // Resize the chart to fit the container when the window resizes.
+    var me = this;
+    var resizeTimeout;
+    window.addEventListener('resize', function (event)
+    {
+        // Add a resizeTimeout to stop multiple calls to setSize().
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function ()
+        {        
+            me.setSize(container.offsetWidth, container.offsetHeight);
+        }, me._options.renderRate);
+    });
 
     this.options(options);
 }
@@ -65,80 +99,96 @@ Chart.prototype.options = function(options)
 {
     if (arguments.length > 0)
     {
-        // Default options.
-        this._options = 
-        {
-            container           : null,
-            coordinateSystem    : 'cartesian',
-            renderer            : 'canvas',
-            renderRate          : 20
-        };
         // Extend default options with passed in options.
         extendObject(this._options, options);
 
-        // Parent html element.
-        var container = this._options.container;
+        // Padding.
+        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
+        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
+        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
+        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
+
+        // Border.
+        this._options.borderTop     = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
+        this._options.borderRight   = this._options.borderRight !== undefined ? this._options.borderRight : this._options.border;
+        this._options.borderBottom  = this._options.borderBottom !== undefined ? this._options.borderBottom : this._options.border;
+        this._options.borderLeft    = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
 
         // Coordinate system.
-        if (options.coordinateSystem === 'polar')   
-            this.coords = new PolarCoords();     // Polar.
-        else                                        
-            this.coords = new CartesianCoords(); // Cartesian.                     
-
-        // Series container.
-        if (this._options.renderer === 'svg')       
-            this._seriesContainer = createSvgElement('svg'); // SVG.
-        else       
-        {
-            this._seriesContainer = createElement('div',     // Canvas.
-            {
-                style : {position : 'relative'} // Need a relative container so we can stack html5 canvases with absolute positioning.
-            }); 
-        }                                 
-
-        container.appendChild(this._seriesContainer);
+        this.coords = getCoords(this._options.coordinateSystem);
 
         // Series.
+        this._seriesContainer = getContainer(this._options.renderer); // Create a container for the series canvases.
+        this._options.container.appendChild(this._seriesContainer);
+
         this.series = [];
         if (this._options.series)
         {
             for (var i = 0; i < this._options.series.length; i++)  
             {
-                var seriesCanvas;
-                if (this._options.renderer === 'svg')   
-                    seriesCanvas = new SvgCanvas(this.coords);  // SVG.
-                else                                    
-                    seriesCanvas = new HtmlCanvas(this.coords); // Canvas.
-
-                var s = new Series(seriesCanvas, this._options.series[i]);
-
+                // Create a canvas for the series.
+                var seriesCanvas = getCanvas(this._options.renderer, this.coords); 
                 seriesCanvas.appendTo(this._seriesContainer);   
+
+                // Create the series.
+                var s = new Series(seriesCanvas, this._options.series[i]);
                 this.series.push(s);                    
             }
         }
 
-        // Set charts initial size to that of the container.
+        // Set charts size to that of the container - it will subsequently be rendered.
         // TODO What happens if the container has padding applied to it.
         // http://stackoverflow.com/questions/21064101/understanding-offsetwidth-clientwidth-scrollwidth-and-height-respectively
-        this.setSize(container.offsetWidth, container.offsetHeight);
-
-        // Resize the chart to fit the container when the window resizes.
-        var me = this;
-        var resizeTimeout;
-        window.addEventListener('resize', function (event)
-        {
-            // Add a resizeTimeout to stop multiple calls to setSize().
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function ()
-            {        
-                me.setSize(container.offsetWidth, container.offsetHeight);
-            }, me._options.renderRate);
-        });
+        this.setSize(this._options.container.offsetWidth, this._options.container.offsetHeight);
 
         return this;
     }
     else return this._options;
 };
+
+/** 
+ * Get the canvas for the given renderer.
+ *
+ * @since 0.1.0
+ * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
+ * @param {CartesianCoords|PolarCoords} coords The coords to apply to the canvas.
+ * @return {HtmlCanvas|SvgCanvas} The canvas.
+ * @private
+ */
+function getCanvas(renderer, coords)
+{
+    if (renderer === 'svg') return new SvgCanvas(coords);  // SVG.
+    else                    return new HtmlCanvas(coords); // Canvas.
+}
+
+/** 
+ * Get the container for the given renderer.
+ *
+ * @since 0.1.0
+ * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
+ * @return {HTMLElement|SVGElement} The container.
+ * @private
+ */
+function getContainer(renderer)
+{
+    if (renderer === 'svg') return createSvgElement('svg');                                 // SVG.
+    else                    return createElement('div', {style : {position : 'relative'}}); // Canvas.
+    // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
+}
+
+/** 
+ * Get the coords object for the given coordinate system.
+ *
+ * @since 0.1.0
+ * @param {string} [coordinateSystem = 'cartesian'] The coordinate system 'cartesian' or 'polar'.
+ * @return {CartesianCoords|PolarCoords} The container.
+ * @private
+ */
+function getCoords(coordinateSystem)
+{
+    if (coordinateSystem === 'polar') return new PolarCoords();     // Polar.
+    else                              return new CartesianCoords(); // Cartesian.    
+}
 
 /** 
  * Set the size of the canvas.
@@ -167,16 +217,12 @@ Chart.prototype.setSize = function (w, h)
     }
 
     // viewPort.
-    var leftMargin = 40;
-    var rightMargin = 40;
-    var topMargin = 40;
-    var bottomMargin = 40;
-    var x = leftMargin;
-    var y = topMargin;
-    var width = w - (leftMargin + rightMargin);
-    var height = h - (topMargin + bottomMargin);
-
+    var x       = this._options.paddingLeft;
+    var y       = this._options.paddingTop;
+    var width   = w - (this._options.paddingLeft + this._options.paddingRight);
+    var height  = h - (this._options.paddingTop + this._options.paddingBottom);
     this.coords.viewPort(x, y, width, height);
+
     this.render();
 };
 
@@ -202,13 +248,14 @@ Chart.prototype.render = function()
     }
     this.coords.viewBox(xMin, yMin, xMax, yMax);
 
+    // Render the border
+
+
     // Render the series.
     for (i = 0; i < n; i++)  
     {
         this.series[i].render();
     }
-
-    // TODO Loop thru and render axes labels etc.
 };
 
 // TODO Event handlers - could be added to canvas so Series can make use of it.
