@@ -57,12 +57,21 @@ function Chart (options)
         paddingRight        : undefined,
         paddingBottom       : undefined,
         paddingLeft         : undefined,
-        border              : 1,
-        borderTop           : undefined,
-        borderRight         : undefined,
-        borderBottom        : undefined,
-        borderLeft          : undefined
+        borderWidth         : 1,
+        borderTopWidth      : undefined,
+        borderRightWidth    : undefined,
+        borderBottomWidth   : undefined,
+        borderLeftWidth     : undefined,
+        borderColor         : '#cccccc',
+        borderTopColor      : undefined,
+        borderRightColor    : undefined,
+        borderBottomColor   : undefined,
+        borderLeftColor     : undefined,
+        backgroundColor     : undefined
     };
+
+    // Public instance members.  
+    this.series = [];
 
     // Parent html element.
     var container = options.container;
@@ -108,19 +117,29 @@ Chart.prototype.options = function(options)
         this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
         this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
 
-        // Border.
-        this._options.borderTop     = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
-        this._options.borderRight   = this._options.borderRight !== undefined ? this._options.borderRight : this._options.border;
-        this._options.borderBottom  = this._options.borderBottom !== undefined ? this._options.borderBottom : this._options.border;
-        this._options.borderLeft    = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
+        // Border width.
+        this._options.borderTopWidth     = this._options.borderTopWidth !== undefined ? this._options.borderTopWidth : this._options.borderWidth;
+        this._options.borderRightWidth   = this._options.borderRightWidth !== undefined ? this._options.borderRightWidth : this._options.borderWidth;
+        this._options.borderBottomWidth  = this._options.borderBottomWidth !== undefined ? this._options.borderBottomWidth : this._options.borderWidth;
+        this._options.borderLeftWidth    = this._options.borderLeftWidth !== undefined ? this._options.borderLeftWidth : this._options.borderWidth;
+
+        // Border color.
+        this._options.borderTopColor     = this._options.borderTopColor !== undefined ? this._options.borderTopColor : this._options.borderColor;
+        this._options.borderRightColor   = this._options.borderRightColor !== undefined ? this._options.borderRightColor : this._options.borderColor;
+        this._options.borderBottomColor  = this._options.borderBottomColor !== undefined ? this._options.borderBottomColor : this._options.borderColor;
+        this._options.borderLeftColor    = this._options.borderLeftColor !== undefined ? this._options.borderLeftColor : this._options.borderColor;
 
         // Coordinate system.
         this.coords = getCoords(this._options.coordinateSystem);
 
-        // Series.
-        this._seriesContainer = getContainer(this._options.renderer); // Create a container for the series canvases.
-        this._options.container.appendChild(this._seriesContainer);
+        // Container for holding the drawing canvases.
+        this._canvasContainer = getCanvasContainer(this._options.renderer);
+        this._options.container.appendChild(this._canvasContainer);
 
+        // Axis canvas
+        var axisCanvas = getCanvas(this._options.renderer, this.coords); 
+
+        // Series.
         this.series = [];
         if (this._options.series)
         {
@@ -128,7 +147,7 @@ Chart.prototype.options = function(options)
             {
                 // Create a canvas for the series.
                 var seriesCanvas = getCanvas(this._options.renderer, this.coords); 
-                seriesCanvas.appendTo(this._seriesContainer);   
+                seriesCanvas.appendTo(this._canvasContainer);   
 
                 // Create the series.
                 var s = new Series(seriesCanvas, this._options.series[i]);
@@ -147,6 +166,35 @@ Chart.prototype.options = function(options)
 };
 
 /** 
+ * Get the coords object for the given coordinate system.
+ *
+ * @since 0.1.0
+ * @param {string} [coordinateSystem = 'cartesian'] The coordinate system 'cartesian' or 'polar'.
+ * @return {CartesianCoords|PolarCoords} The container.
+ * @private
+ */
+function getCoords(coordinateSystem)
+{
+    if (coordinateSystem === 'polar') return new PolarCoords();     // Polar.
+    else                              return new CartesianCoords(); // Cartesian.    
+}
+
+/** 
+ * Returns a container for holding canvases.
+ *
+ * @since 0.1.0
+ * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
+ * @return {HTMLElement|SVGElement} The container.
+ * @private
+ */
+function getCanvasContainer(renderer)
+{
+    if (renderer === 'svg') return createSvgElement('svg');                                 // SVG.
+    else                    return createElement('div', {style : {position : 'relative'}}); // Canvas.
+    // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
+}
+
+/** 
  * Get the canvas for the given renderer.
  *
  * @since 0.1.0
@@ -159,35 +207,6 @@ function getCanvas(renderer, coords)
 {
     if (renderer === 'svg') return new SvgCanvas(coords);  // SVG.
     else                    return new HtmlCanvas(coords); // Canvas.
-}
-
-/** 
- * Get the container for the given renderer.
- *
- * @since 0.1.0
- * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
- * @return {HTMLElement|SVGElement} The container.
- * @private
- */
-function getContainer(renderer)
-{
-    if (renderer === 'svg') return createSvgElement('svg');                                 // SVG.
-    else                    return createElement('div', {style : {position : 'relative'}}); // Canvas.
-    // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
-}
-
-/** 
- * Get the coords object for the given coordinate system.
- *
- * @since 0.1.0
- * @param {string} [coordinateSystem = 'cartesian'] The coordinate system 'cartesian' or 'polar'.
- * @return {CartesianCoords|PolarCoords} The container.
- * @private
- */
-function getCoords(coordinateSystem)
-{
-    if (coordinateSystem === 'polar') return new PolarCoords();     // Polar.
-    else                              return new CartesianCoords(); // Cartesian.    
 }
 
 /** 
@@ -207,8 +226,8 @@ Chart.prototype.setSize = function (w, h)
     //</validation>
 
     // Set the series container size.
-    this._seriesContainer.setAttribute('width', w);
-    this._seriesContainer.setAttribute('height', h);
+    this._canvasContainer.setAttribute('width', w);
+    this._canvasContainer.setAttribute('height', h);
 
     // Set the series canvas sizes.
     for (var i = 0; i < this.series.length; i++)  

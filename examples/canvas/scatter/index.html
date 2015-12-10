@@ -1,0 +1,78 @@
+<!-- build:template 
+<%= banner %> 
+/build -->
+<!doctype html>
+<html lang="">
+    <head>
+        <title>FlowingCharts</title>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- build:remove 
+        <script src="http://localhost:35729/livereload.js"></script>
+        /build -->
+        
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function()
+            {
+                $('#container').flowingcharts(
+                {
+                    chart : 
+                    {
+                        type: 'scatter',
+                    },
+                    title : 
+                    {
+                        text : 'Height Versus Weight of 507 Individuals by Gender'
+                    },
+                    subtitle : 
+                    {
+                        text : 'Source: Heinz 2003'
+                    },
+                    xAxis : 
+                    {
+                        title : 'Height (cm)'
+                    },
+                    yAxis : 
+                    {
+                        title :  'Weight (kg)'
+                    },
+                    series: 
+                    [
+                        {
+                            name        : 'Female',
+                            fillColor   : 'rgba(223, 83, 83, .5)',
+                            idField     : 'id',
+                            xField      : 'x',
+                            yField      : 'y',
+                            data        : 
+                            [
+                                {id:'a',x:10,y:10},{id:'b',x:20,y:20},{id:'c',x:30,y:30},{id:'d',x:40,y:40},
+                                {id:'e',x:50,y:50},{id:'f',x:60,y:60},{id:'g',x:70,y:70},{id:'h',x:80,y:80}
+                            ]
+                        }, 
+                        {
+                            name        : 'Male',
+                            fillColor   : 'rgba(119, 152, 191, .5)',
+                            idField     : 'id',
+                            xField      : 'x',
+                            yField      : 'y',
+                            data        : 
+                            [
+                                {id:'a',x:80,y:10},{id:'b',x:70,y:20},{id:'c',x:60,y:30},{id:'d',x:50,y:40},
+                                {id:'e',x:40,y:50},{id:'f',x:30,y:60},{id:'g',x:20,y:70},{id:'h',x:10,y:80}
+                            ]
+                        }
+                    ]
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="container" style="height: 600px; max-width: 800px; margin: 0 auto; border: 1px solid #cccccc;"></div>
+        <!-- build:js ../../../flowingcharts.js -->
+        <script type="text/javascript" src="../../../gen_build/flowingcharts.debug.js"></script>
+        <!-- /build -->
+    </body>
+</html>
