@@ -16,8 +16,6 @@
 var HtmlCanvas      = require('../canvas/HtmlCanvas');
 var SvgCanvas       = require('../canvas/SvgCanvas');
 var util            = require('../utils/util');
-var isNumber        = util.isNumber;
-var extendObject    = util.extendObject;
 
 /** 
  * @classdesc A base class for series.
@@ -157,7 +155,7 @@ Series.prototype.options = function(options)
     if (arguments.length > 0)
     {
         // Extend default options with passed in options.
-        extendObject(this._options, options);
+        util.extendObject(this._options, options);
 
         // Process the data.
         this.update();
@@ -195,7 +193,7 @@ Series.prototype.update = function()
         var markerSize  = dataItem[this._options.sizeField]  !== undefined ? dataItem[this._options.sizeField]  : this._options.markerSize;
         var shape       = dataItem[this._options.shapeField] !== undefined ? dataItem[this._options.shapeField] : this._options.shape;
 
-        if (isNumber(x) && isNumber(y))
+        if (util.isNumber(x) && util.isNumber(y))
         {
             var item = this.canvas.marker(shape, x, y, markerSize)
             .style(

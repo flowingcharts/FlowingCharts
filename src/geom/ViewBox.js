@@ -10,8 +10,7 @@
  */
 
 // Required modules.
-var util        = require('../utils/util');
-var isNumber    = util.isNumber;
+var util = require('../utils/util');
 
 /** 
  * @classdesc An area defined by its position, as indicated 
@@ -81,7 +80,7 @@ ViewBox.prototype.xMin = function (x)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('ViewBox.xMin(x): x must be a number.');
+        if (!util.isNumber(x)) throw new Error('ViewBox.xMin(x): x must be a number.');
         //</validation>
         this._xMin = x;
         this._width = Math.abs(this._xMax - this._xMin);
@@ -103,7 +102,7 @@ ViewBox.prototype.xMax = function (x)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('ViewBox.xMax(x): x must be a number.');
+        if (!util.isNumber(x)) throw new Error('ViewBox.xMax(x): x must be a number.');
         //</validation>
         this._xMax = x;
         this._width = Math.abs(this._xMax - this._xMin);
@@ -126,7 +125,7 @@ ViewBox.prototype.xCenter = function (x)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(x)) throw new Error('ViewBox.xCenter(x): x must be a number.');
+        if (!util.isNumber(x)) throw new Error('ViewBox.xCenter(x): x must be a number.');
         //</validation>
         this._xCenter = x;
         this._xMin  = this._xCenter - (this._width / 2);
@@ -149,7 +148,7 @@ ViewBox.prototype.width = function (w)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(w))  throw new Error('ViewBox.width(w): w must be a number.');
+        if (!util.isNumber(w))  throw new Error('ViewBox.width(w): w must be a number.');
         if (w < 0)         throw new Error('ViewBox.width(w): w must be >= 0.');
         //</validation>
         this._width = w;
@@ -172,7 +171,7 @@ ViewBox.prototype.yMin = function (y)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('ViewBox.yMin(y): y must be a number.');
+        if (!util.isNumber(y)) throw new Error('ViewBox.yMin(y): y must be a number.');
         //</validation>
         this._yMin = y;
         this._height = Math.abs(this._yMax - this._yMin);
@@ -194,7 +193,7 @@ ViewBox.prototype.yMax = function (y)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('ViewBox.yMax(y): y must be a number.');
+        if (!util.isNumber(y)) throw new Error('ViewBox.yMax(y): y must be a number.');
         //</validation>
         this._yMax = y;
         this._height = Math.abs(this._yMax - this._yMin);
@@ -216,7 +215,7 @@ ViewBox.prototype.yCenter = function (y)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(y)) throw new Error('ViewBox.yCenter(y): y must be a number.');
+        if (!util.isNumber(y)) throw new Error('ViewBox.yCenter(y): y must be a number.');
         //</validation>
         this._yCenter = y;
         this._yMin  = this._yCenter - (this._height / 2);
@@ -238,7 +237,7 @@ ViewBox.prototype.height = function (h)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(h)) throw new Error('ViewBox.height(h): h must be a number.');
+        if (!util.isNumber(h)) throw new Error('ViewBox.height(h): h must be a number.');
         if (h < 0)        throw new Error('ViewBox.height(h): h must be >= 0.');
         //</validation>
         this._height = h;

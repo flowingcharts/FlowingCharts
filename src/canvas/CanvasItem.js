@@ -12,10 +12,8 @@
  */
 
 // Required modules.
-var util        = require('../utils/util');
-var isNumber    = util.isNumber;
-var color       = require('../utils/color');
-var isColor     = color.isColor;
+var util      = require('../utils/util');
+var colorUtil = require('../utils/color');
 
 /** 
  * @classdesc Holds properties of canvas items.
@@ -57,7 +55,7 @@ CanvasItem.prototype.type = function ()
  * Defines the stroke style.
  *
  * @since 0.1.0
- * @param {Object} [options] The fill properties.
+ * @param {Object} [options] The style properties.
  * @param {string} [options.fillColor] The fill color.
  * @param {number} [options.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
  * @param {string} [options.lineColor] The line color.
@@ -95,7 +93,7 @@ CanvasItem.prototype.fillColor = function (color)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isColor(color)) throw new Error('CanvasItem.fillColor(color): color must be a color.');
+        if (!colorUtil.isColor(color)) throw new Error('CanvasItem.fillColor(color): color must be a color.');
         //</validation>
 
         this._fillColor = color;
@@ -117,7 +115,7 @@ CanvasItem.prototype.fillOpacity = function (opacity)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(opacity)) throw new Error('CanvasItem.fillOpacity(opacity): opacity must be a number.');
+        if (!util.isNumber(opacity)) throw new Error('CanvasItem.fillOpacity(opacity): opacity must be a number.');
         //</validation>
 
         opacity = Math.max(0, opacity);
@@ -141,7 +139,7 @@ CanvasItem.prototype.lineColor = function (color)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isColor(color)) throw new Error('CanvasItem.lineColor(color): color must be a color.');
+        if (!colorUtil.isColor(color)) throw new Error('CanvasItem.lineColor(color): color must be a color.');
         //</validation>
 
         this._lineColor = color;
@@ -162,7 +160,7 @@ CanvasItem.prototype.lineWidth = function (width)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(width)) throw new Error('CanvasItem.lineWidth(width): width must be a number.');
+        if (!util.isNumber(width)) throw new Error('CanvasItem.lineWidth(width): width must be a number.');
         if (width < 0)        throw new Error('CanvasItem.lineWidth(width): width must be >= 0.');
         //</validation>
 
@@ -228,7 +226,7 @@ CanvasItem.prototype.lineOpacity = function (opacity)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(opacity)) throw new Error('CanvasItem.lineOpacity(opacity): opacity must be a number.');
+        if (!util.isNumber(opacity)) throw new Error('CanvasItem.lineOpacity(opacity): opacity must be a number.');
         //</validation>
 
         this._lineOpacity = opacity;

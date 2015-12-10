@@ -9,6 +9,18 @@
  */
 
 /** 
+ * Appends the child element to the parent element.
+ * 
+ * @since 0.1.0
+ * @param {HTMLElement} parentElement The parent element
+ * @param {HTMLElement} childElement The child element.
+ */
+var appendChild = function (parentElement, childElement)
+{
+    parentElement.appendChild(childElement);
+};
+
+/** 
  * Empties a html element.
  * 
  * @since 0.1.0
@@ -16,7 +28,7 @@
  */
 var empty = function (element)
 {
-    while (element.hasChildNodes()) 
+    while (element.firstChild) 
     {
         element.removeChild(element.firstChild);
     }
@@ -73,25 +85,11 @@ var createElement = function (type, attributes)
     return htmlElement;
 };
 
-/** 
- * Creates an svg element with the given attributes.
- * 
- * @since 0.1.0
- * @param {string} type The element type.
- * @return {object} attributes The list of attributes.
- */
-var createSvgElement = function (type, attributes)
-{
-    var svgElement = document.createElementNS('http://www.w3.org/2000/svg', type);
-    attr(svgElement, attributes);
-    return svgElement;
-};
-
 module.exports = 
 {
     empty               : empty,
     attr                : attr,
     style               : style,
     createElement       : createElement,
-    createSvgElement    : createSvgElement
+    appendChild         : appendChild
 };

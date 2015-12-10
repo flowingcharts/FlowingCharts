@@ -14,12 +14,9 @@
  */
 
 // Required modules.
-var ShapeItem       = require('./ShapeItem');
-var PathItem        = require('./PathItem');
-var util            = require('../utils/util');
-var isNumber        = util.isNumber;
-var color           = require('../utils/color');
-var isColor         = color.isColor;
+var ShapeItem = require('./ShapeItem');
+var PathItem  = require('./PathItem');
+var util      = require('../utils/util');
 
 /** 
  * @classdesc A base wrapper class for graphics libraries.
@@ -99,10 +96,10 @@ Canvas.prototype.height = function ()
 Canvas.prototype.setSize = function (w, h)
 {
     //<validation>
-    if (!isNumber(w)) throw new Error('Canvas.setSize(w): w must be a number.');
-    if (w < 0)        throw new Error('Canvas.setSize(w): w must be >= 0.');
-    if (!isNumber(h)) throw new Error('Canvas.setSize(h): h must be a number.');
-    if (h < 0)        throw new Error('Canvas.setSize(h): h must be >= 0.');
+    if (!util.isNumber(w))  throw new Error('Canvas.setSize(w): w must be a number.');
+    if (w < 0)              throw new Error('Canvas.setSize(w): w must be >= 0.');
+    if (!util.isNumber(h))  throw new Error('Canvas.setSize(h): h must be a number.');
+    if (h < 0)              throw new Error('Canvas.setSize(h): h must be >= 0.');
     //</validation>
 
     if (w !== this.width() || h !== this.height())
@@ -341,8 +338,7 @@ Canvas.prototype.render = function ()
             else                        this.drawShape(item);
         } 
 
-        this.drawFill(item);
-        this.drawStroke(item);
+        this.draw(item);
     }
 };
 
@@ -363,15 +359,33 @@ Canvas.prototype.drawMarker = function (item)
     switch(item.type())
     {
         case 'circle':
-            this.drawCircle(item, px + r, py + r, r);
+            item.pixelUnits = 
+            {
+                cx : px + r,
+                cy : py + r,
+                r  : r,
+            };
         break;
         case 'ellipse':
-            this.drawEllipse(item, px + r, py + r, r, r);
+            item.pixelUnits = 
+            {
+                cx : px + r,
+                cy : py + r,
+                rx  : r,
+                ry  : r
+            };
         break;
         case 'rect':
-            this.drawRect(item, px, py, size, size);
+            item.pixelUnits = 
+            {
+                x       : px,
+                y       : py,
+                width   : size,
+                height  : size
+            };
         break;
     }
+    this.draw(item);
 };
 
 /** 
@@ -391,13 +405,26 @@ Canvas.prototype.drawShape = function (item)
     switch(item.type())
     {
         case 'rect':
-            this.drawRect(item, px, py, pw, ph);
+            item.pixelUnits = 
+            {
+                x       : px,
+                y       : py,
+                width   : pw,
+                height  : ph
+            };
         break;
         case 'ellipse':
             var rx = pw / 2, ry = ph / 2;
-            this.drawEllipse(item, px + rx, py + ry, rx, ry);
+            item.pixelUnits = 
+            {
+                cx      : px + rx,
+                cy      : py + ry,
+                rx      : rx,
+                ry      : ry
+            };
         break;
     }
+    this.draw(item);
 };
 
 /** 
@@ -414,15 +441,28 @@ Canvas.prototype.drawPath = function (item)
     switch(item.type())
     {
         case 'line':
-            this.drawLine(item, arrPixelCoords[0], arrPixelCoords[1], arrPixelCoords[2], arrPixelCoords[3]);
+            item.pixelUnits = 
+            {
+                x1 : arrPixelCoords[0],
+                y1 : arrPixelCoords[1],
+                x2 : arrPixelCoords[2],
+                y2 : arrPixelCoords[3]
+            };
         break;
         case 'polygon':
-            this.drawPolygon(item, arrPixelCoords);
+            item.pixelUnits = 
+            {
+                points : arrPixelCoords
+            };
         break;
         case 'polyline':
-            this.drawPolyline(item, arrPixelCoords);
+            item.pixelUnits = 
+            {
+                points : arrPixelCoords
+            };
         break;
     }
+    this.draw(item);
 };
 
 module.exports = Canvas;

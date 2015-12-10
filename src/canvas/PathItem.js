@@ -7,13 +7,13 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/PathItem 
+ * @requires geom/CanvasItem
  * @requires utils/util
  */
 
 // Required modules.
 var CanvasItem  = require('./CanvasItem');
 var util        = require('../utils/util');
-var extendClass = util.extendClass;
 
 /** 
  * @classdesc A path item contains an array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
@@ -36,7 +36,7 @@ function PathItem (type, points)
 
     this.points(this._points);
 }
-extendClass(CanvasItem, PathItem);
+util.extendClass(CanvasItem, PathItem);
 
 /** 
  * Get or set the xy positions.

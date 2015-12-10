@@ -14,6 +14,7 @@
  * @requires geom/PolarCoords
  * @requires utils/util
  * @requires utils/dom
+ * @requires utils/svg
  */
 
 // Required modules.
@@ -23,12 +24,8 @@ var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
 var Series              = require('../series/Series');
 var util                = require('../utils/util');
-var isNumber            = util.isNumber;
-var extendObject        = util.extendObject;
 var dom                 = require('../utils/dom');
-var createSvgElement    = dom.createSvgElement;
-var createElement       = dom.createElement;
-var empty               = dom.empty;
+var svg                 = require('../utils/svg');
 
 /** 
  * @classdesc A base class for charts.
@@ -75,7 +72,7 @@ function Chart (options)
 
     // Parent html element.
     var container = options.container;
-    empty(container);
+    dom.empty(container);
 
     // Resize the chart to fit the container when the window resizes.
     var me = this;
@@ -109,7 +106,7 @@ Chart.prototype.options = function(options)
     if (arguments.length > 0)
     {
         // Extend default options with passed in options.
-        extendObject(this._options, options);
+        util.extendObject(this._options, options);
 
         // Padding.
         this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
@@ -134,10 +131,11 @@ Chart.prototype.options = function(options)
 
         // Container for holding the drawing canvases.
         this._canvasContainer = getCanvasContainer(this._options.renderer);
-        this._options.container.appendChild(this._canvasContainer);
+        dom.appendChild(this._options.container, this._canvasContainer);
 
-        // Axis canvas
-        var axisCanvas = getCanvas(this._options.renderer, this.coords); 
+        // Background and border canvas.
+        this._canvas = getCanvas(this._options.renderer, this.coords); 
+        this._canvas.appendTo(this._canvasContainer);   
 
         // Series.
         this.series = [];
@@ -189,8 +187,8 @@ function getCoords(coordinateSystem)
  */
 function getCanvasContainer(renderer)
 {
-    if (renderer === 'svg') return createSvgElement('svg');                                 // SVG.
-    else                    return createElement('div', {style : {position : 'relative'}}); // Canvas.
+    if (renderer === 'svg') return svg.createElement('svg');                                    // SVG.
+    else                    return dom.createElement('div', {style : {position : 'relative'}}); // Canvas.
     // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
 }
 
@@ -219,9 +217,9 @@ function getCanvas(renderer, coords)
 Chart.prototype.setSize = function (w, h)
 {
     //<validation>
-    if (!isNumber(w)) throw new Error('Chart.setSize(w): w must be a number.');
+    if (!util.isNumber(w)) throw new Error('Chart.setSize(w): w must be a number.');
     if (w < 0)        throw new Error('Chart.setSize(w): w must be >= 0.');
-    if (!isNumber(h)) throw new Error('Chart.setSize(h): h must be a number.');
+    if (!util.isNumber(h)) throw new Error('Chart.setSize(h): h must be a number.');
     if (h < 0)        throw new Error('Chart.setSize(h): h must be >= 0.');
     //</validation>
 

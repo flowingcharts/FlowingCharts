@@ -7,15 +7,13 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/ShapeItem 
- * @requires ./CanvasItem
+ * @requires geom/CanvasItem
  * @requires utils/util
  */
 
 // Required modules.
 var CanvasItem  = require('./CanvasItem');
 var util        = require('../utils/util');
-var extendClass = util.extendClass;
-var isNumber    = util.isNumber;
 
 /** 
  * @classdesc A shape item is defined by its <code>x</code>, <code>y</code> 
@@ -38,10 +36,10 @@ function ShapeItem (type, x, y, width, height)
     ShapeItem.baseConstructor.call(this, type);
 
     //<validation>
-    if (!isNumber(x)) throw new Error('ShapeItem.(type, x, y, width, height): x must be a number.');
-    if (!isNumber(y)) throw new Error('ShapeItem.(type, x, y, width, height): y must be a number.');
-    if (!isNumber(width)) throw new Error('ShapeItem.(type, x, y, width, height): width must be a number.');
-    if (!isNumber(height)) throw new Error('ShapeItem.(type, x, y, width, height): height must be a number.');
+    if (!util.isNumber(x)) throw new Error('ShapeItem.(type, x, y, width, height): x must be a number.');
+    if (!util.isNumber(y)) throw new Error('ShapeItem.(type, x, y, width, height): y must be a number.');
+    if (!util.isNumber(width)) throw new Error('ShapeItem.(type, x, y, width, height): width must be a number.');
+    if (!util.isNumber(height)) throw new Error('ShapeItem.(type, x, y, width, height): height must be a number.');
     //</validation>
 
     // Private instance members.
@@ -52,7 +50,7 @@ function ShapeItem (type, x, y, width, height)
 
     this.setDimensions(x, y, width, height);
 }
-extendClass(CanvasItem, ShapeItem);
+util.extendClass(CanvasItem, ShapeItem);
 
 /** 
  * Set the dimensions.
@@ -88,7 +86,7 @@ ShapeItem.prototype.x = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(coord)) throw new Error('ShapeItem.x(coord): coord must be a number.');
+        if (!util.isNumber(coord)) throw new Error('ShapeItem.x(coord): coord must be a number.');
         //</validation>
         this._x = coord;
         return this;
@@ -108,7 +106,7 @@ ShapeItem.prototype.y = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(coord)) throw new Error('ShapeItem.y(coord): coord must be a number.');
+        if (!util.isNumber(coord)) throw new Error('ShapeItem.y(coord): coord must be a number.');
         //</validation>
         this._y = coord;
         return this;
@@ -128,7 +126,7 @@ ShapeItem.prototype.width = function (w)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(w)) throw new Error('ShapeItem.width(w): w must be a number.');
+        if (!util.isNumber(w)) throw new Error('ShapeItem.width(w): w must be a number.');
         if (w < 0)        throw new Error('ShapeItem.width(w): w must be >= 0.');
         //</validation>
         this._w = w;
@@ -149,7 +147,7 @@ ShapeItem.prototype.height = function (h)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!isNumber(h)) throw new Error('ShapeItem.height(h): h must be a number.');
+        if (!util.isNumber(h)) throw new Error('ShapeItem.height(h): h must be a number.');
         if (h < 0)        throw new Error('ShapeItem.height(h): h must be >= 0.');
         //</validation>
         this._h = h;
