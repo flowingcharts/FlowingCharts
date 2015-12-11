@@ -198,7 +198,7 @@ Canvas.prototype.path = function (type, arrCoords)
 Canvas.prototype.circle = function (cx, cy, r)
 {
     var item = new CanvasItem('circle');
-    item.dataUnits = {x:cx-r, y:cy-r, width:r*2, height:r*2};
+    item.coords = {x:cx-r, y:cy-r, width:r*2, height:r*2};
     this._items.push(item);
     return item;
 };
@@ -216,7 +216,7 @@ Canvas.prototype.circle = function (cx, cy, r)
 Canvas.prototype.ellipse = function (cx, cy, rx, ry)
 {
     var item = new CanvasItem('ellipse');
-    item.dataUnits = {x:cx-rx, y:cy-ry, width:rx*2, height:ry*2};
+    item.coords = {x:cx-rx, y:cy-ry, width:rx*2, height:ry*2};
     this._items.push(item);
     return item;
 };
@@ -234,7 +234,7 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry)
 Canvas.prototype.rect = function (x, y, w, h)
 {
     var item = new CanvasItem('rect');
-    item.dataUnits = {x:x, y:y, width:w, height:h};
+    item.coords = {x:x, y:y, width:w, height:h};
     this._items.push(item);
     return item;
 };
@@ -252,7 +252,8 @@ Canvas.prototype.rect = function (x, y, w, h)
 Canvas.prototype.line = function (x1, y1, x2, y2)
 {
     var item = new CanvasItem('line');
-    item.dataUnits = {points:[x1, y1, x2, y2]};
+    item.path = true;
+    item.coords = {points:[x1, y1, x2, y2]};
     this._items.push(item);
     return item;
 };
@@ -267,7 +268,8 @@ Canvas.prototype.line = function (x1, y1, x2, y2)
 Canvas.prototype.polyline = function (arrCoords)
 {
     var item = new CanvasItem('polyline');
-    item.dataUnits = {points:arrCoords};
+    item.path = true;
+    item.coords = {points:arrCoords};
     this._items.push(item);
     return item;
 };
@@ -282,7 +284,8 @@ Canvas.prototype.polyline = function (arrCoords)
 Canvas.prototype.polygon = function (arrCoords)
 {
     var item = new CanvasItem('polygon');
-    item.dataUnits = {points:arrCoords};
+    item.path = true;
+    item.coords = {points:arrCoords};
     this._items.push(item);
     return item;
 };
@@ -325,8 +328,6 @@ Canvas.prototype.render = function ()
  */
 Canvas.prototype.drawItem = function (item)
 {
-    item.pixelUnits = getPixelUnits(item, this._coords);
-
     if (item.context === undefined)
     {
         if (this._renderer === 'svg')
@@ -337,7 +338,7 @@ Canvas.prototype.drawItem = function (item)
         else item.context = this._ctx;
     }
 
-    var p = item.pixelUnits;
+    var p = getPixelUnits(item, this._coords);
     switch(item.type)
     {
         case 'circle':
@@ -371,14 +372,12 @@ Canvas.prototype.drawItem = function (item)
  */
 function getPixelUnits (item, coords)
 {
-    var dataUnits = item.dataUnits;
-    var type      = item.type;
     var pixelUnits;
 
-    if (type === 'polygon' || type === 'polyline' || type === 'line')  // Path.
+    if (item.path)                  // Path.
     {
-        var points = coords.getPixelArray(dataUnits.points);
-        switch(type)
+        var points = coords.getPixelArray(item.coords.points);
+        switch(item.type)
         {
             case 'line':
                 pixelUnits = {x1:points[0], y1:points[1], x2:points[2], y2:points[3]};
@@ -391,13 +390,13 @@ function getPixelUnits (item, coords)
             break;
         }
     }    
-    else if (item.marker === true) // Marker.
+    else if (item.marker === true)  // Marker.
     {
-        var size = dataUnits.width;
+        var size = item.coords.width;
         var r    = size / 2;
-        var cx   = coords.getPixelX(dataUnits.x + r);
-        var cy   = coords.getPixelY(dataUnits.y + r); 
-        switch(type)
+        var cx   = coords.getPixelX(item.coords.x + r);
+        var cy   = coords.getPixelY(item.coords.y + r); 
+        switch(item.type)
         {
             case 'circle':
                 pixelUnits = {cx:cx, cy:cy, r:r};
@@ -410,13 +409,13 @@ function getPixelUnits (item, coords)
             break;
         }
     } 
-    else // Shape.
+    else                            // Shape.
     {
-        var w = coords.getPixelDimensionX(dataUnits.width);
-        var h = coords.getPixelDimensionY(dataUnits.height);
-        var x = coords.getPixelX(dataUnits.x);
-        var y = coords.getPixelY(dataUnits.y) - h;
-        switch(type)
+        var w = coords.getPixelDimensionX(item.coords.width);
+        var h = coords.getPixelDimensionY(item.coords.height);
+        var x = coords.getPixelX(item.coords.x);
+        var y = coords.getPixelY(item.coords.y) - h;
+        switch(item.type)
         {
             case 'rect':
                 pixelUnits = {x:x, y:y, width:w, height:h};

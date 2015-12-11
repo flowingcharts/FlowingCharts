@@ -68,7 +68,6 @@ var empty = function (canvas, ctx)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var circle = function (ctx, cx, cy, r, style)
 {
@@ -94,7 +93,6 @@ var circle = function (ctx, cx, cy, r, style)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var ellipse = function (ctx, cx, cy, rx, ry, style)
 {
@@ -132,7 +130,6 @@ var ellipse = function (ctx, cx, cy, rx, ry, style)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var rect = function (ctx, x, y, w, h, style)
 {
@@ -158,7 +155,6 @@ var rect = function (ctx, x, y, w, h, style)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var line = function (ctx, x1, y1, x2, y2, style)
 {
@@ -182,7 +178,6 @@ var line = function (ctx, x1, y1, x2, y2, style)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var polyline = function (ctx, arrCoords, style)
 {
@@ -212,7 +207,6 @@ var polyline = function (ctx, arrCoords, style)
  * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @private
  */
 var polygon = function (ctx, arrCoords, style)
 {
