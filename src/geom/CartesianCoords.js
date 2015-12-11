@@ -115,8 +115,8 @@ CartesianCoords.prototype.getPixelRect = function (viewBox)
 {
     var x = this.getPixelX(viewBox.xMin());
     var y = this.getPixelY(viewBox.yMax());
-    var w = this.getPixelWidth(viewBox.width());
-    var h = this.getPixelHeight(viewBox.height());
+    var w = this.getPixelDimensionX(viewBox.width());
+    var h = this.getPixelDimensionY(viewBox.height());
     return new Rectangle(x, y, w, h);
 };
 
@@ -143,14 +143,14 @@ CartesianCoords.prototype.getPixelArray = function (arrData)
  * 
  * @since 0.1.0
  * @param {number} dataX An x coord (data units).
- * @return {number} The x coord (pixel units).
+ * @return {number} An x coord (pixel units).
  */
 CartesianCoords.prototype.getPixelX = function (dataX)
 {
     //<validation>
     if (!util.isNumber(dataX)) throw new Error('CartesianCoords.getPixelX(dataX): dataX must be a number.');
     //</validation>
-    var px = this._viewPort.x() + this.getPixelWidth(dataX - this._viewBox.xMin());
+    var px = this._viewPort.x() + this.getPixelDimensionX(dataX - this._viewBox.xMin());
     return px;
 };
 
@@ -159,51 +159,49 @@ CartesianCoords.prototype.getPixelX = function (dataX)
  * 
  * @since 0.1.0
  * @param {number} dataY A y coord (data units).
- * @return {number} The y coord (pixel units).
+ * @return {number} A y coord (pixel units).
  */
 CartesianCoords.prototype.getPixelY = function (dataY)
 {
     //<validation>
     if (!util.isNumber(dataY)) throw new Error('CartesianCoords.getPixelY(dataY): dataY must be a number.');
     //</validation>
-    var py =  this._viewPort.y() + this._viewPort.height() - this.getPixelHeight(dataY - this._viewBox.yMin());
+    var py =  this._viewPort.y() + this._viewPort.height() - this.getPixelDimensionY(dataY - this._viewBox.yMin());
     return py;
 };
 
 /** 
- * Converts a width from data units to pixel units.
+ * Converts an x dimension from data units to pixel units.
  * 
  * @since 0.1.0
- * @param {number} dataWidth A width (data units).
- * @return {number} The width (pixel units).
+ * @param {number} dataDimensionX An x dimension (data units).
+ * @return {number} An x dimension (pixel units).
  */
-CartesianCoords.prototype.getPixelWidth = function (dataWidth)
+CartesianCoords.prototype.getPixelDimensionX = function (dataDimensionX)
 {
     //<validation>
-    if (!util.isNumber(dataWidth)) throw new Error('CartesianCoords.getPixelWidth(dataHeight): dataWidth must be a number.');
-    if (dataWidth < 0)        throw new Error('CartesianCoords.getPixelWidth(dataHeight): dataWidth must be >= 0.');
+    if (!util.isNumber(dataDimensionX)) throw new Error('CartesianCoords.getPixelDimensionX(dataDimensionY): dataDimensionX must be a number.');
     //</validation>
-    if (dataWidth === 0) return 0;
-    var pixelDistance  = (dataWidth / this._viewBox.width()) * this._viewPort.width();
-    return pixelDistance;
+    if (dataDimensionX === 0) return 0;
+    var pixelDimensionX  = (dataDimensionX / this._viewBox.width()) * this._viewPort.width();
+    return pixelDimensionX;
 };
 
 /** 
- * Converts a height from data units to pixel units.
+ * Converts a y dimension from data units to pixel units.
  * 
  * @since 0.1.0
- * @param {number} dataHeight A height (data units).
- * @return {number} The height (pixel units).
+ * @param {number} dataDimensionY A y dimension (data units).
+ * @return {number} A y dimension (pixel units).
  */
-CartesianCoords.prototype.getPixelHeight = function (dataHeight)
+CartesianCoords.prototype.getPixelDimensionY = function (dataDimensionY)
 {
     //<validation>
-    if (!util.isNumber(dataHeight)) throw new Error('CartesianCoords.getPixelHeight(dataHeight): dataHeight must be a number.');
-    if (dataHeight < 0)        throw new Error('CartesianCoords.getPixelHeight(dataHeight): dataHeight must be >= 0.');
+    if (!util.isNumber(dataDimensionY)) throw new Error('CartesianCoords.getPixelDimensionY(dataDimensionY): dataDimensionY must be a number.');
     //</validation>
-    if (dataHeight === 0) return 0;
-    var pixelDistance = (dataHeight / this._viewBox.height()) * this._viewPort.height();
-    return pixelDistance;
+    if (dataDimensionY === 0) return 0;
+    var pixelDimensionY = (dataDimensionY / this._viewBox.height()) * this._viewPort.height();
+    return pixelDimensionY;
 };
 
 /** 
@@ -229,7 +227,7 @@ CartesianCoords.prototype.getDataCoords = function (pixelCoords)
 {
     var xMin = this.getDataX(pixelCoords.x());
     var yMax = this.getDataY(pixelCoords.y());
-    var xMax = xMin + this.getDataWidth(pixelCoords.width());
+    var xMax = xMin + this.getDataDimensionX(pixelCoords.width());
     var yMin = yMax - this.getPDataHeight(pixelCoords.height());
     return new ViewBox(xMin, yMin, xMax, yMax);
 };
@@ -263,7 +261,7 @@ CartesianCoords.prototype.getDataX = function (pixelX)
     //<validation>
     if (!util.isNumber(pixelX)) throw new Error('CartesianCoords.getDataX(pixelX): pixelX must be a number.');
     //</validation>
-    var dataX = this._viewBox.xMin() + this.getDataWidth(pixelX);
+    var dataX = this._viewBox.xMin() + this.getDataDimensionX(pixelX);
     return dataX;
 };
 
@@ -278,50 +276,48 @@ CartesianCoords.prototype.getDataY = function (pixelY)
     //<validation>
     if (!util.isNumber(pixelY)) throw new Error('CartesianCoords.getDataY(pixelY): pixelY must be a number.');
     //</validation>
-    var dataY = this._viewBox.yMin() + this.getDataHeight(this._viewPort.height() - pixelY);
+    var dataY = this._viewBox.yMin() + this.getDataDimensionY(this._viewPort.height() - pixelY);
     return dataY;
 };
 
 /** 
- * Converts a width from pixel units to data units.
+ * Converts an x dimension from pixel units to data units.
  * 
- * @param {number} pixelWidth A width (pixel units).
- * @return {number} A width (data units).
+ * @param {number} pixelDimensionX An x dimension (pixel units).
+ * @return {number} An x dimension (data units).
  */
-CartesianCoords.prototype.getDataWidth = function (pixelWidth)
+CartesianCoords.prototype.getDataDimensionX = function (pixelDimensionX)
 {
     //<validation>
-    if (!util.isNumber(pixelWidth)) throw new Error('CartesianCoords.getDataWidth(pixelWidth): pixelWidth must be a number.');
-    if (pixelWidth < 0)        throw new Error('CartesianCoords.getDataWidth(pixelWidth): pixelWidth must be >= 0.');
+    if (!util.isNumber(pixelDimensionX)) throw new Error('CartesianCoords.getDataDimensionX(pixelDimensionX): pixelDimensionX must be a number.');
     //</validation>
-    if (pixelWidth === 0) return 0;
-    var dataDistance = (pixelWidth / this._viewPort.width()) * this._viewBox.width();
-    return dataDistance;
+    if (pixelDimensionX === 0) return 0;
+    var dataDimensionX = (pixelDimensionX / this._viewPort.width()) * this._viewBox.width();
+    return dataDimensionX;
 };
 
 /** 
- * Converts a height from pixel units to data units.
+ * Converts a y dimension from pixel units to data units.
  * 
- * @param {number} pixelHeight A height (pixel units).
- * @return {number} A height (data units).
+ * @param {number} pixelDimensionY A y dimension (pixel units).
+ * @return {number} A y dimension (data units).
  */
-CartesianCoords.prototype.getDataHeight = function (pixelHeight)
+CartesianCoords.prototype.getDataDimensionY = function (pixelDimensionY)
 {
     //<validation>
-    if (!util.isNumber(pixelHeight)) throw new Error('CartesianCoords.getDataHeight(pixelHeight): pixelHeight must be a number.');
-    if (pixelHeight < 0)        throw new Error('CartesianCoords.getDataHeight(pixelHeight): pixelHeight must be >= 0.');
+    if (!util.isNumber(pixelDimensionY)) throw new Error('CartesianCoords.getDataDimensionY(pixelDimensionY): pixelDimensionY must be a number.');
     //</validation>
-    if (pixelHeight === 0) return 0;
-    var dataDistance = (pixelHeight / this._viewPort.height()) * this._viewBox.height();
-    return dataDistance;
+    if (pixelDimensionY === 0) return 0;
+    var dataDimensionY = (pixelDimensionY / this._viewPort.height()) * this._viewBox.height();
+    return dataDimensionY;
 };
 
 /** 
  * Adjusts a bounding box to fit a rectangle in order to maintain the aspect ratio.
  *
  * @private
- * @param {ViewBox} viewBox The bounding box.
- * @param {Rectangle} rect The rectangle.
+ * @param {ViewBox} viewBox A bounding box.
+ * @param {Rectangle} rect A rectangle.
  */
 CartesianCoords.prototype.fitViewBoxToViewPort = function (viewBox, rect)
 {

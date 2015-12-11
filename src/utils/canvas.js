@@ -26,19 +26,19 @@ var isSupported = function ()
 };
 
 /** 
- * Clears the canvas.
+ * Empties the canvas.
  *
  * @param {HtmlCanvas} canvas The canvas.
  * @param {HtmlCanvasContext} ctx The canvas context.
  * @since 0.1.0
  */
-var clear = function (canvas, ctx)
+var empty = function (canvas, ctx)
 {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 /** 
- * Provides the fill drawing routine for the graphics library being used.
+ * Provides the fill drawing routine.
  *
  * @since 0.1.0
  * @param {HtmlCanvasContext} ctx The canvas context to draw to.
@@ -204,7 +204,7 @@ var polygon = function (ctx, arrCoords)
 module.exports = 
 {
     isSupported : isSupported,
-    clear       : clear,
+    empty       : empty,
     draw        : draw,
     circle      : circle,
     ellipse     : ellipse,

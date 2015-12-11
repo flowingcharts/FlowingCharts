@@ -27,32 +27,82 @@ var colorUtil = require('../utils/color');
  */
 function CanvasItem (type)
 {
-    // Private instance members.
-    this._type          = type; // The shape type.
+    // Public instance variables.
 
-    // Styles.
-    this._fillColor     = '#ffffff'; 
-    this._fillOpacity   = 1;
-    this._lineColor     = '#000000';  
-    this._lineWidth     = 1; 
-    this._lineJoin      = 'round'; 
-    this._lineCap       = 'butt'; 
-    this._lineOpacity   = 1;
+    /** 
+     * The shape type.
+     * 
+     * @since 0.1.0
+     * @type string
+     */
+    this.type = type; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type string
+     * @default '#ffffff'
+     */
+    this.fillColor = '#ffffff'; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type number
+     * @default 1
+     */
+    this.fillOpacity = 1;
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type string
+     * @default '#000000'
+     */
+    this.lineColor = '#000000'; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type number
+     * @default 1
+     */ 
+    this.lineWidth = 1; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type string
+     * @default 'round'
+     */
+    this.lineJoin = 'round'; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type string
+     * @default 'butt'
+     */
+    this.lineCap = 'butt'; 
+
+    /** 
+     * The fill color.
+     * 
+     * @since 0.1.0
+     * @type number
+     * @default 1
+     */
+    this.lineOpacity = 1;
 }
 
 /** 
- * Get the type.
- *
- * @since 0.1.0
- * @return {string} The shape type.
- */
-CanvasItem.prototype.type = function ()
-{
-    return this._type;
-};
-
-/** 
- * Defines the stroke style.
+ * Defines the style.
  *
  * @since 0.1.0
  * @param {Object} [options] The style properties.
@@ -69,170 +119,15 @@ CanvasItem.prototype.style = function (options)
 {
     if (options !== undefined) 
     {
-        if (options.fillColor !== undefined)    this.fillColor(options.fillColor);
-        if (options.fillOpacity !== undefined)  this.fillOpacity(options.fillOpacity);
-        if (options.lineColor !== undefined)    this.lineColor(options.lineColor);
-        if (options.lineWidth !== undefined)    this.lineWidth(options.lineWidth);
-        if (options.lineJoin !== undefined)     this.lineJoin(options.lineJoin);
-        if (options.lineCap !== undefined)      this.lineCap(options.lineCap);
-        if (options.lineOpacity !== undefined)  this.lineOpacity(options.lineOpacity);
+        if (options.fillColor !== undefined)    this.fillColor   = options.fillColor;
+        if (options.fillOpacity !== undefined)  this.fillOpacity = options.fillOpacity;
+        if (options.lineColor !== undefined)    this.lineColor   = options.lineColor;
+        if (options.lineWidth !== undefined)    this.lineWidth   = options.lineWidth;
+        if (options.lineJoin !== undefined)     this.lineJoin    = options.lineJoin;
+        if (options.lineCap !== undefined)      this.lineCap     = options.lineCap;
+        if (options.lineOpacity !== undefined)  this.lineOpacity = options.lineOpacity;
     }
     return this;
-};
-
-/** 
- * Get or set the fill color.
- *
- * @since 0.1.0
-
- * @param {string} color The fill color.
- * @return {string|CanvasItem} The fill color if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.fillColor = function (color)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!colorUtil.isColor(color)) throw new Error('CanvasItem.fillColor(color): color must be a color.');
-        //</validation>
-
-        this._fillColor = color;
-        return this;
-    }
-    else return this._fillColor;
-};
-
-/** 
- * Get or set the fill opacity. This is overriden by the fillColor if it contains an alpha value.
- *
- * @since 0.1.0
-
- * @param {string} opacity The fill opacity.
- * @return {number|CanvasItem} The fill opacity if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.fillOpacity = function (opacity)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!util.isNumber(opacity)) throw new Error('CanvasItem.fillOpacity(opacity): opacity must be a number.');
-        //</validation>
-
-        opacity = Math.max(0, opacity);
-        opacity = Math.min(1, opacity);
-
-        this._fillOpacity = opacity;
-        return this;
-    }
-    else return this._fillOpacity;
-};
-
-/** 
- * Get or set the line color.
- *
- * @since 0.1.0
- * @param {string} color The line color.
- * @return {string|CanvasItem} The line color if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.lineColor = function (color)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!colorUtil.isColor(color)) throw new Error('CanvasItem.lineColor(color): color must be a color.');
-        //</validation>
-
-        this._lineColor = color;
-        return this;
-    }
-    else return this._lineColor;
-};
-
-/** 
- * Get or set the line width.
- *
- * @since 0.1.0
- * @param {number} width The line width.
- * @return {number|CanvasItem} The line width if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.lineWidth = function (width)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!util.isNumber(width)) throw new Error('CanvasItem.lineWidth(width): width must be a number.');
-        if (width < 0)        throw new Error('CanvasItem.lineWidth(width): width must be >= 0.');
-        //</validation>
-
-        this._lineWidth = width;
-        return this;
-    }
-    else return this._lineWidth;
-};
-
-/** 
- * Get or set the line join.
- *
- * @since 0.1.0
- * @param {string} join The line join, one of "bevel", "round", "miter".
- * @return {string|CanvasItem} The line join if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.lineJoin = function (join)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (join !== "bevel" && join !== "round" && join !== "miter")
-             throw new Error('CanvasItem.lineJoin(join): join must one of "bevel", "round", "miter"');
-        //</validation>
-      
-        this._lineJoin = join;
-        return this;
-    }
-    else return this._lineJoin;
-};
-
-/** 
- * Get or set the line cap.
- *
- * @since 0.1.0
- * @param {string} cap The line cap, one of "butt", "round", "square".
- * @return {string|CanvasItem} The line cap if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.lineCap = function (cap)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (cap !== "butt" && cap !== "round" && cap !== "square")
-             throw new Error('CanvasItem.lineCap(cap): cap must one of "butt", "round", "square"');
-        //</validation>
-
-        this._lineCap = cap;
-        return this;
-    }
-    else return this._lineCap;
-};
-
-/** 
- * Get or set the line opacity. This is overriden by the lineColor if it contains an alpha value.
- *
- * @since 0.1.0
- * @param {string} opacity A value between 0 and 1.
- * @return {number|CanvasItem} The line opacity if no arguments are supplied, otherwise <code>this</code>.
- */
-CanvasItem.prototype.lineOpacity = function (opacity)
-{
-    if (arguments.length > 0)
-    {
-        //<validation>
-        if (!util.isNumber(opacity)) throw new Error('CanvasItem.lineOpacity(opacity): opacity must be a number.');
-        //</validation>
-
-        this._lineOpacity = opacity;
-        return this;
-    }
-    else return this._lineOpacity;
 };
 
 module.exports = CanvasItem;

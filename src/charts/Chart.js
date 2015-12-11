@@ -8,8 +8,7 @@
  * @copyright FlowingCharts 2015
  * @module charts/Chart 
  * @requires series/Series
- * @requires canvas/HtmlCanvas
- * @requires canvas/SvgCanvas
+ * @requires canvas/Canvas
  * @requires geom/CartesianCoords
  * @requires geom/PolarCoords
  * @requires utils/util
@@ -18,8 +17,7 @@
  */
 
 // Required modules.
-var HtmlCanvas          = require('../canvas/HtmlCanvas');
-var SvgCanvas           = require('../canvas/SvgCanvas');
+var Canvas              = require('../canvas/Canvas');
 var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
 var Series              = require('../series/Series');
@@ -203,8 +201,7 @@ function getCanvasContainer(renderer)
  */
 function getCanvas(renderer, coords)
 {
-    if (renderer === 'svg') return new SvgCanvas(coords);  // SVG.
-    else                    return new HtmlCanvas(coords); // Canvas.
+    return new Canvas(renderer, coords);
 }
 
 /** 

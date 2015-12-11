@@ -11,12 +11,17 @@
  * @requires canvas/PathItem
  * @requires utils/util
  * @requires utils/color
+ * @requires utils/canvas
+ * @requires utils/svg
  */
 
 // Required modules.
-var ShapeItem = require('./ShapeItem');
-var PathItem  = require('./PathItem');
-var util      = require('../utils/util');
+var ShapeItem  = require('./ShapeItem');
+var PathItem   = require('./PathItem');
+var util       = require('../utils/util');
+var canvasUtil = require('../utils/canvas');
+var svgUtil    = require('../utils/svg');
+var dom     = require('../utils/dom');
 
 /** 
  * @classdesc A base wrapper class for graphics libraries.
@@ -28,28 +33,96 @@ var util      = require('../utils/util');
  *
  * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
  */
-function Canvas (coords)
+function Canvas (type, coords)
 {
     // Private instance members.  
+    this._type   = type;
     this._coords = coords;
+    this._items  = [];
 
-    // Public instance members.  
-
-    /** 
-     * The html element that represents the actual drawing canvas.
-     * 
-     * @since 0.1.0
-     * @type HTMLElement
-     * @default null
-     */
-    this.graphicsElement = null;
-
-    // List added items 
-    this.items = [];
-
-    // Initialise.   
-    this.init();
+    if (this._type === 'svg')
+    {
+        this._g = svgUtil;
+        this._canvas = this._g.createElement('g');
+    }
+    else
+    {
+        this._g = canvasUtil;
+        this._canvas = dom.createElement('canvas', 
+        {
+            style : {position:'absolute', left:0, right:0}
+        });
+        this._ctx = this._canvas.getContext('2d');
+    }
 }
+
+/** 
+ * Clear the canvas.
+ *
+ * @since 0.1.0
+ */
+Canvas.prototype.clear = function ()
+{
+    this._items = [];
+    if (this._type === 'canvas') this._g.empty(this._canvas, this._ctx);
+};
+
+/** 
+ * Provides the drawing routine.
+ *
+ * @since 0.1.0
+ * @param {CanvasItem} item A canvas item.
+ * @private
+ */
+Canvas.prototype.draw = function (item)
+{
+    if (item.context === undefined)
+    {
+        if (this._type === 'svg')
+        {
+            item.context = this._g.createElement(item.type);
+            this._canvas.appendChild(item.context);
+        }
+        else
+        {
+            item.context = this._ctx;
+        }
+    }
+
+    var p = item.pixelUnits;
+    switch(item.type)
+    {
+        case 'circle':
+            this._g.circle(item.context, p.cx, p.cy, p.r);
+        break;
+        case 'ellipse':
+            this._g.ellipse(item.context, p.cx, p.cy, p.rx, p.ry);
+        break;
+        case 'rect':
+            this._g.rect(item.context, p.x, p.y, p.width, p.height);
+        break;
+        case 'line':
+            this._g.line(item.context, p.x1, p.y1, p.x2, p.y2);
+        break;
+        case 'polygon':
+            this._g.polygon(item.context, p.points);
+        break;
+        case 'polyline':
+            this._g.polyline(item.context, p.points);
+        break;
+    }
+
+    this._g.draw(item.context, 
+    {
+        fillColor   : item.fillColor, 
+        fillOpacity : item.fillOpacity,
+        lineColor   : item.lineColor, 
+        lineWidth   : item.lineWidth, 
+        lineOpacity : item.lineOpacity, 
+        lineJoin    : item.lineJoin, 
+        lineCap     : item.lineCap
+    });
+};
 
 /** 
  * Appends the canvas to a html element.
@@ -59,7 +132,7 @@ function Canvas (coords)
  */
 Canvas.prototype.appendTo = function (container)
 {
-    container.appendChild(this.graphicsElement);
+    container.appendChild(this._canvas);
 };
 
 // Geometry.
@@ -72,7 +145,7 @@ Canvas.prototype.appendTo = function (container)
  */
 Canvas.prototype.width = function ()
 {
-    return parseInt(this.graphicsElement.getAttribute('width'));
+    return parseInt(this._canvas.getAttribute('width'));
 };
 
 /** 
@@ -83,7 +156,7 @@ Canvas.prototype.width = function ()
  */
 Canvas.prototype.height = function ()
 {
-    return parseInt(this.graphicsElement.getAttribute('height'));
+    return parseInt(this._canvas.getAttribute('height'));
 };
 
 /** 
@@ -105,8 +178,8 @@ Canvas.prototype.setSize = function (w, h)
     if (w !== this.width() || h !== this.height())
     {
         // Canvas size.
-        this.graphicsElement.setAttribute('width', w);
-        this.graphicsElement.setAttribute('height', h);
+        this._canvas.setAttribute('width', w);
+        this._canvas.setAttribute('height', h);
     }
 };
 
@@ -294,7 +367,7 @@ Canvas.prototype.polygon = function (arrCoords)
 Canvas.prototype.getShapeItem = function (type, x, y, w, h)
 {
     var item = new ShapeItem(type, x, y, w, h);
-    this.items.push(item);
+    this._items.push(item);
     return item;
 };
 
@@ -310,7 +383,7 @@ Canvas.prototype.getShapeItem = function (type, x, y, w, h)
 Canvas.prototype.getPathItem = function (type, arrCoords)
 {
     var item = new PathItem(type, arrCoords);
-    this.items.push(item);
+    this._items.push(item);
     return item;
 };
 
@@ -323,12 +396,12 @@ Canvas.prototype.getPathItem = function (type, arrCoords)
  */
 Canvas.prototype.render = function ()
 {
-    var n = this.items.length;
+    var n = this._items.length;
     for (var i = 0; i < n; i++)  
     {
-        var item = this.items[i];
+        var item = this._items[i];
 
-        if (item.type() === 'polygon' || item.type() === 'polyline' || item.type() === 'line')  
+        if (item.type === 'polygon' || item.type === 'polyline' || item.type === 'line')  
         {
             this.drawPath(item);
         }    
@@ -356,7 +429,7 @@ Canvas.prototype.drawMarker = function (item)
     var px   = this._coords.getPixelX(item.x()) - r;
     var py   = this._coords.getPixelY(item.y()) - r;
 
-    switch(item.type())
+    switch(item.type)
     {
         case 'circle':
             item.pixelUnits = 
@@ -402,7 +475,7 @@ Canvas.prototype.drawShape = function (item)
     var px = this._coords.getPixelX(item.x());
     var py = this._coords.getPixelY(item.y()) - ph;
 
-    switch(item.type())
+    switch(item.type)
     {
         case 'rect':
             item.pixelUnits = 
@@ -438,7 +511,7 @@ Canvas.prototype.drawPath = function (item)
 {
     var arrPixelCoords = this._coords.getPixelArray(item.points());
 
-    switch(item.type())
+    switch(item.type)
     {
         case 'line':
             item.pixelUnits = 
