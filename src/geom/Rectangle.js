@@ -116,8 +116,8 @@ Rectangle.prototype.width = function (w)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(w)) throw new Error('Rectangle.width(w): w must be a number.');
-        if (w < 0)        throw new Error('Rectangle.width(w): w must be >= 0.');
+        if (!util.isNumber(w))  throw new Error('Rectangle.width(w): w must be a number.');
+        if (w < 0)              throw new Error('Rectangle.width(w): w must be >= 0.');
         //</validation>
         this._w = w;
         return this;
@@ -137,8 +137,8 @@ Rectangle.prototype.height = function (h)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(h)) throw new Error('Rectangle.height(h): h must be a number.');
-        if (h < 0)        throw new Error('Rectangle.height(h): h must be >= 0.');
+        if (!util.isNumber(h))  throw new Error('Rectangle.height(h): h must be a number.');
+        if (h < 0)              throw new Error('Rectangle.height(h): h must be >= 0.');
         //</validation>
         this._h = h;
         return this;

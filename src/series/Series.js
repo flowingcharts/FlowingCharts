@@ -226,6 +226,12 @@ Series.prototype.update = function()
  */
 Series.prototype.render = function()
 {
+    /*var n = this._items.length;
+    for (var i = 0; i < n; i++)  
+    {
+        var item = this._items[i];
+        this.canvas.drawItem(item);
+    }*/
     this.canvas.render();
 };
 

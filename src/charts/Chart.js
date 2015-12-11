@@ -214,15 +214,17 @@ function getCanvas(renderer, coords)
 Chart.prototype.setSize = function (w, h)
 {
     //<validation>
-    if (!util.isNumber(w)) throw new Error('Chart.setSize(w): w must be a number.');
-    if (w < 0)        throw new Error('Chart.setSize(w): w must be >= 0.');
-    if (!util.isNumber(h)) throw new Error('Chart.setSize(h): h must be a number.');
-    if (h < 0)        throw new Error('Chart.setSize(h): h must be >= 0.');
+    if (!util.isNumber(w))  throw new Error('Chart.setSize(w): w must be a number.');
+    if (w < 0)              throw new Error('Chart.setSize(w): w must be >= 0.');
+    if (!util.isNumber(h))  throw new Error('Chart.setSize(h): h must be a number.');
+    if (h < 0)              throw new Error('Chart.setSize(h): h must be >= 0.');
     //</validation>
 
-    // Set the series container size.
-    this._canvasContainer.setAttribute('width', w);
-    this._canvasContainer.setAttribute('height', h);
+    // Set the canvas container size.
+    dom.attr(this._canvasContainer, {width:w, height:h});
+
+    // Set the chart canvas size.
+    this._canvas.setSize(w, h);
 
     // Set the series canvas sizes.
     for (var i = 0; i < this.series.length; i++)  
@@ -231,11 +233,11 @@ Chart.prototype.setSize = function (w, h)
     }
 
     // viewPort.
-    var x       = this._options.paddingLeft;
-    var y       = this._options.paddingTop;
-    var width   = w - (this._options.paddingLeft + this._options.paddingRight);
-    var height  = h - (this._options.paddingTop + this._options.paddingBottom);
-    this.coords.viewPort(x, y, width, height);
+    var xViewPort = this._options.paddingLeft;
+    var yViewPort = this._options.paddingTop;
+    var wViewPort = w - (this._options.paddingLeft + this._options.paddingRight);
+    var hViewPort = h - (this._options.paddingTop + this._options.paddingBottom);
+    this.coords.viewPort(xViewPort, yViewPort, wViewPort, hViewPort);
 
     this.render();
 };
