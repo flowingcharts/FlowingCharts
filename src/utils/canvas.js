@@ -26,6 +26,21 @@ var isSupported = function ()
 };
 
 /** 
+ * Returns an absolutely positioned canvas that can be stacked in a relative container.
+ *
+ * @param {HtmlCanvas} The canvas.
+ * @since 0.1.0
+ */
+var getCanvas = function ()
+{
+    var canvas = dom.createElement('canvas', 
+    {
+        style : {position:'absolute', left:0, right:0}
+    });
+    return canvas;
+};
+
+/** 
  * Empties the canvas.
  *
  * @param {HtmlCanvas} canvas The canvas.
@@ -204,6 +219,7 @@ var polygon = function (ctx, arrCoords)
 module.exports = 
 {
     isSupported : isSupported,
+    getCanvas   : getCanvas,
     empty       : empty,
     draw        : draw,
     circle      : circle,

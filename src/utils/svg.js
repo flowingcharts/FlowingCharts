@@ -37,6 +37,17 @@ var isSupported = function ()
 };
 
 /** 
+ * Returns a group element.
+ *
+ * @param {SVGElement} The group element.
+ * @since 0.1.0
+ */
+var getCanvas = function ()
+{
+    return createElement('g');
+};
+
+/** 
  * Empties the element.
  *
  * @param {SVGElement} element The svg element.
@@ -189,6 +200,7 @@ module.exports =
 {
     createElement : createElement,
     isSupported   : isSupported,
+    getCanvas     : getCanvas,
     empty         : empty,
     draw          : draw,
     circle        : circle,

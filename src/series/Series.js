@@ -13,8 +13,6 @@
  */
 
 // Required modules.
-var HtmlCanvas      = require('../canvas/HtmlCanvas');
-var SvgCanvas       = require('../canvas/SvgCanvas');
 var util            = require('../utils/util');
 
 /** 
@@ -196,6 +194,7 @@ Series.prototype.update = function()
         if (util.isNumber(x) && util.isNumber(y))
         {
             var item = this.canvas.marker(shape, x, y, markerSize)
+            //var item = this.canvas.shape(shape, x, y, markerSize, markerSize)
             .style(
             {
                 fillColor   : dataItem[this._options.colorField] !== undefined ? dataItem[this._options.colorField] : this._options.fillColor,
