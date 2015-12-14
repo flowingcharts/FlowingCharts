@@ -52,17 +52,15 @@ function Chart (options)
         paddingRight        : undefined,
         paddingBottom       : undefined,
         paddingLeft         : undefined,
-        borderWidth         : 1,
-        borderTopWidth      : undefined,
-        borderRightWidth    : undefined,
-        borderBottomWidth   : undefined,
-        borderLeftWidth     : undefined,
-        borderColor         : '#cccccc',
-        borderTopColor      : undefined,
-        borderRightColor    : undefined,
-        borderBottomColor   : undefined,
-        borderLeftColor     : undefined,
-        backgroundColor     : undefined
+        borderStyle         : 
+        {
+            lineWidth : 1,
+            lineColor :'#cccccc'
+        },
+        borderTopStyle      : undefined,
+        borderRightStyle    : undefined,
+        borderBottomStyle   : undefined,
+        borderLeftStyle     : undefined
     };
 
     // Public instance members.  
@@ -112,17 +110,11 @@ Chart.prototype.options = function(options)
         this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
         this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
 
-        // Border width.
-        this._options.borderTopWidth     = this._options.borderTopWidth !== undefined ? this._options.borderTopWidth : this._options.borderWidth;
-        this._options.borderRightWidth   = this._options.borderRightWidth !== undefined ? this._options.borderRightWidth : this._options.borderWidth;
-        this._options.borderBottomWidth  = this._options.borderBottomWidth !== undefined ? this._options.borderBottomWidth : this._options.borderWidth;
-        this._options.borderLeftWidth    = this._options.borderLeftWidth !== undefined ? this._options.borderLeftWidth : this._options.borderWidth;
-
-        // Border color.
-        this._options.borderTopColor     = this._options.borderTopColor !== undefined ? this._options.borderTopColor : this._options.borderColor;
-        this._options.borderRightColor   = this._options.borderRightColor !== undefined ? this._options.borderRightColor : this._options.borderColor;
-        this._options.borderBottomColor  = this._options.borderBottomColor !== undefined ? this._options.borderBottomColor : this._options.borderColor;
-        this._options.borderLeftColor    = this._options.borderLeftColor !== undefined ? this._options.borderLeftColor : this._options.borderColor;
+        // Border style.
+        this._options.borderTopStyle    = this._options.borderTopStyle !== undefined ? this._options.borderTopStyle : this._options.borderStyle;
+        this._options.borderRightStyle  = this._options.borderRightStyle !== undefined ? this._options.borderRightStyle : this._options.borderStyle;
+        this._options.borderBottomStyle = this._options.borderBottomStyle !== undefined ? this._options.borderBottomStyle : this._options.borderStyle;
+        this._options.borderLeftStyle   = this._options.borderLeftStyle !== undefined ? this._options.borderLeftStyle : this._options.borderStyle;
 
         // Coordinate system.
         this.coords = getCoords(this._options.coordinateSystem);
@@ -132,7 +124,7 @@ Chart.prototype.options = function(options)
         dom.appendChild(this._options.container, this._canvasContainer);
 
         // Background and border canvas.
-        this._canvas = getCanvas(this._options.renderer, this.coords); 
+        this._canvas = getCanvas(this._options.renderer, this.coords);
         this._canvas.appendTo(this._canvasContainer);   
 
         // Series.
@@ -210,6 +202,7 @@ function getCanvas(renderer, coords)
  * @since 0.1.0
  * @param {number} w The width.
  * @param {number} h The height.
+ * @private
  */
 Chart.prototype.setSize = function (w, h)
 {

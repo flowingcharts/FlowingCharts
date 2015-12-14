@@ -29,7 +29,7 @@ var dom        = require('../utils/dom');
  * @constructor
  *
  * @param {string} renderer The renderer 'svg' or 'canvas'.
- * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
+ * @param {CartesianCoords|PolarCoords} [coords] The coordinate system to use when drawing. If no coordinate system is defined pixel units are used. 
  */
 function Canvas (renderer, coords)
 {
@@ -112,7 +112,7 @@ Canvas.prototype.setSize = function (w, h)
  * @param {number} cx The x position of the center of the marker.
  * @param {number} cy The y position of the center of the marker.
  * @param {number} size The size of the marker.
- * @return {ShapeItem} A shape item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
@@ -142,7 +142,7 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  * @param {number} y The y position of the bottom left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {ShapeItem} A shape item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
@@ -166,7 +166,7 @@ Canvas.prototype.shape = function (type, x, y, w, h)
  * @since 0.1.0
  * @param {string} type The path type.
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {ShapeItem} A path item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.path = function (type, arrCoords)
 {
@@ -193,14 +193,11 @@ Canvas.prototype.path = function (type, arrCoords)
  * @param {number} cx The x position of the center of the circle.
  * @param {number} cy The y position of the center of the circle
  * @param {number} r The radius of the circle.
- * @return {ShapeItem} A shape item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.circle = function (cx, cy, r)
 {
-    var item = new CanvasItem('circle');
-    item.coords = {x:cx-r, y:cy-r, width:r*2, height:r*2};
-    this._items.push(item);
-    return item;
+    return getItem('circle', {x:cx-r, y:cy-r, width:r*2, height:r*2}, this._items);
 };
 
 /** 
@@ -211,14 +208,11 @@ Canvas.prototype.circle = function (cx, cy, r)
  * @param {number} cy The y position of the center of the ellipse
  * @param {number} rx The x radius of the ellipse.
  * @param {number} ry The y radius of the ellipse.
- * @return {ShapeItem} A shape item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.ellipse = function (cx, cy, rx, ry)
 {
-    var item = new CanvasItem('ellipse');
-    item.coords = {x:cx-rx, y:cy-ry, width:rx*2, height:ry*2};
-    this._items.push(item);
-    return item;
+    return getItem('ellipse', {x:cx-rx, y:cy-ry, width:rx*2, height:ry*2}, this._items);
 };
 
 /** 
@@ -229,14 +223,11 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry)
  * @param {number} y The y position of the bottom left corner.
  * @param {number} w The width.
  * @param {number} h The height.
- * @return {ShapeItem} A shape item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.rect = function (x, y, w, h)
 {
-    var item = new CanvasItem('rect');
-    item.coords = {x:x, y:y, width:w, height:h};
-    this._items.push(item);
-    return item;
+    return getItem('rect', {x:x, y:y, width:w, height:h}, this._items);
 };
 
 /** 
@@ -247,15 +238,11 @@ Canvas.prototype.rect = function (x, y, w, h)
  * @param {number} y1 The y position of point 1.
  * @param {number} x2 The x position of point 2.
  * @param {number} y2 The y position of point 2.
- * @return {PathItem} A path item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.line = function (x1, y1, x2, y2)
 {
-    var item = new CanvasItem('line');
-    item.path = true;
-    item.coords = {points:[x1, y1, x2, y2]};
-    this._items.push(item);
-    return item;
+    return getItem('line', {points:[x1, y1, x2, y2]}, this._items);
 };
 
 /** 
@@ -263,15 +250,11 @@ Canvas.prototype.line = function (x1, y1, x2, y2)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {PathItem} A path item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.polyline = function (arrCoords)
 {
-    var item = new CanvasItem('polyline');
-    item.path = true;
-    item.coords = {points:arrCoords};
-    this._items.push(item);
-    return item;
+    return getItem('polyline', {points:arrCoords}, this._items);
 };
 
 /** 
@@ -279,15 +262,11 @@ Canvas.prototype.polyline = function (arrCoords)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @return {PathItem} A path item.
+ * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.polygon = function (arrCoords)
 {
-    var item = new CanvasItem('polygon');
-    item.path = true;
-    item.coords = {points:arrCoords};
-    this._items.push(item);
-    return item;
+    return getItem('polygon', {points:arrCoords}, this._items);
 };
 
 // Drawing.
@@ -338,29 +317,48 @@ Canvas.prototype.drawItem = function (item)
         else item.context = this._ctx;
     }
 
-    var p = getPixelUnits(item, this._coords);
+    var coords;
+    if (this._coords !== undefined) coords = getPixelUnits(item, this._coords);
+    else                            coords = item.coords;
     switch(item.type)
     {
         case 'circle':
-            this._g.circle(item.context, p.cx, p.cy, p.r, item);
+            this._g.circle(item.context, coords.cx, coords.cy, coords.r, item);
         break;
         case 'ellipse':
-            this._g.ellipse(item.context, p.cx, p.cy, p.rx, p.ry, item);
+            this._g.ellipse(item.context, coords.cx, coords.cy, coords.rx, coords.ry, item);
         break;
         case 'rect':
-            this._g.rect(item.context, p.x, p.y, p.width, p.height, item);
+            this._g.rect(item.context, coords.x, coords.y, coords.width, coords.height, item);
         break;
         case 'line':
-            this._g.line(item.context, p.x1, p.y1, p.x2, p.y2, item);
+            this._g.line(item.context, coords.x1, coords.y1, coords.x2, coords.y2, item);
         break;
         case 'polygon':
-            this._g.polygon(item.context, p.points, item);
+            this._g.polygon(item.context, coords.points, item);
         break;
         case 'polyline':
-            this._g.polyline(item.context, p.points, item);
+            this._g.polyline(item.context, coords.points, item);
         break;
     }
 };
+
+/** 
+ * Creates a drawing item.
+ *
+ * @since 0.1.0
+ * @param {string} type The shape type.
+ * @return {Object} coords The coord information.
+ * @return {CanvasItem[]} items The item list.
+ * @private
+ */
+function getItem (type, coords, items)
+{
+    var item = new CanvasItem(type);
+    item.coords = coords;
+    items.push(item);
+    return item;
+}
 
 /** 
  * Gets the pixel units for an item.
@@ -375,7 +373,7 @@ function getPixelUnits (item, coords)
     var pixelUnits;
 
     // Path.
-    if (item.path) 
+    if (item.type === 'line' || item.type === 'polyline' || item.type === 'polygon') 
     {
         var points = coords.getPixelArray(item.coords.points);
         switch(item.type)
