@@ -24,18 +24,27 @@ var colorUtil = require('../utils/color');
  * @constructor
  *
  * @param {string} type The shape type.
+ * @param {Object} coords The shape coords.
  */
-function CanvasItem (type)
+function CanvasItem (type, coords)
 {
     // Public instance variables.
 
     /** 
-     * The shape type.
+     * The item type.
      * 
      * @since 0.1.0
      * @type string
      */
     this.type = type; 
+
+    /** 
+     * The drawing information for the item.
+     * 
+     * @since 0.1.0
+     * @type Object
+     */
+    this.coords = coords;
 
     /** 
      * The fill color.
@@ -71,7 +80,7 @@ function CanvasItem (type)
      * @type number
      * @default 1
      */ 
-    this.lineWidth = 1; 
+    this.lineWidth = 0; 
 
     /** 
      * The fill color.

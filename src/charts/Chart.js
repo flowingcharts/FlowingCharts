@@ -52,10 +52,15 @@ function Chart (options)
         paddingRight        : undefined,
         paddingBottom       : undefined,
         paddingLeft         : undefined,
+        backgroundStyle     : 
+        {
+            fillColor   :'#cccccc',
+            fillOpacity : 0.5
+        },
         borderStyle         : 
         {
-            lineWidth : 1,
-            lineColor :'#cccccc'
+            lineWidth   : 1,
+            lineColor   :'#cccccc'
         },
         borderTopStyle      : undefined,
         borderRightStyle    : undefined,
@@ -124,8 +129,13 @@ Chart.prototype.options = function(options)
         dom.appendChild(this._options.container, this._canvasContainer);
 
         // Background and border canvas.
-        this._canvas = getCanvas(this._options.renderer, this.coords);
+        this._canvas = getCanvas(this._options.renderer);
         this._canvas.appendTo(this._canvasContainer);   
+        this._background    = this._canvas.rect().style(this._options.backgroundStyle);
+        this._borderTop     = this._canvas.line().style(this._options.borderStyle);
+        this._borderRight   = this._canvas.line().style(this._options.borderStyle);
+        this._borderBottom  = this._canvas.line().style(this._options.borderStyle);
+        this._borderLeft    = this._canvas.line().style(this._options.borderStyle);
 
         // Series.
         this.series = [];
@@ -213,8 +223,24 @@ Chart.prototype.setSize = function (w, h)
     if (h < 0)              throw new Error('Chart.setSize(h): h must be >= 0.');
     //</validation>
 
+    // viewPort.
+    var x1Chart = this._options.paddingLeft;
+    var y1Chart = this._options.paddingTop;
+    var x2Chart = w - this._options.paddingRight;
+    var y2Chart = h - this._options.paddingBottom;
+    var wChart = x2Chart - x1Chart;
+    var hChart = y2Chart - y1Chart;
+    this.coords.viewPort(x1Chart, y1Chart, wChart, hChart);
+
     // Set the canvas container size.
     dom.attr(this._canvasContainer, {width:w, height:h});
+
+    // Set the coords for the background and border.
+    this._background.coords     = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
+    this._borderTop.coords      = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
+    this._borderRight.coords    = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
+    this._borderBottom.coords   = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
+    this._borderLeft.coords     = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
 
     // Set the chart canvas size.
     this._canvas.setSize(w, h);
@@ -224,13 +250,6 @@ Chart.prototype.setSize = function (w, h)
     {
         if (this._options.renderer !== 'svg') this.series[i].canvas.setSize(w, h);
     }
-
-    // viewPort.
-    var xViewPort = this._options.paddingLeft;
-    var yViewPort = this._options.paddingTop;
-    var wViewPort = w - (this._options.paddingLeft + this._options.paddingRight);
-    var hViewPort = h - (this._options.paddingTop + this._options.paddingBottom);
-    this.coords.viewPort(xViewPort, yViewPort, wViewPort, hViewPort);
 
     this.render();
 };
@@ -257,8 +276,8 @@ Chart.prototype.render = function()
     }
     this.coords.viewBox(xMin, yMin, xMax, yMax);
 
-    // Render the border
-
+    // Render the background and border.
+    this._canvas.render();
 
     // Render the series.
     for (i = 0; i < n; i++)  
