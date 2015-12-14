@@ -374,7 +374,8 @@ function getPixelUnits (item, coords)
 {
     var pixelUnits;
 
-    if (item.path)                  // Path.
+    // Path.
+    if (item.path) 
     {
         var points = coords.getPixelArray(item.coords.points);
         switch(item.type)
@@ -390,7 +391,8 @@ function getPixelUnits (item, coords)
             break;
         }
     }    
-    else if (item.marker === true)  // Marker.
+    // Marker.
+    else if (item.marker) 
     {
         var size = item.coords.width;
         var r    = size / 2;
@@ -409,7 +411,8 @@ function getPixelUnits (item, coords)
             break;
         }
     } 
-    else                            // Shape.
+    // Shape.
+    else 
     {
         var w = coords.getPixelDimensionX(item.coords.width);
         var h = coords.getPixelDimensionY(item.coords.height);
