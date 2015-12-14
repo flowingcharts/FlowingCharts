@@ -126,27 +126,27 @@ function Series (canvas, options)
  * Get or set the options for the series.
  *
  * @since 0.1.0
- * @param {Object} [options] The series options.
- * @param {string} [options.data = []] The data - an array of the form [{x:10, y:20}, {x:10, y:20}, {x:10, y:20}, ...].
- * @param {string} [options.idField = 'id'] The data property that contains the id value.
- * @param {string} [options.nameField = 'name'] The data property that contains the  name value.
- * @param {string} [options.xField = 'x'] The data property that contains the x value.
- * @param {string} [options.yField = 'y'] The data property that contains the y value.
- * @param {string} [options.sizeField = 'size'] The data property that contains the size value.
- * @param {string} [options.colorField = 'color'] The data property that contains the color value.
- * @param {string} [options.shapeField = 'shape'] The data property that contains the shape value.
- * @param {string} [options.imageField = 'image'] The data property that contains the image value.
- * @param {string} [options.shape = 'circle'] The shape to use for rendering.
- * @param {string} [options.image = ''] The image to use for rendering.
- * @param {string} [options.markerSize = 10] The marker size.
- * @param {string} [options.fillColor = '#ffffff'] The fill color.
- * @param {number} [options.fillOpacity = 1] The fill opacity.
- * @param {string} [options.lineColor = '#000000'] The line color.
- * @param {number} [options.lineWidth = 0] The line width.
- * @param {string} [options.lineJoin = 'round'] The line join, one of "bevel", "round", "miter".
- * @param {string} [options.lineCap = 'butt'] The line cap, one of "butt", "round", "square".
- * @param {number} [options.lineOpacity = 1] The line opacity.
- * @return {Object|Series} The options if no arguments are supplied, otherwise <code>this</code>.
+ * @param {Object} [options]                        The series options.
+ * @param {string} [options.data = []]              The data - an array of the form [{x:10, y:20}, {x:10, y:20}, {x:10, y:20}, ...].
+ * @param {string} [options.idField = 'id']         The data property that contains the id value.
+ * @param {string} [options.nameField = 'name']     The data property that contains the  name value.
+ * @param {string} [options.xField = 'x']           The data property that contains the x value.
+ * @param {string} [options.yField = 'y']           The data property that contains the y value.
+ * @param {string} [options.sizeField = 'size']     The data property that contains the size value.
+ * @param {string} [options.colorField = 'color']   The data property that contains the color value.
+ * @param {string} [options.shapeField = 'shape']   The data property that contains the shape value.
+ * @param {string} [options.imageField = 'image']   The data property that contains the image value.
+ * @param {string} [options.shape = 'circle']       The shape to use for rendering.
+ * @param {string} [options.image = '']             The image to use for rendering.
+ * @param {string} [options.markerSize = 10]        The marker size.
+ * @param {string} [options.fillColor = '#ffffff']  The fill color.
+ * @param {number} [options.fillOpacity = 1]        The fill opacity.
+ * @param {string} [options.lineColor = '#000000']  The line color.
+ * @param {number} [options.lineWidth = 0]          The line width.
+ * @param {string} [options.lineJoin = 'round']     The line join, one of "bevel", "round", "miter".
+ * @param {string} [options.lineCap = 'butt']       The line cap, one of "butt", "round", "square".
+ * @param {number} [options.lineOpacity = 1]        The line opacity.
+ * @return {Object|Series}                          The options if no arguments are supplied, otherwise <code>this</code>.
  */
 Series.prototype.options = function(options)
 {

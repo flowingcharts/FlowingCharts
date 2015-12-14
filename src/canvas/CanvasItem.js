@@ -24,9 +24,9 @@ var colorUtil = require('../utils/color');
  * @constructor
  *
  * @param {string} type The shape type.
- * @param {Object} coords The shape coords.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  */
-function CanvasItem (type, coords)
+function CanvasItem (type, units)
 {
     // Public instance variables.
 
@@ -39,12 +39,27 @@ function CanvasItem (type, coords)
     this.type = type; 
 
     /** 
-     * The drawing information for the item.
+     * The coords - properties differ depending on the item type.
+     * <br/>circle      {cx, cy, r}
+     * <br/>ellipse     {cx, cy, rx, ry}
+     * <br/>rect        {x, y, width, height}  
+     * <br/>line        {x1, y1, x2, y2}
+     * <br/>polyline    {points} 
+     * <br/>polygon     {points} 
      * 
      * @since 0.1.0
      * @type Object
      */
-    this.coords = coords;
+    this.coords = {};
+
+    /** 
+     * The units - 'pixel' or 'data'.
+     * 
+     * @since 0.1.0
+     * @type string
+     * @default 'pixel'
+     */
+    this.units = units !== undefined ? units : 'pixel';
 
     /** 
      * The fill color.

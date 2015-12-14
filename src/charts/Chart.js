@@ -95,12 +95,12 @@ function Chart (options)
  * Get or set the options for the chart.
  *
  * @since 0.1.0
- * @param {Object} [options] The chart options.
- * @param {HTMLElement} options.container The html element that will contain the chart.
+ * @param {Object} options                                  The chart options.
+ * @param {HTMLElement} options.container                   The html element that will contain the chart.
  * @param {string} [options.coordinateSystem = 'cartesian'] The coordinate system. Possible values are 'cartesian' or 'polar'.
- * @param {string} [options.renderer = 'canvas'] The graphics renderer. Possible values are 'canvas' or 'svg'.
- * @param {string} [options.renderRate = 250] The rate in ms that graphics are rendered when the chart is resized.
- * @return {Object|Series} The options if no arguments are supplied, otherwise <code>this</code>.
+ * @param {string} [options.renderer = 'canvas']            The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string} [options.renderRate = 250]               The rate in ms that graphics are rendered when the chart is resized.
+ * @return {Object|Series}                                  The options if no arguments are supplied, otherwise <code>this</code>.
  */
 Chart.prototype.options = function(options)
 {

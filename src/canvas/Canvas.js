@@ -112,11 +112,12 @@ Canvas.prototype.setSize = function (w, h)
  * @param {number} cx The x position of the center of the marker.
  * @param {number} cy The y position of the center of the marker.
  * @param {number} size The size of the marker.
+ * @param {number} [units = 'data'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
-    var item = getItem(type, {cx:cx, cy:cy, r:size/2}, this._items);
+    var item = getItem(type, {cx:cx, cy:cy, size:size}, 'data', this._items);
     item.marker = true;
     return item;
 };
@@ -130,11 +131,12 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  * @param {number} y The y position of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
+ * @param {number} [units = 'data'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
-    var item = getItem(type, {x:x, y:y, width:w, height:h}, this._items);
+    var item = getItem(type, {x:x, y:y, width:w, height:h}, 'data', this._items);
     item.shape = true;
     return item;
 };
@@ -146,11 +148,12 @@ Canvas.prototype.shape = function (type, x, y, w, h)
  * @param {number} cx The x position of the center of the circle.
  * @param {number} cy The y position of the center of the circle
  * @param {number} r The radius of the circle.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.circle = function (cx, cy, r)
+Canvas.prototype.circle = function (cx, cy, r, units)
 {
-    return getItem('circle', {cx:cx, cy:cy, r:r}, this._items);
+    return getItem('circle', {cx:cx, cy:cy, r:r}, units, this._items);
 };
 
 /** 
@@ -161,11 +164,12 @@ Canvas.prototype.circle = function (cx, cy, r)
  * @param {number} cy The y position of the center of the ellipse
  * @param {number} rx The x radius of the ellipse.
  * @param {number} ry The y radius of the ellipse.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.ellipse = function (cx, cy, rx, ry)
+Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
 {
-    return getItem('ellipse', {cx:cx, cy:cy, rx:rx, ry:ry}, this._items);
+    return getItem('ellipse', {cx:cx, cy:cy, rx:rx, ry:ry}, units, this._items);
 };
 
 /** 
@@ -176,11 +180,12 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry)
  * @param {number} y The y position of the top left corner.
  * @param {number} w The width.
  * @param {number} h The height.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.rect = function (x, y, w, h)
+Canvas.prototype.rect = function (x, y, w, h, units)
 {
-    return getItem('rect', {x:x, y:y, width:w, height:h}, this._items);
+    return getItem('rect', {x:x, y:y, width:w, height:h}, units, this._items);
 };
 
 /** 
@@ -191,11 +196,12 @@ Canvas.prototype.rect = function (x, y, w, h)
  * @param {number} y1 The y position of point 1.
  * @param {number} x2 The x position of point 2.
  * @param {number} y2 The y position of point 2.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.line = function (x1, y1, x2, y2)
+Canvas.prototype.line = function (x1, y1, x2, y2, units)
 {
-    return getItem('line', {x1:x1, y1:y1, x2:x2, y2:y2}, this._items);
+    return getItem('line', {x1:x1, y1:y1, x2:x2, y2:y2}, units, this._items);
 };
 
 /** 
@@ -203,11 +209,12 @@ Canvas.prototype.line = function (x1, y1, x2, y2)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.polyline = function (arrCoords)
+Canvas.prototype.polyline = function (arrCoords, units)
 {
-    return getItem('polyline', {points:arrCoords}, this._items);
+    return getItem('polyline', {points:arrCoords}, units, this._items);
 };
 
 /** 
@@ -215,11 +222,12 @@ Canvas.prototype.polyline = function (arrCoords)
  *
  * @since 0.1.0
  * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem} A canvas item.
  */
-Canvas.prototype.polygon = function (arrCoords)
+Canvas.prototype.polygon = function (arrCoords, units)
 {
-    return getItem('polygon', {points:arrCoords}, this._items);
+    return getItem('polygon', {points:arrCoords}, units, this._items);
 };
 
 // Drawing.
@@ -271,20 +279,23 @@ Canvas.prototype.drawItem = function (item)
     }
 
     var p;
-    if (this._coords !== undefined) p = getPixelUnits(item, this._coords);  // Canvas using data units.
-    else                            p = item.coords;                        // Canvas using pixel units.
+    if (this._coords !== undefined && item.units === 'data') p = getPixelUnits(item, this._coords);  // Canvas using data units.
+    else                                                     p = item.coords;                        // Canvas using pixel units.
 
-    if (item.marker) // coords{cx, cy, r}
+    if (item.marker) 
     {
+        // coords{cx, cy, size}
+        var r = p.size / 2;
         switch(item.type)
         {
-            case 'circle'   : this._g.circle(item.context, p.cx, p.cy, p.r, item); break;
-            case 'ellipse'  : this._g.ellipse(item.context, p.cx, p.cy, p.r, p.r, item); break;
-            case 'rect'     : this._g.rect(item.context, p.cx-p.r, p.cy-p.r, p.r*2, p.r*2, item); break;
+            case 'circle'   : this._g.circle(item.context, p.cx, p.cy, r, item); break;
+            case 'ellipse'  : this._g.ellipse(item.context, p.cx, p.cy, r, r, item); break;
+            case 'rect'     : this._g.rect(item.context, p.cx-r, p.cy-r, p.size, p.size, item); break;
         }
     } 
-    else if (item.shape) // coords{x, y, width, height}
+    else if (item.shape) 
     {
+        // coords{x, y, width, height}
         switch(item.type)
         {
             case 'rect'     : this._g.rect(item.context, p.x, p.y, p.width, p.height, item); break;
@@ -310,13 +321,15 @@ Canvas.prototype.drawItem = function (item)
  *
  * @since 0.1.0
  * @param {string} type The shape type.
- * @return {Object} coords The coord information.
+ * @param {Object} coords The coords.
+ * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
  * @return {CanvasItem[]} items The item list.
  * @private
  */
-function getItem (type, coords, items)
+function getItem (type, coords, units, items)
 {
-    var item = new CanvasItem(type, coords);
+    var item = new CanvasItem(type, units);
+    item.coords = coords;
     items.push(item);
     return item;
 }
@@ -333,14 +346,16 @@ function getPixelUnits (item, coords)
 {
     var pixelUnits = {};
 
-    if (item.marker) // coords{cx, cy, r}
+    if (item.marker) 
     {
-        pixelUnits.cx = coords.getPixelX(item.coords.cx);
-        pixelUnits.cy = coords.getPixelY(item.coords.cy); 
-        pixelUnits.r  = item.coords.r; 
+        // coords{cx, cy, size}
+        pixelUnits.cx   = coords.getPixelX(item.coords.cx);
+        pixelUnits.cy   = coords.getPixelY(item.coords.cy); 
+        pixelUnits.size = item.coords.size; 
     } 
-    else if (item.shape) // coords{x, y, width, height}   
+    else if (item.shape) 
     {
+        // coords{x, y, width, height}
         pixelUnits.x      = coords.getPixelX(item.coords.x);
         pixelUnits.y      = coords.getPixelY(item.coords.y); 
         pixelUnits.width  = coords.getPixelDimensionX(item.coords.width);
@@ -377,12 +392,12 @@ function getPixelUnits (item, coords)
                 pixelUnits.x2 = coords.getPixelX(item.coords.x2);
                 pixelUnits.y2 = coords.getPixelY(item.coords.y2); 
             break;
-            // coords{points} 
-            case 'polygon':      
-                pixelUnits.points = coords.getPixelArray(item.coords.points);
-            break;
             // coords{points}
             case 'polyline':    
+                pixelUnits.points = coords.getPixelArray(item.coords.points);
+            break;
+            // coords{points} 
+            case 'polygon':      
                 pixelUnits.points = coords.getPixelArray(item.coords.points);
             break;
         }
