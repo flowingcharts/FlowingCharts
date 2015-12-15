@@ -15,9 +15,6 @@
  * @since 0.1.0
  * 
  * @param {HTMLElement} parentElement   The parent element
- * 
- * @since 0.1.0
- * 
  * @param {HTMLElement} childElement    The child element.
  */
 var appendChild = function (parentElement, childElement)
@@ -45,11 +42,8 @@ var empty = function (element)
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element The html element.
- * 
- * @since 0.1.0
- * 
- * @return {object} attributes The list of attributes.
+ * @param {HTMLElement} element     The html element.
+ * @param {object}      attributes  The list of attributes.
  */
 var attr = function (element, attributes)
 {
@@ -67,11 +61,8 @@ var attr = function (element, attributes)
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element The html element.
- * 
- * @since 0.1.0
- * 
- * @return {object} attributes The list of style attributes.
+ * @param {HTMLElement} element     The html element.
+ * @param {object}      attributes  The list of style attributes.
  */
 var style = function (element, attributes)
 {
@@ -89,11 +80,10 @@ var style = function (element, attributes)
  * 
  * @since 0.1.0
  * 
- * @param {string} type The element type.
+ * @param {string} type         The element type.
+ * @param {object} attributes   The list of attributes.
  * 
- * @since 0.1.0
- * 
- * @return {object} attributes The list of attributes.
+ * @return {HTMLElement}        The html element.
  */
 var createElement = function (type, attributes)
 {

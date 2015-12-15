@@ -69,18 +69,18 @@ var empty = function (element)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number}      cx                      The x position of the center of the circle.
- * @param {number}      cy                      The y position of the center of the circle.
- * @param {number}      r                       The circle radius.
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number}      cx                  The x position of the center of the circle.
+ * @param {number}      cy                  The y position of the center of the circle.
+ * @param {number}      r                   The circle radius.
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var circle = function (element, cx, cy, r, style)
 {
@@ -93,19 +93,19 @@ var circle = function (element, cx, cy, r, style)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number}      cx                      The x position of the center of the ellipse.
- * @param {number}      cy                      The y position of the center of the ellipse
- * @param {number}      rx                      The x radius of the ellipse.
- * @param {number}      ry                      The y radius of the ellipse.
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number}      cx                  The x position of the center of the ellipse.
+ * @param {number}      cy                  The y position of the center of the ellipse
+ * @param {number}      rx                  The x radius of the ellipse.
+ * @param {number}      ry                  The y radius of the ellipse.
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var ellipse = function (element, cx, cy, rx, ry, style)
 {
@@ -118,19 +118,19 @@ var ellipse = function (element, cx, cy, rx, ry, style)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number}      x                       The x position of the top left corner.
- * @param {number}      y                       The y position of the top left corner.
- * @param {number}      w                       The width.
- * @param {number}      h                       The height.
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number}      x                   The x position of the top left corner.
+ * @param {number}      y                   The y position of the top left corner.
+ * @param {number}      w                   The width.
+ * @param {number}      h                   The height.
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var rect = function (element, x, y, w, h, style)
 {
@@ -143,19 +143,19 @@ var rect = function (element, x, y, w, h, style)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number}      x1                      The x position of point 1.
- * @param {number}      y1                      The y position of point 1.
- * @param {number}      x2                      The x position of point 2.
- * @param {number}      y2                      The y position of point 2.
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number}      x1                  The x position of point 1.
+ * @param {number}      y1                  The y position of point 1.
+ * @param {number}      x2                  The x position of point 2.
+ * @param {number}      y2                  The y position of point 2.
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var line = function (element, x1, y1, x2, y2, style)
 {
@@ -168,16 +168,16 @@ var line = function (element, x1, y1, x2, y2, style)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number[]}    arrCoords               An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number[]}    arrCoords           An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var polyline = function (element, arrCoords, style)
 {
@@ -190,16 +190,16 @@ var polyline = function (element, arrCoords, style)
  *
  * @since 0.1.0
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {number[]}    arrCoords               An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {number[]}    arrCoords           An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 var polygon = function (element, arrCoords, style)
 {
@@ -236,15 +236,15 @@ function getCoordsAsString (arrCoords)
  * @since 0.1.0
  * @private
  *
- * @param {SVGElement}  element                 The svg element.
- * @param {Object}      [options]               The style properties.
- * @param {string}      [options.fillColor]     The fill color.
- * @param {number}      [options.fillOpacity]   The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [options.lineColor]     The line color.
- * @param {number}      [options.lineWidth]     The line width.
- * @param {string}      [options.lineJoin]      The line join, one of "bevel", "round", "miter".
- * @param {string}      [options.lineCap]       The line cap, one of "butt", "round", "square".
- * @param {number}      [options.lineOpacity]   The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element             The svg element.
+ * @param {Object}      [style]             The style properties.
+ * @param {string}      [style.fillColor]   The fill color.
+ * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor]   The line color.
+ * @param {number}      [style.lineWidth]   The line width.
+ * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 function draw(element, style)
 {
