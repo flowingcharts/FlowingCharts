@@ -38,42 +38,25 @@ var svg                 = require('../utils/svg');
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
  * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ * @param {number}      [options.padding = 20]                  The chart padding.
+ * @param {number}      [options.paddingTop]                    The chart top padding.
+ * @param {number}      [options.paddingRight]                  The chart right padding.
+ * @param {number}      [options.paddingBottom]                 The chart bottom padding.
+ * @param {number}      [options.paddingLeft]                   The chart left padding.
+ * @param {number}      [options.border]                        The chart border.
+ * @param {number}      [options.borderTop]                     The chart top border.
+ * @param {number}      [options.borderRight]                   The chart right border.
+ * @param {number}      [options.borderBottom]                  The chart bottom border.
+ * @param {number}      [options.borderLeft]                    The chart left border.
+ * @param {number}      [options.background]                    The chart background.
  */
 function Chart (options)
 {
-    // Private instance members.  
-    this._options = // Default options.
-    {
-        container           : undefined,
-        coordinateSystem    : 'cartesian',
-        renderer            : 'canvas',
-        renderRate          : 20,
-        padding             : 50,
-        paddingTop          : undefined,
-        paddingRight        : undefined,
-        paddingBottom       : undefined,
-        paddingLeft         : undefined,
-        background          : 
-        {
-            fillColor   :'#cccccc',
-            fillOpacity : 0.5
-        },
-        border              : 
-        {
-            lineWidth   : 1,
-            lineColor   :'#cccccc'
-        },
-        borderTop           : undefined,
-        borderRight         : undefined,
-        borderBottom        : undefined,
-        borderLeft          : undefined
-    };
-
     // Public instance members.  
     this.series = [];
 
     // Parent html element.
-    var container = options.container;
+    var container = options.chart.container;
     dom.empty(container);
 
     // Resize the chart to fit the container when the window resizes.
@@ -102,6 +85,17 @@ function Chart (options)
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
  * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ * @param {number}      [options.padding = 20]                  The chart padding.
+ * @param {number}      [options.paddingTop]                    The chart top padding.
+ * @param {number}      [options.paddingRight]                  The chart right padding.
+ * @param {number}      [options.paddingBottom]                 The chart bottom padding.
+ * @param {number}      [options.paddingLeft]                   The chart left padding.
+ * @param {number}      [options.border]                        The chart border.
+ * @param {number}      [options.borderTop]                     The chart top border.
+ * @param {number}      [options.borderRight]                   The chart right border.
+ * @param {number}      [options.borderBottom]                  The chart bottom border.
+ * @param {number}      [options.borderLeft]                    The chart left border.
+ * @param {number}      [options.background]                    The chart background.
  *
  * @return {Object|Series}                                      The options if no arguments are supplied, otherwise <code>this</code>.
  */
@@ -109,20 +103,28 @@ Chart.prototype.options = function(options)
 {
     if (arguments.length > 0)
     {
+        this._options = // Default chart options.
+        {
+            container           : undefined,
+            coordinateSystem    : 'cartesian',
+            renderer            : 'canvas',
+            renderRate          : 20,
+            padding             : 20,
+            paddingTop          : undefined,
+            paddingRight        : undefined,
+            paddingBottom       : undefined,
+            paddingLeft         : undefined,
+            border              : {lineColor : '#cccccc'},
+            borderTop           : {},
+            borderRight         : {},
+            borderBottom        : {lineWidth : 1},
+            borderLeft          : {lineWidth : 1},
+            background          : undefined
+        };
+
         // Extend default options with passed in options.
-        util.extendObject(this._options, options);
-
-        // Padding.
-        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
-        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
-        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-
-        // Border style.
-        this._options.borderTop    = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
-        this._options.borderRight  = this._options.borderRight !== undefined ? this._options.borderRight : this._options.border;
-        this._options.borderBottom = this._options.borderBottom !== undefined ? this._options.borderBottom : this._options.border;
-        this._options.borderLeft   = this._options.borderLeft !== undefined ? this._options.borderLeft : this._options.border;
+        if (options.chart.border !== undefined) util.addProperties(options.chart.border, this._options.border);
+        util.extendObject(this._options, options.chart);
 
         // Coordinate system.
         this.coords = getCoords(this._options.coordinateSystem);
@@ -131,27 +133,41 @@ Chart.prototype.options = function(options)
         this._canvasContainer = getCanvasContainer(this._options.renderer);
         dom.appendChild(this._options.container, this._canvasContainer);
 
-        // Background and border canvas.
+        // Chart canvas.
         this._canvas = getCanvas(this._options.renderer);
         this._canvas.appendTo(this._canvasContainer);   
-        this._background    = this._canvas.rect().style(this._options.background);
-        this._borderTop     = this._canvas.line().style(this._options.border);
-        this._borderRight   = this._canvas.line().style(this._options.border);
-        this._borderBottom  = this._canvas.line().style(this._options.border);
-        this._borderLeft    = this._canvas.line().style(this._options.border);
+
+        // Background.
+        if (this._options.background !== undefined) this._background = this._canvas.rect().style(this._options.background);
+
+        // Border.
+        util.addProperties(this._options.borderTop,    this._options.border);
+        util.addProperties(this._options.borderRight,  this._options.border);
+        util.addProperties(this._options.borderBottom, this._options.border);
+        util.addProperties(this._options.borderLeft,   this._options.border);
+        this._borderTop     = this._canvas.line().style(this._options.borderTop);
+        this._borderRight   = this._canvas.line().style(this._options.borderRight);
+        this._borderBottom  = this._canvas.line().style(this._options.borderBottom);
+        this._borderLeft    = this._canvas.line().style(this._options.borderLeft);
+
+        // Padding.
+        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
+        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
+        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
+        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
 
         // Series.
         this.series = [];
-        if (this._options.series)
+        if (options.series)
         {
-            for (var i = 0; i < this._options.series.length; i++)  
+            for (var i = 0; i < options.series.length; i++)  
             {
                 // Create a canvas for the series.
                 var seriesCanvas = getCanvas(this._options.renderer, this.coords); 
                 seriesCanvas.appendTo(this._canvasContainer);   
 
                 // Create the series.
-                var s = new Series(seriesCanvas, this._options.series[i]);
+                var s = new Series(seriesCanvas, options.series[i]);
                 this.series.push(s);                    
             }
         }
@@ -246,11 +262,11 @@ Chart.prototype.setSize = function (w, h)
     dom.attr(this._canvasContainer, {width:w, height:h});
 
     // Set the coords for the background and border.
-    this._background.coords    = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
-    this._borderTop.coords     = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
-    this._borderRight.coords   = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
-    this._borderBottom.coords  = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
-    this._borderLeft.coords    = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
+    if (this._background !== undefined)     this._background.coords    = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
+    if (this._borderTop !== undefined)      this._borderTop.coords     = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
+    if (this._borderRight !== undefined)    this._borderRight.coords   = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
+    if (this._borderBottom !== undefined)   this._borderBottom.coords  = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
+    if (this._borderLeft !== undefined)     this._borderLeft.coords    = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
 
     // Set the chart canvas size.
     this._canvas.setSize(w, h);

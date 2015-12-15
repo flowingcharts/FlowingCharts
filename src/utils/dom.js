@@ -23,11 +23,11 @@ var appendChild = function (parentElement, childElement)
 };
 
 /** 
- * Empties a html element.
+ * Empties the target element.
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element The html element.
+ * @param {HTMLElement} element The target element.
  */
 var empty = function (element)
 {
@@ -38,11 +38,11 @@ var empty = function (element)
 };
 
 /** 
- * Sets the attributes for the given html element.
+ * Sets the attributes for the target element.
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element     The html element.
+ * @param {HTMLElement} element     The target element.
  * @param {object}      attributes  The list of attributes.
  */
 var attr = function (element, attributes)
@@ -57,11 +57,11 @@ var attr = function (element, attributes)
 };
 
 /** 
- * Sets the style for the given html element.
+ * Sets the style for the target element.
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element     The html element.
+ * @param {HTMLElement} element     The target element.
  * @param {object}      attributes  The list of style attributes.
  */
 var style = function (element, attributes)
@@ -93,11 +93,55 @@ var createElement = function (type, attributes)
     return htmlElement;
 };
 
+/** 
+ * Add event listeners to the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element     The target element.
+ * @param {string[]}    arrTypes    An array containing the event types to listen for.
+ * @param {Function}    listener    The function that receives a notification when an event of the specified type occurs.
+ */
+var on = function (element, arrTypes, listener)
+{
+    for (var i = 0; i < arrTypes.length; i++)  
+    {
+        var type = arrTypes[i];
+        if (element.attachEvent)
+            element.attachEvent('on'+type, listener);
+        else
+            element.addEventListener(type, listener);
+    }
+};
+
+/** 
+ * Removes event listeners from the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element     The target element.
+ * @param {string[]}    arrTypes    An array containing the event types to remove.
+ * @param {Function}    listener    The function to remove from the event target.
+ */
+var off = function (element, arrTypes, listener)
+{
+    for (var i = 0; i < arrTypes.length; i++)  
+    {
+        var type = arrTypes[i];
+        if (element.attachEvent)
+            element.detachEvent('on'+type, listener);
+        else
+            element.removeEventListener(type, listener);
+    }
+};
+
 module.exports = 
 {
-    empty               : empty,
-    attr                : attr,
-    style               : style,
-    createElement       : createElement,
-    appendChild         : appendChild
+    appendChild     : appendChild,
+    empty           : empty,
+    attr            : attr,
+    style           : style,
+    createElement   : createElement,
+    on              : on,
+    off             : off
 };

@@ -16,7 +16,7 @@ var dom       = require('../utils/dom');
 var colorUtil = require('../utils/color');
 
 /** 
- * Check for canvas support.
+ * Checks for canvas support.
  *
  * @since 0.1.0
  *

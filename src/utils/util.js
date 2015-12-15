@@ -41,7 +41,22 @@ var extendObject = function (a, b)
     {
         if (b.hasOwnProperty(key)) a[key] = b[key];
     }
-    return a;
+};
+
+/** 
+ * Add properties to object a from object b if object a does not already contain the properties.
+ *
+ * @since 0.1.0
+ *
+ * @param {Object} a The object that the properties are added to.
+ * @param {Object} b The object that provides the properties.
+ */
+var addProperties = function (a, b)
+{
+    for (var key in b)
+    {
+        if (a[key] === undefined && b.hasOwnProperty(key)) a[key] = b[key];
+    }
 };
 
 /** 
@@ -66,5 +81,6 @@ module.exports =
 {
     isNumber        : isNumber,
     extendObject    : extendObject,
+    addProperties   : addProperties,
     extendClass     : extendClass
 };

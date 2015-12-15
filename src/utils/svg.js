@@ -29,7 +29,7 @@ var createElement = function (type, attributes)
 };
 
 /** 
- * Check for svg support.
+ * Checks for svg support.
  *
  * @since 0.1.0
  *

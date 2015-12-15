@@ -7,13 +7,11 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          charts/Series 
- * @requires        canvas/HtmlCanvas
- * @requires        canvas/SvgCanvas
  * @requires        utils/util
  */
 
 // Required modules.
-var util            = require('../utils/util');
+var util = require('../utils/util');
 
 /** 
  * @classdesc A base class for series.
@@ -48,28 +46,6 @@ var util            = require('../utils/util');
 function Series (canvas, options)
 {
     // Private instance members.  
-    this._options = // Default options.
-    {
-        data        : [],
-        idField     : 'id',
-        nameField   : 'name',
-        xField      : 'x',
-        yField      : 'y',
-        sizeField   : 'size',
-        colorField  : 'color',
-        shapeField  : 'shape',
-        imageField  : 'image',
-        shape       : 'circle',
-        image       : undefined,
-        markerSize  : 10,
-        fillColor   : '#ffffff', 
-        fillOpacity : 1,
-        lineColor   : '#000000',  
-        lineWidth   : 0, 
-        lineJoin    : 'round', 
-        lineCap     : 'butt', 
-        lineOpacity : 1
-    };   
     this._items = []; // The list of items belonging to the series.
 
     // Public instance members.  
@@ -154,6 +130,29 @@ Series.prototype.options = function(options)
 {
     if (arguments.length > 0)
     {
+        this._options = // Default options.
+        {
+            data        : [],
+            idField     : 'id',
+            nameField   : 'name',
+            xField      : 'x',
+            yField      : 'y',
+            sizeField   : 'size',
+            colorField  : 'color',
+            shapeField  : 'shape',
+            imageField  : 'image',
+            shape       : 'circle',
+            image       : undefined,
+            markerSize  : 10,
+            fillColor   : '#ffffff', 
+            fillOpacity : 1,
+            lineColor   : '#000000',  
+            lineWidth   : 0, 
+            lineJoin    : 'round', 
+            lineCap     : 'butt', 
+            lineOpacity : 1
+        };   
+
         // Extend default options with passed in options.
         util.extendObject(this._options, options);
 
