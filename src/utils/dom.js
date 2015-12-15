@@ -10,16 +10,28 @@
  */
 
 /** 
- * Appends the child element to the parent element.
+ * Appends the child element to the parent.
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} parentElement   The parent element
+ * @param {HTMLElement} parentElement   The parent element.
  * @param {HTMLElement} childElement    The child element.
  */
 var appendChild = function (parentElement, childElement)
 {
     parentElement.appendChild(childElement);
+};
+
+/** 
+ * Removes an element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The element to remove.
+ */
+var remove = function (element)
+{
+    element.parentElement.removeChild(element);
 };
 
 /** 
@@ -99,9 +111,10 @@ var createElement = function (type, attributes)
  * @since 0.1.0
  * 
  * @param {HTMLElement} element     The target element.
- * @param {string[]}    arrTypes    An array containing the event types to listen for.
+ * @param {string[]}    arrTypes    An array containing a list of event types to listen for.
  * @param {Function}    listener    The function that receives a notification when an event of the specified type occurs.
  */
+var eventListeners = [];
 var on = function (element, arrTypes, listener)
 {
     for (var i = 0; i < arrTypes.length; i++)  
@@ -120,7 +133,7 @@ var on = function (element, arrTypes, listener)
  * @since 0.1.0
  * 
  * @param {HTMLElement} element     The target element.
- * @param {string[]}    arrTypes    An array containing the event types to remove.
+ * @param {string[]}    arrTypes    An array containing a list of event types to remove.
  * @param {Function}    listener    The function to remove from the event target.
  */
 var off = function (element, arrTypes, listener)
@@ -138,6 +151,7 @@ var off = function (element, arrTypes, listener)
 module.exports = 
 {
     appendChild     : appendChild,
+    remove          : remove,
     empty           : empty,
     attr            : attr,
     style           : style,
