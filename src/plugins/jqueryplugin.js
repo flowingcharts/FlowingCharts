@@ -1,4 +1,5 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 var $     = require('jQuery');

@@ -1,13 +1,15 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
- * @fileoverview Contains color functions.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module color 
+ * @fileoverview    Contains color functions.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          color 
  */
 
+// List of valid color names.
 var colorNames = 
 {
     'aliceblue':'#f0f8ff','antiquewhite':'#faebd7','aqua':'#00ffff','aquamarine':'#7fffd4','azure':'#f0ffff',
@@ -40,7 +42,9 @@ var colorNames =
  * Check if c is a valid color.
  *
  * @since 0.1.0
- * @param {*} c The color.
+ *
+ * @param {string} c The color.
+ *
  * @return {boolean} true, if c is a number, otherwise false.
  */
 var isColor = function (c)
@@ -54,7 +58,10 @@ var isColor = function (c)
 /** 
  * Check if c is a valid rgb color.
  *
- * @param {*} c The color.
+ * @since 0.1.0
+ *
+ * @param {string} c The color.
+ *
  * @return {boolean} true, if c is an rgb color, otherwise false.
  */
 var isRGB = function(c)
@@ -65,7 +72,10 @@ var isRGB = function(c)
 /** 
  * Check if c is a valid rgba color.
  *
- * @param {*} c The color.
+ * @since 0.1.0
+ *
+ * @param {string} c The color.
+ *
  * @return {boolean} true, if c is an rgba color, otherwise false.
  */
 var isRGBA = function(c)
@@ -77,7 +87,9 @@ var isRGBA = function(c)
  * Check if c is a valid hex color.
  *
  * @since 0.1.0
- * @param {*} c The color.
+ *
+ * @param {string} c The color.
+ *
  * @return {boolean} true, if c is a hexadecimal color, otherwise false.
  */
 var isHex = function (c)
@@ -89,7 +101,9 @@ var isHex = function (c)
  * Check if c is a valid color name.
  *
  * @since 0.1.0
- * @param {*} c The color.
+ *
+ * @param {string} c The color.
+ *
  * @return {boolean} true, if c is a color name, otherwise false.
  */
 var isColorName = function (c)
@@ -102,9 +116,11 @@ var isColorName = function (c)
  * Converts rgb to hex.
  *
  * @since 0.1.0
+ *
  * @param {number} r The red component.
  * @param {number} g The green component.
  * @param {number} b The blue component.
+ *
  * @return {string} The hexadecimal value.
  */
 var RGBToHex = function (r, g, b)
@@ -116,7 +132,9 @@ var RGBToHex = function (r, g, b)
  * Converts hex to rgb.
  *
  * @since 0.1.0
- * @return {string} The hexadecimal value.
+ *
+ * @param {string} hex The hexadecimal value.
+ *
  * @return {Object} An object containing the rgb color values {r:255, g:255, b:255}.
  */
 var hexToRGB = function (hex)
@@ -141,7 +159,9 @@ var hexToRGB = function (hex)
  * Converts a color name to hex.
  *
  * @since 0.1.0
- * @return {string} c The color name.
+ *
+ * @param {string} c The color name.
+ *
  * @return {string} The hexadecimal value.
  */
 var colorNameToHex = function (c)
@@ -152,7 +172,10 @@ var colorNameToHex = function (c)
 /** 
  * Get the components colors for an rgba color string.
  *
+ * @since 0.1.0
+ *
  * @param {string} rgba The rgb(a) color string 'rgba(255, 255, 255, 0.5)'.
+ *
  * @return {Object} An object containing the component colors {r:255, g:255, b:255, a:0.5}.
  */
 var componentColors = function(rgba)
@@ -170,9 +193,12 @@ var componentColors = function(rgba)
 
 /**
  * Converts a color to an rgba string.
- * 
- * @param {string} c The color.
- * @param {number} opacity The opacity value 0 to 1.
+ *
+ * @since 0.1.0
+ *
+ * @param {string} c        The color.
+ * @param {number} opacity  The opacity value 0 to 1.
+ *
  * @return {string} An rgba color string 'rgba(255, 255, 255, 0.5)'.
  */
 var toRGBA = function(c, opacity)

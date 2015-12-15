@@ -1,18 +1,21 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
- * @fileoverview Contains utility functions.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module util 
+ * @fileoverview    Contains utility functions.
+ * @author          Jonathan Clare 
+ * @copyright   FlowingCharts 2015
+ * @module      util 
  */
 
 /** 
  * Check if n is a valid number. Returns false if n is equal to NaN, Infinity, -Infinity or a string eg '10'.
  *
  * @since 0.1.0
+ *
  * @param {*} n The number to test.
+ *
  * @return {boolean} true, if n is a number, otherwise false.
  */
 var isNumber = function (n)
@@ -28,6 +31,7 @@ var isNumber = function (n)
  * Extend an object a with the properties of object b.
  *
  * @since 0.1.0
+ *
  * @param {Object} a The object to be extended.
  * @param {Object} b The object to add to the first one.
  */
@@ -44,8 +48,9 @@ var extendObject = function (a, b)
  * A function used to extend one class with another.
  *
  * @since 0.1.0
- * @param {Object} baseClass The class from which to inherit.
- * @param {Object} subClass The inheriting class, or subclass.
+ *
+ * @param {Object} baseClass    The class from which to inherit.
+ * @param {Object} subClass     The inheriting class, or subclass.
  */
 var extendClass = function(baseClass, subClass)
 {

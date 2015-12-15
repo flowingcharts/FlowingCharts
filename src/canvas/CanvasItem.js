@@ -3,12 +3,12 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link CanvasItem} class.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module canvas/CanvasItem 
- * @requires utils/util
- * @requires utils/color
+ * @fileoverview    Exports the {@link CanvasItem} class.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          canvas/CanvasItem 
+ * @requires        utils/util
+ * @requires        utils/color
  */
 
 // Required modules.
@@ -23,8 +23,8 @@ var colorUtil = require('../utils/color');
  * @since 0.1.0
  * @constructor
  *
- * @param {string} type The shape type.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
+ * @param {string} type                 The shape type.
+ * @param {number} [units = 'pixel']    The units - 'pixel' or 'data'.
  */
 function CanvasItem (type, units)
 {
@@ -129,15 +129,17 @@ function CanvasItem (type, units)
  * Defines the style.
  *
  * @since 0.1.0
- * @param {Object} [options] The style properties.
- * @param {string} [options.fillColor] The fill color.
- * @param {number} [options.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string} [options.lineColor] The line color.
- * @param {number} [options.lineWidth] The line width.
- * @param {string} [options.lineJoin] The line join, one of "bevel", "round", "miter".
- * @param {string} [options.lineCap] The line cap, one of "butt", "round", "square".
- * @param {number} [options.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
- * @return {CanvasItem} <code>this</code>.
+ *
+ * @param {Object} [options]                The style properties.
+ * @param {string} [options.fillColor]      The fill color.
+ * @param {number} [options.fillOpacity]    The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string} [options.lineColor]      The line color.
+ * @param {number} [options.lineWidth]      The line width.
+ * @param {string} [options.lineJoin]       The line join, one of "bevel", "round", "miter".
+ * @param {string} [options.lineCap]        The line cap, one of "butt", "round", "square".
+ * @param {number} [options.lineOpacity]    The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ *
+ * @return {CanvasItem}                     <code>this</code>.
  */
 CanvasItem.prototype.style = function (options)
 {

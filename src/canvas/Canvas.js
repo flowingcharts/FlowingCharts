@@ -3,14 +3,14 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link Canvas} class.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module canvas/Canvas 
- * @requires utils/util
- * @requires utils/canvas
- * @requires utils/dom
- * @requires utils/svg
+ * @fileoverview    Exports the {@link Canvas} class.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          canvas/Canvas 
+ * @requires        utils/util
+ * @requires        utils/canvas
+ * @requires        utils/dom
+ * @requires        utils/svg
  */
 
 // Required modules.
@@ -28,7 +28,7 @@ var dom        = require('../utils/dom');
  * @since 0.1.0
  * @constructor
  *
- * @param {string} renderer The renderer 'svg' or 'canvas'.
+ * @param {string}                      renderer The renderer 'svg' or 'canvas'.
  * @param {CartesianCoords|PolarCoords} [coords] The coordinate system to use when drawing. If no coordinate system is defined pixel units are used. 
  */
 function Canvas (renderer, coords)
@@ -51,6 +51,7 @@ function Canvas (renderer, coords)
  * Appends the canvas to a html element.
  *
  * @since 0.1.0
+ *
  * @return {HTMLElement} container The html element.
  */
 Canvas.prototype.appendTo = function (container)
@@ -64,6 +65,7 @@ Canvas.prototype.appendTo = function (container)
  * Get the width of the canvas.
  *
  * @since 0.1.0
+ *
  * @return {number} The width.
  */
 Canvas.prototype.width = function ()
@@ -75,6 +77,7 @@ Canvas.prototype.width = function ()
  * Get the height of the canvas.
  *
  * @since 0.1.0
+ *
  * @return {number} The height.
  */
 Canvas.prototype.height = function ()
@@ -86,6 +89,7 @@ Canvas.prototype.height = function ()
  * Set the size of the canvas.
  *
  * @since 0.1.0
+ *
  * @param {number} w The width.
  * @param {number} h The height.
  */
@@ -108,12 +112,14 @@ Canvas.prototype.setSize = function (w, h)
  * Creates a marker.
  *
  * @since 0.1.0
- * @param {string} type The marker type.
- * @param {number} cx The x position of the center of the marker.
- * @param {number} cy The y position of the center of the marker.
- * @param {number} size The size of the marker.
- * @param {number} [units = 'data'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {string} type             The marker type.
+ * @param {number} cx               The x position of the center of the marker.
+ * @param {number} cy               The y position of the center of the marker.
+ * @param {number} size             The size of the marker.
+ * @param {number} [units = data]   The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
@@ -126,13 +132,15 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  * Creates a shape.
  *
  * @since 0.1.0
- * @param {string} type The shape type.
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y position of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
+ *
+ * @param {string} type             The shape type.
+ * @param {number} x                The x position of the top left corner.
+ * @param {number} y                The y position of the top left corner.
+ * @param {number} w                The width.
+ * @param {number} h                The height.
  * @param {number} [units = 'data'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
@@ -145,11 +153,13 @@ Canvas.prototype.shape = function (type, x, y, w, h)
  * Creates a circle.
  *
  * @since 0.1.0
- * @param {number} cx The x position of the center of the circle.
- * @param {number} cy The y position of the center of the circle
- * @param {number} r The radius of the circle.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number} cx               The x position of the center of the circle.
+ * @param {number} cy               The y position of the center of the circle
+ * @param {number} r                The radius of the circle.
+ * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.circle = function (cx, cy, r, units)
 {
@@ -160,12 +170,14 @@ Canvas.prototype.circle = function (cx, cy, r, units)
  * Creates an ellipse.
  *
  * @since 0.1.0
- * @param {number} cx The x position of the center of the ellipse.
- * @param {number} cy The y position of the center of the ellipse
- * @param {number} rx The x radius of the ellipse.
- * @param {number} ry The y radius of the ellipse.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number} cx               The x position of the center of the ellipse.
+ * @param {number} cy               The y position of the center of the ellipse
+ * @param {number} rx               The x radius of the ellipse.
+ * @param {number} ry               The y radius of the ellipse.
+ * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
 {
@@ -176,12 +188,14 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
  * Creates a rectangle.
  *
  * @since 0.1.0
- * @param {number} x The x position of the top left corner.
- * @param {number} y The y position of the top left corner.
- * @param {number} w The width.
- * @param {number} h The height.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number} x                The x position of the top left corner.
+ * @param {number} y                The y position of the top left corner.
+ * @param {number} w                The width.
+ * @param {number} h                The height.
+ * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.rect = function (x, y, w, h, units)
 {
@@ -192,12 +206,14 @@ Canvas.prototype.rect = function (x, y, w, h, units)
  * Creates a line.
  *
  * @since 0.1.0
- * @param {number} x1 The x position of point 1.
- * @param {number} y1 The y position of point 1.
- * @param {number} x2 The x position of point 2.
- * @param {number} y2 The y position of point 2.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number} x1               The x position of point 1.
+ * @param {number} y1               The y position of point 1.
+ * @param {number} x2               The x position of point 2.
+ * @param {number} y2               The y position of point 2.
+ * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.line = function (x1, y1, x2, y2, units)
 {
@@ -208,9 +224,11 @@ Canvas.prototype.line = function (x1, y1, x2, y2, units)
  * Creates a polyline.
  *
  * @since 0.1.0
- * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number[]}    arrCoords       An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {number}      [units = pixel] The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}                 A canvas item.
  */
 Canvas.prototype.polyline = function (arrCoords, units)
 {
@@ -221,9 +239,11 @@ Canvas.prototype.polyline = function (arrCoords, units)
  * Creates a polygon.
  *
  * @since 0.1.0
- * @param {number[]} arrCoords An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem} A canvas item.
+ *
+ * @param {number[]}    arrCoords       An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
+ * @param {number}      [units = pixel] The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem}                 A canvas item.
  */
 Canvas.prototype.polygon = function (arrCoords, units)
 {
@@ -264,6 +284,7 @@ Canvas.prototype.render = function ()
  * Draws an item.
  *
  * @since 0.1.0
+ *
  * @param {CanvasItem} item A canvas item.
  */
 Canvas.prototype.drawItem = function (item)
@@ -320,11 +341,13 @@ Canvas.prototype.drawItem = function (item)
  * Returns a canvas item.
  *
  * @since 0.1.0
- * @param {string} type The shape type.
- * @param {Object} coords The coords.
- * @param {number} [units = 'pixel'] The units - 'pixel' or 'data'.
- * @return {CanvasItem[]} items The item list.
  * @private
+ *
+ * @param {string} type             The shape type.
+ * @param {Object} coords           The coords.
+ * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
+ *
+ * @return {CanvasItem[]}           The item list.
  */
 function getItem (type, coords, units, items)
 {
@@ -338,9 +361,10 @@ function getItem (type, coords, units, items)
  * Gets the pixel units for an item.
  *
  * @since 0.1.0
+ * @private
+ *
  * @param {CanvasItem} item The item.
  * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
- * @private
  */
 function getPixelUnits (item, coords)
 {

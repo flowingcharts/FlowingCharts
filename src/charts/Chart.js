@@ -3,17 +3,17 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link Chart} class.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module charts/Chart 
- * @requires series/Series
- * @requires canvas/Canvas
- * @requires geom/CartesianCoords
- * @requires geom/PolarCoords
- * @requires utils/util
- * @requires utils/dom
- * @requires utils/svg
+ * @fileoverview    Exports the {@link Chart} class.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          charts/Chart 
+ * @requires        series/Series
+ * @requires        canvas/Canvas
+ * @requires        geom/CartesianCoords
+ * @requires        geom/PolarCoords
+ * @requires        utils/util
+ * @requires        utils/dom
+ * @requires        utils/svg
  */
 
 // Required modules.
@@ -33,10 +33,11 @@ var svg                 = require('../utils/svg');
  * @since 0.1.0
  * @constructor
  *
- * @param {Object} [options] The chart options.
- * @param {HTMLElement} options.container The html element that will contain the chart.
- * @param {string} [options.coordinateSystem = 'cartesian'] The coordinate system. Possible values are 'cartesian' or 'polar'.
- * @param {string} [options.renderer = 'canvas'] The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {Object}      options                                 The chart options.
+ * @param {HTMLElement} options.container                       The html element that will contain the chart.
+ * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
+ * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
  */
 function Chart (options)
 {
@@ -52,20 +53,20 @@ function Chart (options)
         paddingRight        : undefined,
         paddingBottom       : undefined,
         paddingLeft         : undefined,
-        backgroundStyle     : 
+        background          : 
         {
             fillColor   :'#cccccc',
             fillOpacity : 0.5
         },
-        borderStyle         : 
+        border              : 
         {
             lineWidth   : 1,
             lineColor   :'#cccccc'
         },
-        borderTopStyle      : undefined,
-        borderRightStyle    : undefined,
-        borderBottomStyle   : undefined,
-        borderLeftStyle     : undefined
+        borderTop           : undefined,
+        borderRight         : undefined,
+        borderBottom        : undefined,
+        borderLeft          : undefined
     };
 
     // Public instance members.  
@@ -95,12 +96,14 @@ function Chart (options)
  * Get or set the options for the chart.
  *
  * @since 0.1.0
- * @param {Object} options                                  The chart options.
- * @param {HTMLElement} options.container                   The html element that will contain the chart.
- * @param {string} [options.coordinateSystem = 'cartesian'] The coordinate system. Possible values are 'cartesian' or 'polar'.
- * @param {string} [options.renderer = 'canvas']            The graphics renderer. Possible values are 'canvas' or 'svg'.
- * @param {string} [options.renderRate = 250]               The rate in ms that graphics are rendered when the chart is resized.
- * @return {Object|Series}                                  The options if no arguments are supplied, otherwise <code>this</code>.
+ *
+ * @param {Object}      options                                 The chart options.
+ * @param {HTMLElement} options.container                       The html element that will contain the chart.
+ * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
+ * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ *
+ * @return {Object|Series}                                      The options if no arguments are supplied, otherwise <code>this</code>.
  */
 Chart.prototype.options = function(options)
 {
@@ -116,10 +119,10 @@ Chart.prototype.options = function(options)
         this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
 
         // Border style.
-        this._options.borderTopStyle    = this._options.borderTopStyle !== undefined ? this._options.borderTopStyle : this._options.borderStyle;
-        this._options.borderRightStyle  = this._options.borderRightStyle !== undefined ? this._options.borderRightStyle : this._options.borderStyle;
-        this._options.borderBottomStyle = this._options.borderBottomStyle !== undefined ? this._options.borderBottomStyle : this._options.borderStyle;
-        this._options.borderLeftStyle   = this._options.borderLeftStyle !== undefined ? this._options.borderLeftStyle : this._options.borderStyle;
+        this._options.borderTop    = this._options.borderTop !== undefined ? this._options.borderTop : this._options.border;
+        this._options.borderRight  = this._options.borderRight !== undefined ? this._options.borderRight : this._options.border;
+        this._options.borderBottom = this._options.borderBottom !== undefined ? this._options.borderBottom : this._options.border;
+        this._options.borderLeft   = this._options.borderLeft !== undefined ? this._options.borderLeft : this._options.border;
 
         // Coordinate system.
         this.coords = getCoords(this._options.coordinateSystem);
@@ -131,11 +134,11 @@ Chart.prototype.options = function(options)
         // Background and border canvas.
         this._canvas = getCanvas(this._options.renderer);
         this._canvas.appendTo(this._canvasContainer);   
-        this._background    = this._canvas.rect().style(this._options.backgroundStyle);
-        this._borderTop     = this._canvas.line().style(this._options.borderStyle);
-        this._borderRight   = this._canvas.line().style(this._options.borderStyle);
-        this._borderBottom  = this._canvas.line().style(this._options.borderStyle);
-        this._borderLeft    = this._canvas.line().style(this._options.borderStyle);
+        this._background    = this._canvas.rect().style(this._options.background);
+        this._borderTop     = this._canvas.line().style(this._options.border);
+        this._borderRight   = this._canvas.line().style(this._options.border);
+        this._borderBottom  = this._canvas.line().style(this._options.border);
+        this._borderLeft    = this._canvas.line().style(this._options.border);
 
         // Series.
         this.series = [];
@@ -167,9 +170,11 @@ Chart.prototype.options = function(options)
  * Get the coords object for the given coordinate system.
  *
  * @since 0.1.0
- * @param {string} [coordinateSystem = 'cartesian'] The coordinate system 'cartesian' or 'polar'.
- * @return {CartesianCoords|PolarCoords} The container.
  * @private
+ *
+ * @param {string} [coordinateSystem = cartesian] The coordinate system 'cartesian' or 'polar'.
+ *
+ * @return {CartesianCoords|PolarCoords}          The container.
  */
 function getCoords(coordinateSystem)
 {
@@ -181,9 +186,11 @@ function getCoords(coordinateSystem)
  * Returns a container for holding canvases.
  *
  * @since 0.1.0
- * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
- * @return {HTMLElement|SVGElement} The container.
  * @private
+ *
+ * @param {string} [renderer = canvas] The renderer 'svg' or 'canvas'.
+ *
+ * @return {HTMLElement|SVGElement}    The container.
  */
 function getCanvasContainer(renderer)
 {
@@ -196,10 +203,12 @@ function getCanvasContainer(renderer)
  * Get the canvas for the given renderer.
  *
  * @since 0.1.0
- * @param {string} [renderer = 'canvas'] The renderer 'svg' or 'canvas'.
- * @param {CartesianCoords|PolarCoords} coords The coords to apply to the canvas.
- * @return {HtmlCanvas|SvgCanvas} The canvas.
  * @private
+ *
+ * @param {string}                      [renderer = canvas] The renderer 'svg' or 'canvas'.
+ * @param {CartesianCoords|PolarCoords} coords              The coords to apply to the canvas.
+ *
+ * @return {HtmlCanvas|SvgCanvas}                           The canvas.
  */
 function getCanvas(renderer, coords)
 {
@@ -210,9 +219,10 @@ function getCanvas(renderer, coords)
  * Set the size of the canvas.
  *
  * @since 0.1.0
+ * @private
+ *
  * @param {number} w The width.
  * @param {number} h The height.
- * @private
  */
 Chart.prototype.setSize = function (w, h)
 {
@@ -228,19 +238,19 @@ Chart.prototype.setSize = function (w, h)
     var y1Chart = this._options.paddingTop;
     var x2Chart = w - this._options.paddingRight;
     var y2Chart = h - this._options.paddingBottom;
-    var wChart = x2Chart - x1Chart;
-    var hChart = y2Chart - y1Chart;
+    var wChart  = x2Chart - x1Chart;
+    var hChart  = y2Chart - y1Chart;
     this.coords.viewPort(x1Chart, y1Chart, wChart, hChart);
 
     // Set the canvas container size.
     dom.attr(this._canvasContainer, {width:w, height:h});
 
     // Set the coords for the background and border.
-    this._background.coords     = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
-    this._borderTop.coords      = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
-    this._borderRight.coords    = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
-    this._borderBottom.coords   = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
-    this._borderLeft.coords     = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
+    this._background.coords    = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
+    this._borderTop.coords     = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
+    this._borderRight.coords   = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
+    this._borderBottom.coords  = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
+    this._borderLeft.coords    = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
 
     // Set the chart canvas size.
     this._canvas.setSize(w, h);

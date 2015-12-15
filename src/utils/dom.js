@@ -1,19 +1,24 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
- * @fileoverview Contains functions for manipulating the dom.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module dom 
+ * @fileoverview    Contains functions for manipulating the dom.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          dom 
  */
 
 /** 
  * Appends the child element to the parent element.
  * 
  * @since 0.1.0
- * @param {HTMLElement} parentElement The parent element
- * @param {HTMLElement} childElement The child element.
+ * 
+ * @param {HTMLElement} parentElement   The parent element
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} childElement    The child element.
  */
 var appendChild = function (parentElement, childElement)
 {
@@ -24,6 +29,7 @@ var appendChild = function (parentElement, childElement)
  * Empties a html element.
  * 
  * @since 0.1.0
+ * 
  * @param {HTMLElement} element The html element.
  */
 var empty = function (element)
@@ -38,7 +44,11 @@ var empty = function (element)
  * Sets the attributes for the given html element.
  * 
  * @since 0.1.0
+ * 
  * @param {HTMLElement} element The html element.
+ * 
+ * @since 0.1.0
+ * 
  * @return {object} attributes The list of attributes.
  */
 var attr = function (element, attributes)
@@ -56,7 +66,11 @@ var attr = function (element, attributes)
  * Sets the style for the given html element.
  * 
  * @since 0.1.0
+ * 
  * @param {HTMLElement} element The html element.
+ * 
+ * @since 0.1.0
+ * 
  * @return {object} attributes The list of style attributes.
  */
 var style = function (element, attributes)
@@ -74,7 +88,11 @@ var style = function (element, attributes)
  * Creates a html element with the given attributes.
  * 
  * @since 0.1.0
+ * 
  * @param {string} type The element type.
+ * 
+ * @since 0.1.0
+ * 
  * @return {object} attributes The list of attributes.
  */
 var createElement = function (type, attributes)

@@ -1,12 +1,13 @@
 /* jshint browserify: true */
+/* globals DEBUG */
 'use strict';
 
 /**
- * @fileoverview Exports the {@link ViewBox} class.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module geom/ViewBox 
- * @requires utils/util
+ * @fileoverview    Exports the {@link ViewBox} class.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          geom/ViewBox 
+ * @requires        utils/util
  */
 
 // Required modules.
@@ -22,8 +23,8 @@ var util = require('../utils/util');
  * @since 0.1.0
  * @constructor
  *
- * @param {number} [xMin = 0] The x coord of the bottom left corner.
- * @param {number} [yMin = 0] The y coord of the bottom left corner.
+ * @param {number} [xMin = 0]   The x coord of the bottom left corner.
+ * @param {number} [yMin = 0]   The y coord of the bottom left corner.
  * @param {number} [xMax = 100] The x coord of the top right corner.
  * @param {number} [yMax = 100] The y coord of the top right corner.
  */
@@ -50,11 +51,13 @@ function ViewBox (xMin, yMin, xMax, yMax)
  * Set the dimensions.
  *
  * @since 0.1.0
+ *
  * @param {number} [xMin] The x coord of the bottom left corner.
  * @param {number} [yMin] The y coord of the bottom left corner.
  * @param {number} [xMax] The x coord of the top right corner.
  * @param {number} [yMax] The y coord of the top right corner.
- * @return {ViewBox} <code>this</code>.
+ *
+ * @return {ViewBox}      <code>this</code>.
  */
 ViewBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
 {
@@ -72,7 +75,9 @@ ViewBox.prototype.setCoords = function (xMin, yMin, xMax, yMax)
  * Get or set the x coord of the bottom left corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [x] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.xMin = function (x)
@@ -94,7 +99,9 @@ ViewBox.prototype.xMin = function (x)
  * Get or set the x coord of the top right corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [x] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.xMax = function (x)
@@ -117,7 +124,9 @@ ViewBox.prototype.xMax = function (x)
  * Get or set the x coord of the center.
  *
  * @since 0.1.0
+ *
  * @param {number} [x] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.xCenter = function (x)
@@ -140,7 +149,9 @@ ViewBox.prototype.xCenter = function (x)
  * Get or set the width.
  *
  * @since 0.1.0
+ *
  * @param {number} [w] The width.
+ *
  * @return {number|ViewBox} The width if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.width = function (w)
@@ -163,7 +174,9 @@ ViewBox.prototype.width = function (w)
  * Get or set the y coord of the bottom left corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [y] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.yMin = function (y)
@@ -185,7 +198,9 @@ ViewBox.prototype.yMin = function (y)
  * Get or set the y coord of the top right corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [y] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.yMax = function (y)
@@ -207,7 +222,9 @@ ViewBox.prototype.yMax = function (y)
  * Get or set the y coord of the center.
  *
  * @since 0.1.0
+ *
  * @param {number} [y] The coordinate.
+ *
  * @return {number|ViewBox} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.yCenter = function (y)
@@ -229,7 +246,9 @@ ViewBox.prototype.yCenter = function (y)
  * Get or set the height.
  *
  * @since 0.1.0
+ *
  * @param {number} [h] The height.
+ *
  * @return {number|ViewBox} The height if no arguments are supplied, otherwise <code>this</code>.
  */
 ViewBox.prototype.height = function (h)
@@ -252,6 +271,7 @@ ViewBox.prototype.height = function (h)
  * Returns a clone of this ViewBox.        
  * 
  * @since 0.1.0
+ *
  * @return {ViewBox} The ViewBox.   
  */
 ViewBox.prototype.clone = function ()
@@ -263,7 +283,9 @@ ViewBox.prototype.clone = function ()
  * Returns true if a ViewBox equals to this one.
  * 
  * @since 0.1.0
+ *
  * @param {ViewBox} vb The ViewBox.
+ *
  * @return {boolean} true, if the ViewBox is equal to this one, otherwise false.
  */
 ViewBox.prototype.equals = function (vb)
@@ -286,7 +308,9 @@ ViewBox.prototype.equals = function (vb)
  * Returns true if a ViewBox intersects this one.
  * 
  * @since 0.1.0
+ *
  * @param {ViewBox} vb The ViewBox.
+ *
  * @return {boolean} true, if the ViewBox intercepts this one, otherwise false.
  */
 ViewBox.prototype.intersects = function (vb)
@@ -309,7 +333,9 @@ ViewBox.prototype.intersects = function (vb)
  * Returns true if a ViewBox is contained within this one.
  * 
  * @since 0.1.0
+ *
  * @param {ViewBox} vb The ViewBox.
+ *
  * @return {boolean} true, if the ViewBox is contained within this one, otherwise false.
  */
 ViewBox.prototype.contains = function (vb)

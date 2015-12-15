@@ -22,10 +22,10 @@ var util = require('../utils/util');
  * @since 0.1.0
  * @constructor
  *
- * @param {number} [x = 0] The x coord of the top left corner.
- * @param {number} [y = 0] The y coord of the top left corner.
- * @param {number} [width = 100] The width.
- * @param {number} [height = 100] The height.
+ * @param {number} [x = 0]          The x coord of the top left corner.
+ * @param {number} [y = 0]          The y coord of the top left corner.
+ * @param {number} [width = 100]    The width.
+ * @param {number} [height = 100]   The height.
  */
 function Rectangle (x, y, width, height)
 {
@@ -46,10 +46,12 @@ function Rectangle (x, y, width, height)
  * Set the dimensions.
  *
  * @since 0.1.0
+ *
  * @param {number} [x] The x coord of the top left corner.
  * @param {number} [y] The y coord of the top left corner.
  * @param {number} [w] The width.
  * @param {number} [h] The height.
+ *
  * @return {Rectangle} <code>this</code>.
  */
 Rectangle.prototype.setDimensions = function (x, y, w, h)
@@ -68,7 +70,9 @@ Rectangle.prototype.setDimensions = function (x, y, w, h)
  * Get or set the x coord of the top left corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [coord] The coordinate.
+ *
  * @return {number|Rectangle} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 Rectangle.prototype.x = function (coord)
@@ -88,7 +92,9 @@ Rectangle.prototype.x = function (coord)
  * Get or set the y coord of the top left corner.
  *
  * @since 0.1.0
+ *
  * @param {number} [coord] The coordinate.
+ *
  * @return {number|Rectangle} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 Rectangle.prototype.y = function (coord)
@@ -108,7 +114,9 @@ Rectangle.prototype.y = function (coord)
  * Get or set the width.
  *
  * @since 0.1.0
+ *
  * @param {number} [w] The width.
+ *
  * @return {number|Rectangle} The width if no arguments are supplied, otherwise <code>this</code>.
  */
 Rectangle.prototype.width = function (w)
@@ -129,7 +137,9 @@ Rectangle.prototype.width = function (w)
  * Get or set the height.
  *
  * @since 0.1.0
+ *
  * @param {number} [h] The height.
+ *
  * @return {number|Rectangle} The height if no arguments are supplied, otherwise <code>this</code>.
  */
 Rectangle.prototype.height = function (h)
@@ -150,6 +160,7 @@ Rectangle.prototype.height = function (h)
  * Returns a clone of this rectangle.        
  * 
  * @since 0.1.0
+ *
  * @return {Rectangle} The rectangle.   
  */
 Rectangle.prototype.clone = function ()

@@ -3,11 +3,11 @@
 'use strict';
 
 /**
- * @fileoverview Exports the {@link Point} class.
- * @author Jonathan Clare 
- * @copyright FlowingCharts 2015
- * @module geom/Point 
- * @requires utils/util
+ * @fileoverview    Exports the {@link Point} class.
+ * @author          Jonathan Clare 
+ * @copyright       FlowingCharts 2015
+ * @module          geom/Point 
+ * @requires        utils/util
  */
 
 // Required modules.
@@ -39,9 +39,11 @@ function Point (x, y)
  * Set the coordinates.
  *
  * @since 0.1.0
+ *
  * @param {number} [x] The x coord.
  * @param {number} [y] The y coord.
- * @return {Point} <code>this</code>.
+ *
+ * @return {Point}     <code>this</code>.
  */
 Point.prototype.setCoords = function (x, y)
 {
@@ -57,7 +59,9 @@ Point.prototype.setCoords = function (x, y)
  * Get or set the x coord of the left edge.
  *
  * @since 0.1.0
+ *
  * @param {number} [coord] The coordinate.
+ *
  * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 Point.prototype.x = function (coord)
@@ -77,7 +81,9 @@ Point.prototype.x = function (coord)
  * Get or set the y coord of the top edge.
  *
  * @since 0.1.0
+ *
  * @param {number} [coord] The coordinate.
+ *
  * @return {number|Point} The coordinate if no arguments are supplied, otherwise <code>this</code>.
  */
 Point.prototype.y = function (coord)
@@ -97,6 +103,7 @@ Point.prototype.y = function (coord)
  * Returns a clone of this Point.        
  * 
  * @since 0.1.0
+ *
  * @return {Point} The Point.   
  */
 Point.prototype.clone = function ()
