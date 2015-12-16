@@ -121,7 +121,7 @@ var on = function (element, arrTypes, listener)
     {
         var type = arrTypes[i];
         if (element.attachEvent)
-            element.attachEvent('on'+type, listener);
+            element.attachEvent('on'+type, listener); // <IE9.
         else
             element.addEventListener(type, listener);
     }
@@ -142,7 +142,7 @@ var off = function (element, arrTypes, listener)
     {
         var type = arrTypes[i];
         if (element.attachEvent)
-            element.detachEvent('on'+type, listener);
+            element.detachEvent('on'+type, listener); // <IE9.
         else
             element.removeEventListener(type, listener);
     }
