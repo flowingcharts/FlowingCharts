@@ -231,45 +231,54 @@ var polygon = function (ctx, arrCoords, style)
  * @since 0.1.0
  * @private
  *
- * @param {HtmlCanvasContext}   ctx                 The canvas context to draw to.
- * @param {Object}              [style]             The style properties.
- * @param {string}              [style.fillColor]   The fill color.
- * @param {number}              [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}              [style.lineColor]   The line color.
- * @param {number}              [style.lineWidth]   The line width.
- * @param {string}              [style.lineJoin]    The line join, one of "bevel", "round", "miter".
- * @param {string}              [style.lineCap]     The line cap, one of "butt", "round", "square".
- * @param {number}              [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {HtmlCanvasContext}   ctx                         The canvas context to draw to.
+ * @param {Object}              [style]                     The style properties.
+ * @param {string}              [style.fillColor]           The fill color.
+ * @param {number}              [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}              [style.lineColor]           The line color.
+ * @param {number}              [style.lineWidth = 1]       The line width.
+ * @param {string}              [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
+ * @param {string}              [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
+ * @param {number}              [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
-function draw (ctx, options)
+function draw (ctx, style)
 {
     // Fill.
-    if (options.fillColor !== undefined)
+    if (style.fillColor !== undefined)
     {
-        if (options.fillOpacity !== undefined)
+        var fillColor     = style.fillColor;
+        var fillOpacity   = style.fillOpacity !== undefined ? style.fillOpacity : 1;
+
+        if (fillOpacity < 1)
         {
-            var rgbaFillStyle = options.fillColor;
-            if (colorUtil.isRGBA(rgbaFillStyle) === false) rgbaFillStyle = colorUtil.toRGBA(options.fillColor, options.fillOpacity);
+            var rgbaFillStyle = fillColor;
+            if (colorUtil.isRGBA(rgbaFillStyle) === false) rgbaFillStyle = colorUtil.toRGBA(fillColor, fillOpacity);
             ctx.fillStyle = rgbaFillStyle;       
         }
-        else ctx.fillStyle = options.fillColor; 
+        else ctx.fillStyle = fillColor; 
         ctx.fill();
     }
 
     // Stroke.
-    if (options.lineWidth !== undefined && options.lineWidth > 0)
+    if (style.lineColor !== undefined && style.lineWidth !== 0)
     {
-        if (options.lineOpacity !== undefined)
+        var lineColor     = style.lineColor;
+        var lineWidth     = style.lineWidth !== undefined ? style.lineWidth : 1;
+        var lineJoin      = style.lineJoin !== undefined ? style.lineJoin : 'round';
+        var lineCap       = style.lineCap !== undefined ? style.lineCap : 'butt';
+        var lineOpacity   = style.lineOpacity !== undefined ? style.lineOpacity : 1;
+
+        if (lineOpacity < 1)
         {
-            var rgbaLineStyle = options.lineColor;
-            if (colorUtil.isRGBA(rgbaLineStyle) === false) rgbaLineStyle = colorUtil.toRGBA(options.lineColor, options.lineOpacity);
+            var rgbaLineStyle = lineColor;
+            if (colorUtil.isRGBA(rgbaLineStyle) === false) rgbaLineStyle = colorUtil.toRGBA(lineColor, lineOpacity);
             ctx.strokeStyle = rgbaLineStyle;
         }
-        else ctx.strokeStyle = options.lineColor;
+        else ctx.strokeStyle = lineColor;
 
-        if (ctx.lineWidth !== undefined) ctx.lineWidth = options.lineWidth;
-        if (ctx.lineJoin !== undefined)  ctx.lineJoin  = options.lineJoin;
-        if (ctx.lineCap !== undefined)   ctx.lineCap   = options.lineCap;
+        if (ctx.lineWidth !== undefined) ctx.lineWidth = lineWidth;
+        if (ctx.lineJoin !== undefined)  ctx.lineJoin  = lineJoin;
+        if (ctx.lineCap !== undefined)   ctx.lineCap   = lineCap;
         ctx.stroke();
     }
 }

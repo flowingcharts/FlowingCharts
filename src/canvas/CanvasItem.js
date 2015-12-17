@@ -24,9 +24,8 @@ var colorUtil = require('../utils/color');
  * @constructor
  *
  * @param {string} type                 The shape type.
- * @param {number} [units = 'pixel']    The units - 'pixel' or 'data'.
  */
-function CanvasItem (type, units)
+function CanvasItem (type)
 {
     // Public instance variables.
 
@@ -53,76 +52,65 @@ function CanvasItem (type, units)
     this.coords = {};
 
     /** 
-     * The units - 'pixel' or 'data'.
-     * 
-     * @since 0.1.0
-     * @type string
-     * @default 'pixel'
-     */
-    this.units = units !== undefined ? units : 'pixel';
-
-    /** 
      * The fill color.
      * 
      * @since 0.1.0
      * @type string
-     * @default '#ffffff'
      */
-    this.fillColor = '#ffffff'; 
+    this.fillColor = undefined; 
 
     /** 
-     * The fill color.
+     * The fill opacity. This is overriden by the fillColor if it contains an alpha value.
      * 
      * @since 0.1.0
      * @type number
      * @default 1
      */
-    this.fillOpacity = 1;
+    this.fillOpacity = undefined;
 
     /** 
-     * The fill color.
+     * The line color.
      * 
      * @since 0.1.0
      * @type string
-     * @default '#000000'
      */
-    this.lineColor = '#000000'; 
+    this.lineColor = undefined; 
 
     /** 
-     * The fill color.
+     * The line width.
      * 
      * @since 0.1.0
      * @type number
      * @default 1
      */ 
-    this.lineWidth = 0; 
+    this.lineWidth = undefined; 
 
     /** 
-     * The fill color.
+     * The line join, one of "bevel", "round", "miter".
      * 
      * @since 0.1.0
      * @type string
      * @default 'round'
      */
-    this.lineJoin = 'round'; 
+    this.lineJoin = undefined; 
 
     /** 
-     * The fill color.
+     * The line cap, one of "butt", "round", "square".
      * 
      * @since 0.1.0
      * @type string
      * @default 'butt'
      */
-    this.lineCap = 'butt'; 
+    this.lineCap = undefined; 
 
     /** 
-     * The fill color.
+     * The line opacity. This is overriden by the lineColor if it contains an alpha value.
      * 
      * @since 0.1.0
      * @type number
      * @default 1
      */
-    this.lineOpacity = 1;
+    this.lineOpacity = undefined;
 }
 
 /** 

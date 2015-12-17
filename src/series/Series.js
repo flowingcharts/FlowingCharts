@@ -116,10 +116,10 @@ function Series (canvas, options)
  * @param {string} [options.shape = circle]         The shape to use for rendering.
  * @param {string} [options.image = ]               The image to use for rendering.
  * @param {string} [options.markerSize = 10]        The marker size.
- * @param {string} [options.fillColor = #ffffff]    The fill color.
+ * @param {string} [options.fillColor]              The fill color.
  * @param {number} [options.fillOpacity = 1]        The fill opacity.
- * @param {string} [options.lineColor = #000000]    The line color.
- * @param {number} [options.lineWidth = 0]          The line width.
+ * @param {string} [options.lineColor]              The line color.
+ * @param {number} [options.lineWidth = 1]          The line width.
  * @param {string} [options.lineJoin = round]       The line join, one of "bevel", "round", "miter".
  * @param {string} [options.lineCap = butt]         The line cap, one of "butt", "round", "square".
  * @param {number} [options.lineOpacity = 1]        The line opacity.
@@ -144,12 +144,12 @@ Series.prototype.options = function(options)
             shape       : 'circle',
             image       : undefined,
             markerSize  : 10,
-            fillColor   : '#ffffff', 
-            fillOpacity : 1,
-            lineColor   : '#000000',  
-            lineWidth   : 0, 
-            lineJoin    : 'round', 
-            lineCap     : 'butt', 
+            fillColor   : undefined, 
+            fillOpacity : undefined,
+            lineColor   : undefined,  
+            lineWidth   : undefined, 
+            lineJoin    : undefined, 
+            lineCap     : undefined, 
             lineOpacity : 1
         };   
 
@@ -236,6 +236,37 @@ Series.prototype.render = function()
         this.canvas.drawItem(item);
     }*/
     this.canvas.render();
+};
+
+
+/** 
+ * Returns any item that is hit by the given coords.
+ *
+ * @since 0.1.0
+ *
+ * @param {number} x The x coord.
+ * @param {number} y The y coord.
+ *
+ * @return {CanvasItem} The canvas item.
+ */
+Series.prototype.hitItem = function(x, y)
+{
+    var nearestItem;
+    var shortestDistance = Infinity;
+    var n = this._items.length;
+    for (var i = 0; i < n; i++)  
+    {
+        var item = this._items[i];
+        var dx = x - item.coords.cx;
+        var dy = y - item.coords.cy;
+        var distanceToPoint = Math.pow(dx, 2) + Math.pow(dy, 2);
+        if (distanceToPoint < shortestDistance) 
+        {
+            nearestItem = item;
+            shortestDistance = distanceToPoint;
+        }
+    }
+    return nearestItem;
 };
 
 module.exports = Series;

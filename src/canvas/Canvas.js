@@ -43,8 +43,8 @@ function Canvas (renderer, coords)
     else                            this._g = canvasUtil;
 
     // Get the actual drawing canvas.
-    this._canvas = this._g.getCanvas();
-    if (this._renderer === 'canvas') this._ctx = this._canvas.getContext('2d');
+    this.canvas = this._g.getCanvas();
+    if (this._renderer === 'canvas') this._ctx = this.canvas.getContext('2d');
 }
 
 /** 
@@ -56,7 +56,7 @@ function Canvas (renderer, coords)
  */
 Canvas.prototype.appendTo = function (container)
 {
-    container.appendChild(this._canvas);
+    container.appendChild(this.canvas);
 };
 
 // Geometry.
@@ -70,7 +70,7 @@ Canvas.prototype.appendTo = function (container)
  */
 Canvas.prototype.width = function ()
 {
-    return parseInt(this._canvas.getAttribute('width'));
+    return parseInt(this.canvas.getAttribute('width'));
 };
 
 /** 
@@ -82,7 +82,7 @@ Canvas.prototype.width = function ()
  */
 Canvas.prototype.height = function ()
 {
-    return parseInt(this._canvas.getAttribute('height'));
+    return parseInt(this.canvas.getAttribute('height'));
 };
 
 /** 
@@ -103,7 +103,7 @@ Canvas.prototype.setSize = function (w, h)
     //</validation>
 
     // Canvas size.
-    if (w !== this.width() || h !== this.height()) dom.attr(this._canvas, {width:w, height:h});
+    if (w !== this.width() || h !== this.height()) dom.attr(this.canvas, {width:w, height:h});
 };
 
 // Create canvas items.
@@ -114,16 +114,15 @@ Canvas.prototype.setSize = function (w, h)
  * @since 0.1.0
  *
  * @param {string} type             The marker type.
- * @param {number} cx               The x position of the center of the marker.
- * @param {number} cy               The y position of the center of the marker.
- * @param {number} size             The size of the marker.
- * @param {number} [units = data]   The units - 'pixel' or 'data'.
+ * @param {number} cx               The x position of the center of the marker (data units).
+ * @param {number} cy               The y position of the center of the marker (data units).
+ * @param {number} size             The size of the marker (pixel units).
  *
  * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
-    var item = getItem(type, {cx:cx, cy:cy, size:size}, 'data', this._items);
+    var item = this.getItem(type, {cx:cx, cy:cy, size:size, units:'data'});
     item.marker = true;
     return item;
 };
@@ -134,17 +133,16 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  * @since 0.1.0
  *
  * @param {string} type             The shape type.
- * @param {number} x                The x position of the top left corner.
- * @param {number} y                The y position of the top left corner.
- * @param {number} w                The width.
- * @param {number} h                The height.
- * @param {number} [units = 'data'] The units - 'pixel' or 'data'.
+ * @param {number} x                The x position of the top left corner (data units).
+ * @param {number} y                The y position of the top left corner (data units).
+ * @param {number} w                The width (data units).
+ * @param {number} h                The height (data units).
  *
  * @return {CanvasItem}             A canvas item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
-    var item = getItem(type, {x:x, y:y, width:w, height:h}, 'data', this._items);
+    var item = this.getItem(type, {x:x, y:y, width:w, height:h, units:'data'});
     item.shape = true;
     return item;
 };
@@ -163,7 +161,7 @@ Canvas.prototype.shape = function (type, x, y, w, h)
  */
 Canvas.prototype.circle = function (cx, cy, r, units)
 {
-    return getItem('circle', {cx:cx, cy:cy, r:r}, units, this._items);
+    return this.getItem('circle', {cx:cx, cy:cy, r:r, units:units});
 };
 
 /** 
@@ -181,7 +179,7 @@ Canvas.prototype.circle = function (cx, cy, r, units)
  */
 Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
 {
-    return getItem('ellipse', {cx:cx, cy:cy, rx:rx, ry:ry}, units, this._items);
+    return this.getItem('ellipse', {cx:cx, cy:cy, rx:rx, ry:ry, units:units});
 };
 
 /** 
@@ -199,7 +197,7 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
  */
 Canvas.prototype.rect = function (x, y, w, h, units)
 {
-    return getItem('rect', {x:x, y:y, width:w, height:h}, units, this._items);
+    return this.getItem('rect', {x:x, y:y, width:w, height:h, units:units});
 };
 
 /** 
@@ -217,7 +215,7 @@ Canvas.prototype.rect = function (x, y, w, h, units)
  */
 Canvas.prototype.line = function (x1, y1, x2, y2, units)
 {
-    return getItem('line', {x1:x1, y1:y1, x2:x2, y2:y2}, units, this._items);
+    return this.getItem('line', {x1:x1, y1:y1, x2:x2, y2:y2, units:units});
 };
 
 /** 
@@ -232,7 +230,7 @@ Canvas.prototype.line = function (x1, y1, x2, y2, units)
  */
 Canvas.prototype.polyline = function (arrCoords, units)
 {
-    return getItem('polyline', {points:arrCoords}, units, this._items);
+    return this.getItem('polyline', {points:arrCoords, units:units});
 };
 
 /** 
@@ -247,7 +245,7 @@ Canvas.prototype.polyline = function (arrCoords, units)
  */
 Canvas.prototype.polygon = function (arrCoords, units)
 {
-    return getItem('polygon', {points:arrCoords}, units, this._items);
+    return this.getItem('polygon', {points:arrCoords, units:units});
 };
 
 // Drawing.
@@ -260,7 +258,7 @@ Canvas.prototype.polygon = function (arrCoords, units)
 Canvas.prototype.clear = function ()
 {
     this._items = [];
-    if (this._renderer === 'canvas') this._g.empty(this._canvas, this._ctx);
+    this._g.empty(this.canvas, this._ctx);
 };
 
 /** 
@@ -270,7 +268,7 @@ Canvas.prototype.clear = function ()
  */
 Canvas.prototype.render = function ()
 {
-    if (this._renderer === 'canvas') this._g.empty(this._canvas, this._ctx);
+    if (this._renderer === 'canvas') this._g.empty(this.canvas, this._ctx);
     
     var n = this._items.length;
     for (var i = 0; i < n; i++)  
@@ -289,19 +287,9 @@ Canvas.prototype.render = function ()
  */
 Canvas.prototype.drawItem = function (item)
 {
-    if (item.context === undefined)
-    {
-        if (this._renderer === 'svg')
-        {
-            item.context = this._g.createElement(item.type);
-            this._canvas.appendChild(item.context);
-        }
-        else item.context = this._ctx;
-    }
-
     var p;
-    if (this._coords !== undefined && item.units === 'data') p = getPixelUnits(item, this._coords);  // Canvas using data units.
-    else                                                     p = item.coords;                        // Canvas using pixel units.
+    if (this._coords !== undefined && item.coords.units === 'data') p = getPixelUnits(item, this._coords);  // Canvas using data units.
+    else                                                            p = item.coords;                        // Canvas using pixel units.
 
     if (item.marker) 
     {
@@ -345,17 +333,24 @@ Canvas.prototype.drawItem = function (item)
  *
  * @param {string} type             The shape type.
  * @param {Object} coords           The coords.
- * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
  *
- * @return {CanvasItem[]}           The item list.
+ * @return {CanvasItem}             The canvas item.
  */
-function getItem (type, coords, units, items)
+Canvas.prototype.getItem = function (type, coords)
 {
-    var item = new CanvasItem(type, units);
+    var item = new CanvasItem(type);
     item.coords = coords;
-    items.push(item);
+
+    if (this._renderer === 'svg')
+    {
+        item.context = this._g.createElement(type);
+        this.canvas.appendChild(item.context);
+    }
+    else item.context = this._ctx;
+
+    this._items.push(item);
     return item;
-}
+};
 
 /** 
  * Gets the pixel units for an item.

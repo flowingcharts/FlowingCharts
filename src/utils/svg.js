@@ -236,27 +236,35 @@ function getCoordsAsString (arrCoords)
  * @since 0.1.0
  * @private
  *
- * @param {SVGElement}  element             The svg element.
- * @param {Object}      [style]             The style properties.
- * @param {string}      [style.fillColor]   The fill color.
- * @param {number}      [style.fillOpacity] The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}      [style.lineColor]   The line color.
- * @param {number}      [style.lineWidth]   The line width.
- * @param {string}      [style.lineJoin]    The line join, one of "bevel", "round", "miter".
- * @param {string}      [style.lineCap]     The line cap, one of "butt", "round", "square".
- * @param {number}      [style.lineOpacity] The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}          element                     The svg element.
+ * @param {Object}              [style]                     The style properties.
+ * @param {string}              [style.fillColor = none]    The fill color.
+ * @param {number}              [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}              [style.lineColor = none]    The line color.
+ * @param {number}              [style.lineWidth = 1]       The line width.
+ * @param {string}              [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
+ * @param {string}              [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
+ * @param {number}              [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 function draw(element, style)
 {
+    // Fill.
+    var fillColor   = style.fillColor !== undefined ? style.fillColor : 'none';
+    var fillOpacity = style.fillOpacity !== undefined ? style.fillOpacity : 1;
+    var lineColor   = style.lineColor !== undefined ? style.lineColor : 'none';
+    var lineWidth   = style.lineWidth !== undefined ? style.lineWidth : 1;
+    var lineOpacity = style.lineOpacity !== undefined ? style.lineOpacity : 1;
+    var lineJoin    = style.lineJoin !== undefined ? style.lineJoin : 'round';
+    var lineCap     = style.lineCap !== undefined ? style.lineCap : 'butt';
     dom.attr(element, 
     {
-        'fill'            : style.fillColor,
-        'fill-opacity'    : style.fillOpacity,
-        'stroke'          : style.lineColor,
-        'stroke-width'    : style.lineWidth,
-        'stroke-linejoin' : style.lineJoin,
-        'stroke-linecap'  : style.lineCap,
-        'stroke-opacity'  : style.lineOpacity
+        'fill'            : fillColor,
+        'fill-opacity'    : fillOpacity,
+        'stroke'          : lineColor,
+        'stroke-width'    : lineWidth,
+        'stroke-linejoin' : lineJoin,
+        'stroke-linecap'  : lineCap,
+        'stroke-opacity'  : lineOpacity
     });
 }
 

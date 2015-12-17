@@ -62,7 +62,7 @@ function Chart (options)
     // Resize the chart to fit the container when the window resizes.
     var me = this;
     var resizeTimeout;
-    window.addEventListener('resize', function (event)
+    dom.on(window, 'resize', function (event)
     {
         // Add a resizeTimeout to stop multiple calls to setSize().
         clearTimeout(resizeTimeout);
@@ -72,7 +72,7 @@ function Chart (options)
         }, me._options.renderRate);
     });
 
-    this.options(options);
+    this.options(options); 
 }
 
 /** 
@@ -115,8 +115,8 @@ Chart.prototype.options = function(options)
             paddingBottom       : undefined,
             paddingLeft         : undefined,
             border              : {lineColor : '#cccccc'},
-            borderTop           : {},
-            borderRight         : {},
+            borderTop           : {lineWidth : 0},
+            borderRight         : {lineWidth : 0},
             borderBottom        : {lineWidth : 1},
             borderLeft          : {lineWidth : 1},
             background          : undefined
@@ -126,29 +126,32 @@ Chart.prototype.options = function(options)
         if (options.chart.border !== undefined) util.addProperties(options.chart.border, this._options.border);
         util.extendObject(this._options, options.chart);
 
+        // Holds the canvases.
+        this._arrCanvas = [];
+
         // Coordinate system.
         this.coords = getCoords(this._options.coordinateSystem);
 
         // Container for holding the drawing canvases.
         this._canvasContainer = getCanvasContainer(this._options.renderer);
         dom.appendChild(this._options.container, this._canvasContainer);
+        this.addEventHandlers();
 
         // Chart canvas.
-        this._canvas = getCanvas(this._options.renderer);
-        this._canvas.appendTo(this._canvasContainer);   
+        this._backgroundCanvas = this.addCanvas();
 
         // Background.
-        if (this._options.background !== undefined) this._background = this._canvas.rect().style(this._options.background);
+        if (this._options.background !== undefined) this._background = this._backgroundCanvas.rect().style(this._options.background);
 
         // Border.
         util.addProperties(this._options.borderTop,    this._options.border);
         util.addProperties(this._options.borderRight,  this._options.border);
         util.addProperties(this._options.borderBottom, this._options.border);
         util.addProperties(this._options.borderLeft,   this._options.border);
-        this._borderTop     = this._canvas.line().style(this._options.borderTop);
-        this._borderRight   = this._canvas.line().style(this._options.borderRight);
-        this._borderBottom  = this._canvas.line().style(this._options.borderBottom);
-        this._borderLeft    = this._canvas.line().style(this._options.borderLeft);
+        this._borderTop    = this._backgroundCanvas.line().style(this._options.borderTop);
+        this._borderRight  = this._backgroundCanvas.line().style(this._options.borderRight);
+        this._borderBottom = this._backgroundCanvas.line().style(this._options.borderBottom);
+        this._borderLeft   = this._backgroundCanvas.line().style(this._options.borderLeft);
 
         // Padding.
         this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
@@ -163,14 +166,16 @@ Chart.prototype.options = function(options)
             for (var i = 0; i < options.series.length; i++)  
             {
                 // Create a canvas for the series.
-                var seriesCanvas = getCanvas(this._options.renderer, this.coords); 
-                seriesCanvas.appendTo(this._canvasContainer);   
+                var seriesCanvas = this.addCanvas();
 
                 // Create the series.
                 var s = new Series(seriesCanvas, options.series[i]);
                 this.series.push(s);                    
             }
         }
+
+        // Interaction canvas.
+        this._interactionCanvas = this.addCanvas();
 
         // Set charts size to that of the container - it will subsequently be rendered.
         // TODO What happens if the container has padding applied to it.
@@ -180,6 +185,75 @@ Chart.prototype.options = function(options)
         return this;
     }
     else return this._options;
+};
+
+/** 
+ * Adds a event hanlders to the chart.
+ *
+ * @since 0.1.0
+ * @private
+ */
+Chart.prototype.addEventHandlers = function()
+{
+    var me = this;
+
+    // Add event listeners.
+    dom.on(me._canvasContainer, 'mouseover mousedown mouseup click    mousemove    mouseleave touchstart touchmove touchend', eventHandler);
+
+    // Update the canvas element position on window change.
+    var canvasPosition;
+    function updatePosition () {canvasPosition = dom.getPosition(me._canvasContainer);}
+    updatePosition();
+    dom.on(window, 'scroll resize', updatePosition);
+
+    function eventHandler (event)
+    {
+        var type = event.type;
+        type.replace(/^(on\.)/,""); // For event types with 'on' prefix.
+
+        var x     = event.clientX - canvasPosition.x - me.coords.viewPort().x();
+        var y     = event.clientY - canvasPosition.y - me.coords.viewPort().y();
+        var dataX = me.coords.getDataX(x);
+        var dataY = me.coords.getDataY(y);
+        //window.console.log(dataX + ' ' + dataY);
+
+        var hitItem;
+        for (var i = 0; i < me.series.length; i++)  
+        {
+            var s = me.series[i];
+            hitItem = s.hitItem(dataX, dataY);
+        }
+
+        me._interactionCanvas.clear();
+        var highlightItem;
+        if (hitItem !== undefined) 
+        {
+            highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size)
+            .style(
+            {
+                lineColor   : 'red',
+                lineWidth   : 1
+            });
+            me._interactionCanvas.render();
+        }
+        if (type == 'mouseleave') me._interactionCanvas.clear();
+    }
+};
+
+/** 
+ * Adds a canvas.
+ *
+ * @since 0.1.0
+ * @private
+ *
+ * @return {Canvas} The canvas.
+ */
+Chart.prototype.addCanvas = function()
+{
+    var canvas = new Canvas(this._options.renderer, this.coords);
+    canvas.appendTo(this._canvasContainer);   
+    this._arrCanvas.push(canvas);
+    return canvas;
 };
 
 /** 
@@ -216,22 +290,6 @@ function getCanvasContainer(renderer)
 }
 
 /** 
- * Get the canvas for the given renderer.
- *
- * @since 0.1.0
- * @private
- *
- * @param {string}                      [renderer = canvas] The renderer 'svg' or 'canvas'.
- * @param {CartesianCoords|PolarCoords} coords              The coords to apply to the canvas.
- *
- * @return {HtmlCanvas|SvgCanvas}                           The canvas.
- */
-function getCanvas(renderer, coords)
-{
-    return new Canvas(renderer, coords);
-}
-
-/** 
  * Set the size of the canvas.
  *
  * @since 0.1.0
@@ -258,23 +316,20 @@ Chart.prototype.setSize = function (w, h)
     var hChart  = y2Chart - y1Chart;
     this.coords.viewPort(x1Chart, y1Chart, wChart, hChart);
 
-    // Set the canvas container size.
-    dom.attr(this._canvasContainer, {width:w, height:h});
-
-    // Set the coords for the background and border.
+    // Set the coords for the background and border elements.
     if (this._background !== undefined)     this._background.coords    = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
     if (this._borderTop !== undefined)      this._borderTop.coords     = {x1:x1Chart, y1:y1Chart, x2:x2Chart, y2:y1Chart};
     if (this._borderRight !== undefined)    this._borderRight.coords   = {x1:x2Chart, y1:y1Chart, x2:x2Chart, y2:y2Chart};
     if (this._borderBottom !== undefined)   this._borderBottom.coords  = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
     if (this._borderLeft !== undefined)     this._borderLeft.coords    = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
 
-    // Set the chart canvas size.
-    this._canvas.setSize(w, h);
+    // Set the canvas container size.
+    dom.attr(this._canvasContainer, {width:w, height:h});
 
-    // Set the series canvas sizes.
-    for (var i = 0; i < this.series.length; i++)  
+    // Set the canvas sizes.
+    for (var i = 0; i < this._arrCanvas.length; i++)  
     {
-        if (this._options.renderer !== 'svg') this.series[i].canvas.setSize(w, h);
+        this._arrCanvas[i].setSize(w, h);
     }
 
     this.render();
@@ -303,7 +358,7 @@ Chart.prototype.render = function()
     this.coords.viewBox(xMin, yMin, xMax, yMax);
 
     // Render the background and border.
-    this._canvas.render();
+    this._backgroundCanvas.render();
 
     // Render the series.
     for (i = 0; i < n; i++)  

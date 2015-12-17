@@ -69,6 +69,22 @@ var attr = function (element, attributes)
 };
 
 /** 
+ * Removes the attributes from the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element     The target element.
+ * @param {string[]}    attributes  The list of attributes to remove.
+ */
+var removeAttr = function (element, attributes)
+{
+    for (var i = 0; i < attributes.length; i++)  
+    {
+        element.removeAttribute(attributes[i]);
+    }
+};
+
+/** 
  * Sets the style for the target element.
  * 
  * @since 0.1.0
@@ -110,16 +126,16 @@ var createElement = function (type, attributes)
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element     The target element.
- * @param {string[]}    arrTypes    An array containing a list of event types to listen for.
- * @param {Function}    listener    The function that receives a notification when an event of the specified type occurs.
+ * @param {HTMLElement} element  The target element.
+ * @param {string}      types    A space separated string of event types.
+ * @param {Function}    listener The function that receives a notification when an event of the specified type occurs.
  */
-var eventListeners = [];
-var on = function (element, arrTypes, listener)
+var on = function (element, types, listener)
 {
+    var arrTypes = types.split(' ');
     for (var i = 0; i < arrTypes.length; i++)  
     {
-        var type = arrTypes[i];
+        var type = arrTypes[i].trim();
         if (element.attachEvent)
             element.attachEvent('on'+type, listener); // <IE9.
         else
@@ -132,15 +148,16 @@ var on = function (element, arrTypes, listener)
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element     The target element.
- * @param {string[]}    arrTypes    An array containing a list of event types to remove.
- * @param {Function}    listener    The function to remove from the event target.
+ * @param {HTMLElement} element  The target element.
+ * @param {string}      types    A space separated string of event types.
+ * @param {Function}    listener The function to remove from the event target.
  */
-var off = function (element, arrTypes, listener)
+var off = function (element, types, listener)
 {
+    var arrTypes = types.split(' ');
     for (var i = 0; i < arrTypes.length; i++)  
     {
-        var type = arrTypes[i];
+        var type = arrTypes[i].trim();
         if (element.attachEvent)
             element.detachEvent('on'+type, listener); // <IE9.
         else
@@ -148,14 +165,38 @@ var off = function (element, arrTypes, listener)
     }
 };
 
+/** 
+ * Return the position of the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ * 
+ * @return {Object}     {x:number, y:number}.
+ */
+function getPosition (element) 
+{
+    var xPosition = 0;
+    var yPosition = 0;
+    while (element) 
+    {
+        xPosition   += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+        yPosition   += (element.offsetTop - element.scrollTop + element.clientTop);
+        element     = element.offsetParent;
+    }
+    return {x:xPosition, y:yPosition};
+}
+
 module.exports = 
 {
     appendChild     : appendChild,
     remove          : remove,
     empty           : empty,
     attr            : attr,
+    removeAttr      : removeAttr,
     style           : style,
     createElement   : createElement,
     on              : on,
-    off             : off
+    off             : off,
+    getPosition     : getPosition
 };
