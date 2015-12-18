@@ -49,35 +49,35 @@ function EventHandler (options)
                 if (!isDragging && isDown && isOver && (downX !== pixelCoords.x || downY !== pixelCoords.y)) 
                 {
                     isDragging = true;
-                                        dispatch('mousedragstart', pixelCoords);
+                                        dispatch('mousedragstart', event, pixelCoords);
                 }
-                else if (isDragging)    dispatch('mousedrag', pixelCoords);
-                else if (isOver)        dispatch('mousemove', pixelCoords);
+                else if (isDragging)    dispatch('mousedrag', event, pixelCoords);
+                else if (isOver)        dispatch('mousemove', event, pixelCoords);
 
                 if (isOver && !dispatchedOver)
                 {
                     dispatchedOver = true;
-                                        dispatch('mouseover', pixelCoords);
+                                        dispatch('mouseover', event, pixelCoords);
                 }
-                if (!isOver && !dispatchedOver)
+                if (!isOver && dispatchedOver)
                 {
                     dispatchedOver = false;
-                                        dispatch('mouseout', pixelCoords);
+                                        dispatch('mouseout', event, pixelCoords);
                 }
             break;
             case 'mousedown' : 
                 if (isOver)      
                 {
-                                        dispatch('mousedown', pixelCoords);
+                                        dispatch('mousedown', event, pixelCoords);
                     downX = pixelCoords.x;
                     downY = pixelCoords.y;
                     isDown = true; 
                 } 
             break;
             case 'mouseup' : 
-                if      (isDragging)    dispatch('mousedragend', pixelCoords);
-                else if (isOver)        dispatch('click', pixelCoords); 
-                if      (isOver)        dispatch('mouseup', pixelCoords);    
+                if      (isDragging)    dispatch('mousedragend', event, pixelCoords);
+                else if (isOver)        dispatch('click', event, pixelCoords); 
+                if      (isOver)        dispatch('mouseup', event, pixelCoords);    
                 isDragging = false;
                 isDown     = false; 
             break;
@@ -91,10 +91,11 @@ function EventHandler (options)
     }
 
     // Event dispatcher.
-    function dispatch (eventType, pixelCoords)
+    function dispatch (eventType, event, pixelCoords)
     {
         if (options[eventType] !== undefined) 
         {
+            window.console.log(eventType);
             options[eventType](
             {
                 event   : event,
