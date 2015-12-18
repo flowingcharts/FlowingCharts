@@ -135,7 +135,7 @@ Chart.prototype.options = function(options)
         // Container for holding the drawing canvases.
         this._canvasContainer = getCanvasContainer(this._options.renderer);
         dom.appendChild(this._options.container, this._canvasContainer);
-        this.addEventHandlers();
+        this.addMouseEventHandlers();
 
         // Chart canvas.
         this._backgroundCanvas = this.addCanvas();
@@ -188,17 +188,17 @@ Chart.prototype.options = function(options)
 };
 
 /** 
- * Adds a event hanlders to the chart.
+ * Adds mouse event handlers.
  *
  * @since 0.1.0
  * @private
  */
-Chart.prototype.addEventHandlers = function()
+Chart.prototype.addMouseEventHandlers = function()
 {
     var me = this;
 
     // Add event listeners.
-    dom.on(me._canvasContainer, 'mouseover mousedown mouseup click    mousemove    mouseleave touchstart touchmove touchend', eventHandler);
+    dom.on(me._canvasContainer, 'mouseover mousedown mouseup click mousemove mouseleave touchstart touchmove touchend', eventHandler);
 
     // Update the canvas element position on window change.
     var canvasPosition;
@@ -228,7 +228,7 @@ Chart.prototype.addEventHandlers = function()
         var highlightItem;
         if (hitItem !== undefined) 
         {
-            highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size)
+            highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size * 1.25)
             .style(
             {
                 lineColor   : 'red',
@@ -236,7 +236,7 @@ Chart.prototype.addEventHandlers = function()
             });
             me._interactionCanvas.render();
         }
-        if (type == 'mouseleave') me._interactionCanvas.clear();
+        if (type === 'mouseleave') me._interactionCanvas.clear();
     }
 };
 
