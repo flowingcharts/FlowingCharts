@@ -7,6 +7,7 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          charts/Chart 
+ * @requires        charts/EventHandelr
  * @requires        series/Series
  * @requires        canvas/Canvas
  * @requires        geom/CartesianCoords
@@ -17,6 +18,7 @@
  */
 
 // Required modules.
+var EventHandler        = require('./EventHandler');
 var Canvas              = require('../canvas/Canvas');
 var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
@@ -52,9 +54,6 @@ var svg                 = require('../utils/svg');
  */
 function Chart (options)
 {
-    // Public instance members.  
-    this.series = [];
-
     // Parent html element.
     var container = options.chart.container;
     dom.empty(container);
@@ -74,6 +73,26 @@ function Chart (options)
 
     this.options(options); 
 }
+
+
+Chart.defaults = // Default chart options.
+{
+    container           : undefined,
+    coordinateSystem    : 'cartesian',
+    renderer            : 'canvas',
+    renderRate          : 20,
+    padding             : 20,
+    paddingTop          : undefined,
+    paddingRight        : undefined,
+    paddingBottom       : undefined,
+    paddingLeft         : undefined,
+    border              : {lineColor : '#cccccc'},
+    borderTop           : {lineWidth : 0},
+    borderRight         : {lineWidth : 0},
+    borderBottom        : {lineWidth : 1},
+    borderLeft          : {lineWidth : 1},
+    background          : undefined
+};
 
 /** 
  * Get or set the options for the chart.
@@ -97,12 +116,14 @@ function Chart (options)
  * @param {number}      [options.borderLeft]                    The chart left border.
  * @param {number}      [options.background]                    The chart background.
  *
- * @return {Object|Series}                                      The options if no arguments are supplied, otherwise <code>this</code>.
+ * @return {Object|Chart}                                       The options if no arguments are supplied, otherwise <code>this</code>.
  */
 Chart.prototype.options = function(options)
 {
     if (arguments.length > 0)
     {
+        var me = this;
+
         this._options = // Default chart options.
         {
             container           : undefined,
@@ -130,37 +151,17 @@ Chart.prototype.options = function(options)
         this._arrCanvas = [];
 
         // Coordinate system.
-        this.coords = getCoords(this._options.coordinateSystem);
+        this._coords = getCoords(this._options.coordinateSystem);
 
         // Container for holding the drawing canvases.
         this._canvasContainer = getCanvasContainer(this._options.renderer);
         dom.appendChild(this._options.container, this._canvasContainer);
-        this.addMouseEventHandlers();
 
-        // Chart canvas.
+        // Background canvas.
         this._backgroundCanvas = this.addCanvas();
 
-        // Background.
-        if (this._options.background !== undefined) this._background = this._backgroundCanvas.rect().style(this._options.background);
-
-        // Border.
-        util.addProperties(this._options.borderTop,    this._options.border);
-        util.addProperties(this._options.borderRight,  this._options.border);
-        util.addProperties(this._options.borderBottom, this._options.border);
-        util.addProperties(this._options.borderLeft,   this._options.border);
-        this._borderTop    = this._backgroundCanvas.line().style(this._options.borderTop);
-        this._borderRight  = this._backgroundCanvas.line().style(this._options.borderRight);
-        this._borderBottom = this._backgroundCanvas.line().style(this._options.borderBottom);
-        this._borderLeft   = this._backgroundCanvas.line().style(this._options.borderLeft);
-
-        // Padding.
-        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
-        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
-        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-
         // Series.
-        this.series = [];
+        this._series = [];
         if (options.series)
         {
             for (var i = 0; i < options.series.length; i++)  
@@ -170,12 +171,80 @@ Chart.prototype.options = function(options)
 
                 // Create the series.
                 var s = new Series(seriesCanvas, options.series[i]);
-                this.series.push(s);                    
+                this._series.push(s);                    
             }
         }
 
         // Interaction canvas.
         this._interactionCanvas = this.addCanvas();
+
+        // Background elements.
+        if (this._options.background !== undefined) this._background = this._backgroundCanvas.rect().style(this._options.background);
+
+        // Border elements.
+        util.addProperties(this._options.borderTop,    this._options.border);
+        util.addProperties(this._options.borderRight,  this._options.border);
+        util.addProperties(this._options.borderBottom, this._options.border);
+        util.addProperties(this._options.borderLeft,   this._options.border);
+        this._borderTop    = this._backgroundCanvas.line().style(this._options.borderTop);
+        this._borderRight  = this._backgroundCanvas.line().style(this._options.borderRight);
+        this._borderBottom = this._backgroundCanvas.line().style(this._options.borderBottom);
+        this._borderLeft   = this._backgroundCanvas.line().style(this._options.borderLeft);
+
+        // Padding elements.
+        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
+        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
+        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
+        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
+
+        // Event handler
+        var eventHandler = new EventHandler(
+        {
+            element : this._canvasContainer,
+            coords  : this._coords,
+            click : function (dataEvent)
+            {
+
+            },
+            mousedown : function (dataEvent)
+            {
+
+            },
+            mouseup : function (dataEvent)
+            {
+
+            },
+            mousemove : function (dataEvent)
+            {
+                var hitItem;
+                for (var i = 0; i < me._series.length; i++)  
+                {
+                    var s = me._series[i];
+                    hitItem = s.hitItem(dataEvent.dataX, dataEvent.dataY);
+                }
+
+                me._interactionCanvas.clear();
+                var highlightItem;
+                if (hitItem !== undefined) 
+                {
+                    highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size * 1.25)
+                    .style(
+                    {
+                        lineColor   : 'red',
+                        lineWidth   : 1
+                    });
+                    me._interactionCanvas.render();
+                }
+            },
+            mouseout : function (dataEvent)
+            {
+                me._interactionCanvas.clear();
+            },
+            mousedragstart : function (dataEvent)
+            {
+                me._interactionCanvas.clear();
+            }
+        });
 
         // Set charts size to that of the container - it will subsequently be rendered.
         // TODO What happens if the container has padding applied to it.
@@ -188,69 +257,16 @@ Chart.prototype.options = function(options)
 };
 
 /** 
- * Adds mouse event handlers.
- *
- * @since 0.1.0
- * @private
- */
-Chart.prototype.addMouseEventHandlers = function()
-{
-    var me = this;
-
-    // Add event listeners.
-    dom.on(me._canvasContainer, 'mouseover mousedown mouseup click mousemove mouseleave touchstart touchmove touchend', eventHandler);
-
-    // Update the canvas element position on window change.
-    var canvasPosition;
-    function updatePosition () {canvasPosition = dom.getPosition(me._canvasContainer);}
-    updatePosition();
-    dom.on(window, 'scroll resize', updatePosition);
-
-    function eventHandler (event)
-    {
-        var type = event.type;
-        type.replace(/^(on\.)/,""); // For event types with 'on' prefix.
-
-        var x     = event.clientX - canvasPosition.x - me.coords.viewPort().x();
-        var y     = event.clientY - canvasPosition.y - me.coords.viewPort().y();
-        var dataX = me.coords.getDataX(x);
-        var dataY = me.coords.getDataY(y);
-        //window.console.log(dataX + ' ' + dataY);
-
-        var hitItem;
-        for (var i = 0; i < me.series.length; i++)  
-        {
-            var s = me.series[i];
-            hitItem = s.hitItem(dataX, dataY);
-        }
-
-        me._interactionCanvas.clear();
-        var highlightItem;
-        if (hitItem !== undefined) 
-        {
-            highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size * 1.25)
-            .style(
-            {
-                lineColor   : 'red',
-                lineWidth   : 1
-            });
-            me._interactionCanvas.render();
-        }
-        if (type === 'mouseleave') me._interactionCanvas.clear();
-    }
-};
-
-/** 
  * Adds a canvas.
  *
  * @since 0.1.0
  * @private
  *
- * @return {Canvas} The canvas.
+ * @return {Canvas} The added canvas.
  */
 Chart.prototype.addCanvas = function()
 {
-    var canvas = new Canvas(this._options.renderer, this.coords);
+    var canvas = new Canvas(this._options.renderer, this._coords);
     canvas.appendTo(this._canvasContainer);   
     this._arrCanvas.push(canvas);
     return canvas;
@@ -314,7 +330,7 @@ Chart.prototype.setSize = function (w, h)
     var y2Chart = h - this._options.paddingBottom;
     var wChart  = x2Chart - x1Chart;
     var hChart  = y2Chart - y1Chart;
-    this.coords.viewPort(x1Chart, y1Chart, wChart, hChart);
+    this._coords.viewPort(x1Chart, y1Chart, wChart, hChart);
 
     // Set the coords for the background and border elements.
     if (this._background !== undefined)     this._background.coords    = {x:x1Chart,  y:y1Chart, width:wChart, height:hChart};
@@ -346,31 +362,22 @@ Chart.prototype.render = function()
 
     // Set the viewbox.
     var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
-    var n = this.series.length;
+    var n = this._series.length;
     for (var i = 0; i < n; i++)  
     {
-        var s = this.series[i];
+        var s = this._series[i];
         xMin = Math.min(xMin, s.xMin);
         xMax = Math.max(xMax, s.xMax);
         yMin = Math.min(yMin, s.yMin);
         yMax = Math.max(yMax, s.yMax);
     }
-    this.coords.viewBox(xMin, yMin, xMax, yMax);
+    this._coords.viewBox(xMin, yMin, xMax, yMax);
 
-    // Render the background and border.
-    this._backgroundCanvas.render();
-
-    // Render the series.
-    for (i = 0; i < n; i++)  
+    // Render the canvases.
+    for (var j = 0; j < this._arrCanvas.length; j++)  
     {
-        this.series[i].render();
+        this._arrCanvas[j].render();
     }
-};
-
-// TODO Event handlers - could be added to canvas so Series can make use of it.
-Chart.prototype.on = function (strEvents, fncHandler)
-{
-    return this;
 };
 
 module.exports = Chart;

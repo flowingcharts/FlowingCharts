@@ -28,8 +28,8 @@ var dom        = require('../utils/dom');
  * @since 0.1.0
  * @constructor
  *
- * @param {string}                      renderer The renderer 'svg' or 'canvas'.
- * @param {CartesianCoords|PolarCoords} [coords] The coordinate system to use when drawing. If no coordinate system is defined pixel units are used. 
+ * @param {string}                      renderer    The renderer 'svg' or 'canvas'.
+ * @param {CartesianCoords|PolarCoords} coords      The coordinate system. 
  */
 function Canvas (renderer, coords)
 {
@@ -359,7 +359,7 @@ Canvas.prototype.getItem = function (type, coords)
  * @private
  *
  * @param {CanvasItem} item The item.
- * @param {CartesianCoords|PolarCoords} coords The coordinate system to use when drawing. 
+ * @param {CartesianCoords|PolarCoords} coords The coordinate system 
  */
 function getPixelUnits (item, coords)
 {
