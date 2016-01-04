@@ -44,6 +44,19 @@ var getCanvas = function ()
 };
 
 /** 
+ * Clears the canvas.
+ *
+ * @since 0.1.0
+ *
+ * @param {HtmlCanvas}          canvas  The canvas.
+ * @param {HtmlCanvasContext}   ctx     The canvas context.
+ */
+var clear = function (canvas, ctx)
+{
+    empty(canvas, ctx);
+};
+
+/** 
  * Empties the canvas.
  *
  * @since 0.1.0
@@ -287,6 +300,7 @@ module.exports =
 {
     isSupported : isSupported,
     getCanvas   : getCanvas,
+    clear       : clear,
     empty       : empty,
     draw        : draw,
     circle      : circle,

@@ -74,26 +74,6 @@ function Chart (options)
     this.options(options); 
 }
 
-
-Chart.defaults = // Default chart options.
-{
-    container           : undefined,
-    coordinateSystem    : 'cartesian',
-    renderer            : 'canvas',
-    renderRate          : 20,
-    padding             : 20,
-    paddingTop          : undefined,
-    paddingRight        : undefined,
-    paddingBottom       : undefined,
-    paddingLeft         : undefined,
-    border              : {lineColor : '#cccccc'},
-    borderTop           : {lineWidth : 0},
-    borderRight         : {lineWidth : 0},
-    borderBottom        : {lineWidth : 1},
-    borderLeft          : {lineWidth : 1},
-    background          : undefined
-};
-
 /** 
  * Get or set the options for the chart.
  *
@@ -223,26 +203,35 @@ Chart.prototype.options = function(options)
                     hitItem = s.hitItem(dataEvent.dataX, dataEvent.dataY);
                 }
 
-                me._interactionCanvas.clear();
-                var highlightItem;
+                me._interactionCanvas.empty();
                 if (hitItem !== undefined) 
                 {
-                    highlightItem = me._interactionCanvas.marker('circle', hitItem.coords.cx, hitItem.coords.cy, hitItem.coords.size * 1.25)
-                    .style(
+                    var highlightItem = hitItem.clone();
+                    me._interactionCanvas.addItem(highlightItem);
+
+                    highlightItem.lineWidth = 3;
+                    highlightItem.lineColor = '#cccccc';
+
+
+                   /* highlightItem.style(
                     {
-                        lineColor   : 'red',
-                        lineWidth   : 1
-                    });
+                        lineWidth : 3,
+                        lineColor : '#cccccc'
+                    });*/
+
+                    highlightItem.coords.size = highlightItem.coords.size * 1.3;
+                    window.console.log(highlightItem);
+
                     me._interactionCanvas.render();
                 }
             },
             mouseout : function (dataEvent)
             {
-                me._interactionCanvas.clear();
+                me._interactionCanvas.empty();
             },
             mousedragstart : function (dataEvent)
             {
-                me._interactionCanvas.clear();
+                me._interactionCanvas.empty();
             }
         });
 
@@ -323,7 +312,7 @@ Chart.prototype.setSize = function (w, h)
     if (h < 0)              throw new Error('Chart.setSize(h): h must be >= 0.');
     //</validation>
 
-    // viewPort.
+    // Set the viewPort.
     var x1Chart = this._options.paddingLeft;
     var y1Chart = this._options.paddingTop;
     var x2Chart = w - this._options.paddingRight;

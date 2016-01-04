@@ -255,7 +255,7 @@ Canvas.prototype.polygon = function (arrCoords, units)
  *
  * @since 0.1.0
  */
-Canvas.prototype.clear = function ()
+Canvas.prototype.empty = function ()
 {
     this._items = [];
     this._g.empty(this.canvas, this._ctx);
@@ -268,7 +268,7 @@ Canvas.prototype.clear = function ()
  */
 Canvas.prototype.render = function ()
 {
-    if (this._renderer === 'canvas') this._g.empty(this.canvas, this._ctx);
+    this._g.clear(this.canvas, this._ctx);
     
     var n = this._items.length;
     for (var i = 0; i < n; i++)  
@@ -326,30 +326,83 @@ Canvas.prototype.drawItem = function (item)
 };
 
 /** 
- * Returns a canvas item.
+ * Returns the nearest item to the given coords.
  *
  * @since 0.1.0
- * @private
  *
- * @param {string} type             The shape type.
- * @param {Object} coords           The coords.
+ * @param {number} x The x coord.
+ * @param {number} y The y coord.
  *
- * @return {CanvasItem}             The canvas item.
+ * @return {CanvasItem} The canvas item.
  */
-Canvas.prototype.getItem = function (type, coords)
+Canvas.prototype.nearestItem = function(x, y)
 {
-    var item = new CanvasItem(type);
-    item.coords = coords;
+    var nearestItem;
+    var shortestDistance = Infinity;
+    var n = this._items.length;
+    for (var i = 0; i < n; i++)  
+    {
+        var item = this._items[i];
+        var dx = x - item.coords.cx;
+        var dy = y - item.coords.cy;
+        var distanceToPoint = Math.pow(dx, 2) + Math.pow(dy, 2);
+        if (distanceToPoint < shortestDistance) 
+        {
+            nearestItem = item;
+            shortestDistance = distanceToPoint;
+        }
+    }
+    return nearestItem;
+};
 
+/** 
+ * Adds an item.
+ *
+ * @since 0.1.0
+ *
+ * @param {CanvasItem} item A canvas item.
+ */
+Canvas.prototype.addItem = function (item)
+{
     if (this._renderer === 'svg')
     {
-        item.context = this._g.createElement(type);
+        item.context = this._g.createElement(item.type);
         this.canvas.appendChild(item.context);
     }
     else item.context = this._ctx;
 
     this._items.push(item);
     return item;
+};
+
+/** 
+ * Clone an item.
+ *
+ * @since 0.1.0
+ *
+ * @param {CanvasItem} item A canvas item.
+ */
+Canvas.prototype.clone = function (item)
+{
+
+};
+
+/** 
+ * Returns a canvas item.
+ *
+ * @since 0.1.0
+ * @private
+ *
+ * @param {string} type     The shape type.
+ * @param {Object} coords   The coords.
+ *
+ * @return {CanvasItem}     The canvas item.
+ */
+Canvas.prototype.getItem = function (type, coords)
+{
+    var item = new CanvasItem(type);
+    item.coords = coords;
+    return this.addItem(item);
 };
 
 /** 

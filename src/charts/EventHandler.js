@@ -95,7 +95,6 @@ function EventHandler (options)
     {
         if (options[eventType] !== undefined) 
         {
-            window.console.log(eventType);
             options[eventType](
             {
                 event   : event,

@@ -28,34 +28,81 @@ var isNumber = function (n)
 };
 
 /** 
- * Extend an object a with the properties of object b.
+ * Clone a simple object.
  *
  * @since 0.1.0
  *
- * @param {Object} a The object to be extended.
- * @param {Object} b The object to add to the first one.
+ * @param {Object} obj The object to be cloned.
+ * @param {Object} [copy] An optional class.
+ * @param {Object} A clone of the object.
  */
-var extendObject = function (a, b)
+var clone = function (obj, copy) 
 {
-    for (var key in b)
+    copy = copy !== undefined ? copy : {};
+
+    // Handle the 3 simple types, and null or undefined
+    if (null === obj || "object" !== typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) 
     {
-        if (b.hasOwnProperty(key)) a[key] = b[key];
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) 
+    {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) 
+        {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) 
+    {
+        copy = {};
+        for (var attr in obj) 
+        {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
     }
 };
 
 /** 
- * Add properties to object a from object b if object a does not already contain the properties.
+ * Extend an object objA with the properties of object objB.
  *
  * @since 0.1.0
  *
- * @param {Object} a The object that the properties are added to.
- * @param {Object} b The object that provides the properties.
+ * @param {Object} objA The object to be extended.
+ * @param {Object} objB The object to add to the first one.
  */
-var addProperties = function (a, b)
+var extendObject = function (objA, objB)
 {
-    for (var key in b)
+    for (var key in objB)
     {
-        if (a[key] === undefined && b.hasOwnProperty(key)) a[key] = b[key];
+        if (objB.hasOwnProperty(key)) objA[key] = objB[key];
+    }
+};
+
+/** 
+ * Add properties to object objA from object objB if object a does not already contain the properties.
+ *
+ * @since 0.1.0
+ *
+ * @param {Object} objA The object that the properties are added to.
+ * @param {Object} objB The object that provides the properties.
+ */
+var addProperties = function (objA, objB)
+{
+    for (var key in objB)
+    {
+        if (objA[key] === undefined && objB.hasOwnProperty(key)) objA[key] = objB[key];
     }
 };
 
@@ -80,6 +127,7 @@ var extendClass = function(baseClass, subClass)
 module.exports = 
 {
     isNumber        : isNumber,
+    clone           : clone,
     extendObject    : extendObject,
     addProperties   : addProperties,
     extendClass     : extendClass

@@ -23,7 +23,7 @@ var colorUtil = require('../utils/color');
  * @since 0.1.0
  * @constructor
  *
- * @param {string} type                 The shape type.
+ * @param {string} type The shape type.
  */
 function CanvasItem (type)
 {
@@ -142,6 +142,19 @@ CanvasItem.prototype.style = function (options)
         if (options.lineOpacity !== undefined)  this.lineOpacity = options.lineOpacity;
     }
     return this;
+};
+
+/** 
+ * Return a clone of this canvas item.
+ *
+ * @since 0.1.0
+ *
+ * @return {CanvasItem} <code>this</code>.
+ */
+CanvasItem.prototype.clone = function ()
+{
+    var item = new CanvasItem(this.type);
+    return util.clone(this, item);
 };
 
 module.exports = CanvasItem;

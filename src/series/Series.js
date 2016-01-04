@@ -229,12 +229,6 @@ Series.prototype.update = function()
  */
 Series.prototype.render = function()
 {
-    /*var n = this._items.length;
-    for (var i = 0; i < n; i++)  
-    {
-        var item = this._items[i];
-        this.canvas.drawItem(item);
-    }*/
     this.canvas.render();
 };
 
@@ -251,22 +245,7 @@ Series.prototype.render = function()
  */
 Series.prototype.hitItem = function(x, y)
 {
-    var nearestItem;
-    var shortestDistance = Infinity;
-    var n = this._items.length;
-    for (var i = 0; i < n; i++)  
-    {
-        var item = this._items[i];
-        var dx = x - item.coords.cx;
-        var dy = y - item.coords.cy;
-        var distanceToPoint = Math.pow(dx, 2) + Math.pow(dy, 2);
-        if (distanceToPoint < shortestDistance) 
-        {
-            nearestItem = item;
-            shortestDistance = distanceToPoint;
-        }
-    }
-    return nearestItem;
+    return this.canvas.nearestItem(x, y);
 };
 
 module.exports = Series;
