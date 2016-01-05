@@ -40,7 +40,7 @@ function EventHandler (options)
     function mouseEventHandler (event)
     {
         var type = event.type;
-        type.replace(/^(on\.)/,""); // For event types with 'on' prefix.
+        type.replace(/^(on\.)/,''); // For event types with 'on' prefix.
 
         var pixelCoords = getPixelCoords(event);
         switch(type)

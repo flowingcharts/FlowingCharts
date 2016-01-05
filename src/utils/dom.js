@@ -90,15 +90,15 @@ var removeAttr = function (element, attributes)
  * @since 0.1.0
  * 
  * @param {HTMLElement} element     The target element.
- * @param {object}      attributes  The list of style attributes.
+ * @param {object}      styles      The list of style attributes.
  */
-var style = function (element, attributes)
+var style = function (element, styles)
 {
-    for (var property in attributes) 
+    for (var property in styles) 
     {
-        if (attributes.hasOwnProperty(property))  
+        if (styles.hasOwnProperty(property))  
         {
-            element.style[property] = attributes[property];
+            element.style[property] = styles[property];
         }
     }
 };
@@ -117,7 +117,6 @@ var createElement = function (type, attributes)
 {
     var htmlElement = document.createElement(type);
     attr(htmlElement, attributes);
-    style(htmlElement, attributes.style);
     return htmlElement;
 };
 
@@ -174,7 +173,7 @@ var off = function (element, types, listener)
  * 
  * @return {Object}     {x:number, y:number}.
  */
-function getPosition (element) 
+var getPosition = function (element) 
 {
     var xPosition = 0;
     var yPosition = 0;
@@ -185,7 +184,7 @@ function getPosition (element)
         element     = element.offsetParent;
     }
     return {x:xPosition, y:yPosition};
-}
+};
 
 module.exports = 
 {

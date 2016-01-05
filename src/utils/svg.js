@@ -249,15 +249,15 @@ function getCoordsAsString (arrCoords)
  * @since 0.1.0
  * @private
  *
- * @param {SVGElement}          element                     The svg element.
- * @param {Object}              [style]                     The style properties.
- * @param {string}              [style.fillColor = none]    The fill color.
- * @param {number}              [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
- * @param {string}              [style.lineColor = none]    The line color.
- * @param {number}              [style.lineWidth = 1]       The line width.
- * @param {string}              [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
- * @param {string}              [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
- * @param {number}              [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {SVGElement}  element                     The svg element.
+ * @param {Object}      [style]                     The style properties.
+ * @param {string}      [style.fillColor = none]    The fill color.
+ * @param {number}      [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {string}      [style.lineColor = none]    The line color.
+ * @param {number}      [style.lineWidth = 1]       The line width.
+ * @param {string}      [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
+ * @param {string}      [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
+ * @param {number}      [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
  */
 function draw(element, style)
 {

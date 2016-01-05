@@ -159,17 +159,25 @@ Chart.prototype.options = function(options)
         this._interactionCanvas = this.addCanvas();
 
         // Background elements.
-        if (this._options.background !== undefined) this._background = this._backgroundCanvas.rect().style(this._options.background);
+        if (this._options.background !== undefined) 
+        {
+            this._background = this._backgroundCanvas.rect();
+            this._background.style = this._options.background;
+        }
 
         // Border elements.
         util.addProperties(this._options.borderTop,    this._options.border);
         util.addProperties(this._options.borderRight,  this._options.border);
         util.addProperties(this._options.borderBottom, this._options.border);
         util.addProperties(this._options.borderLeft,   this._options.border);
-        this._borderTop    = this._backgroundCanvas.line().style(this._options.borderTop);
-        this._borderRight  = this._backgroundCanvas.line().style(this._options.borderRight);
-        this._borderBottom = this._backgroundCanvas.line().style(this._options.borderBottom);
-        this._borderLeft   = this._backgroundCanvas.line().style(this._options.borderLeft);
+        this._borderTop             = this._backgroundCanvas.line();
+        this._borderRight           = this._backgroundCanvas.line();
+        this._borderBottom          = this._backgroundCanvas.line();
+        this._borderLeft            = this._backgroundCanvas.line();
+        this._borderTop.style       = this._options.borderTop;
+        this._borderRight.style     = this._options.borderRight;
+        this._borderBottom.style    = this._options.borderBottom;
+        this._borderLeft.style      = this._options.borderLeft;
 
         // Padding elements.
         this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
@@ -206,19 +214,11 @@ Chart.prototype.options = function(options)
                 me._interactionCanvas.empty();
                 if (hitItem !== undefined) 
                 {
-                    var highlightItem = hitItem.clone();
+                    var highlightItem = util.clone(hitItem);
                     me._interactionCanvas.addItem(highlightItem);
 
-                    highlightItem.lineWidth = 3;
-                    highlightItem.lineColor = '#cccccc';
-
-
-                   /* highlightItem.style(
-                    {
-                        lineWidth : 3,
-                        lineColor : '#cccccc'
-                    });*/
-
+                    highlightItem.style.lineWidth = 3;
+                    highlightItem.style.lineColor = '#cccccc';
                     highlightItem.coords.size = highlightItem.coords.size * 1.3;
                     window.console.log(highlightItem);
 
@@ -289,8 +289,13 @@ function getCoords(coordinateSystem)
  */
 function getCanvasContainer(renderer)
 {
-    if (renderer === 'svg') return svg.createElement('svg');                                    // SVG.
-    else                    return dom.createElement('div', {style : {position : 'relative'}}); // Canvas.
+    if (renderer === 'svg') return svg.createElement('svg');    // SVG.
+    else                   
+    {
+        var div = dom.createElement('div');                     // Canvas.
+        dom.style(div, {position : 'relative'});
+        return div;
+    } 
     // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
 }
 

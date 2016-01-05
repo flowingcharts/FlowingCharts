@@ -195,9 +195,9 @@ Series.prototype.update = function()
 
         if (util.isNumber(x) && util.isNumber(y))
         {
-            var item = this.canvas.marker(shape, x, y, markerSize)
-            //var item = this.canvas.shape(shape, x, y, markerSize, markerSize)
-            .style(
+            var item = this.canvas.marker(shape, x, y, markerSize);
+            //var item = this.canvas.shape(shape, x, y, markerSize, markerSize);
+            item.style = 
             {
                 fillColor   : dataItem[this._options.colorField] !== undefined ? dataItem[this._options.colorField] : this._options.fillColor,
                 fillOpacity : this._options.fillOpacity,
@@ -206,7 +206,7 @@ Series.prototype.update = function()
                 lineJoin    : this._options.lineJoin,
                 lineCap     : this._options.lineCap,
                 lineOpacity : this._options.lineOpacity
-            });
+            };
 
             this._items.push(item);
 

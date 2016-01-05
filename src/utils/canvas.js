@@ -36,10 +36,8 @@ var isSupported = function ()
  */
 var getCanvas = function ()
 {
-    var canvas = dom.createElement('canvas', 
-    {
-        style : {position:'absolute', left:0, right:0}
-    });
+    var canvas = dom.createElement('canvas'); 
+    dom.style(canvas, {position:'absolute', left:0, right:0});
     return canvas;
 };
 
