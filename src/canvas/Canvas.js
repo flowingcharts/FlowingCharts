@@ -347,7 +347,11 @@ Canvas.prototype.nearestItem = function(x, y)
         var distanceToPoint = Math.pow(dx, 2) + Math.pow(dy, 2);
         if (distanceToPoint < shortestDistance) 
         {
-            nearestItem = item;
+            nearestItem = 
+            {
+                item        : item,
+                distance    : distanceToPoint,
+            };
             shortestDistance = distanceToPoint;
         }
     }

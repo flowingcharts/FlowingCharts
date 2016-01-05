@@ -205,10 +205,16 @@ Chart.prototype.options = function(options)
             mousemove : function (dataEvent)
             {
                 var hitItem;
+                var shortestDistance = Infinity;
                 for (var i = 0; i < me._series.length; i++)  
                 {
                     var s = me._series[i];
-                    hitItem = s.hitItem(dataEvent.dataX, dataEvent.dataY);
+                    var hitEvent = s.hitItem(dataEvent.dataX, dataEvent.dataY);
+                    if (hitEvent.distance < shortestDistance) 
+                    {
+                        hitItem = hitEvent.item; 
+                        shortestDistance = hitEvent.distance;
+                    }
                 }
 
                 me._interactionCanvas.empty();
@@ -217,9 +223,10 @@ Chart.prototype.options = function(options)
                     var highlightItem = util.cloneObject(hitItem);
                     me._interactionCanvas.addItem(highlightItem);
 
-                    highlightItem.style.lineWidth = 3;
-                    highlightItem.style.lineColor = '#cccccc';
-                    highlightItem.coords.size = highlightItem.coords.size * 1.3;
+                    highlightItem.style.lineWidth = 5;
+                    highlightItem.style.lineColor = highlightItem.style.fillColor;
+                    highlightItem.style.fillColor = undefined;
+                    highlightItem.style.lineOpacity = 0.7;
                     window.console.log(highlightItem);
 
                     me._interactionCanvas.render();
