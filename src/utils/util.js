@@ -28,17 +28,16 @@ var isNumber = function (n)
 };
 
 /** 
- * Clone a simple object.
+ * Clone an object literal.
  *
  * @since 0.1.0
  *
  * @param {Object} obj The object to be cloned.
- * @param {Object} [copy] An optional class.
  * @param {Object} A clone of the object.
  */
-var clone = function (obj, copy) 
+var cloneObject = function (obj) 
 {
-    copy = copy !== undefined ? copy : {};
+    var copy = {};
 
     // Handle the 3 simple types, and null or undefined
     if (null === obj || "object" !== typeof obj) return obj;
@@ -57,7 +56,7 @@ var clone = function (obj, copy)
         copy = [];
         for (var i = 0, len = obj.length; i < len; i++) 
         {
-            copy[i] = clone(obj[i]);
+            copy[i] = cloneObject(obj[i]);
         }
         return copy;
     }
@@ -68,7 +67,7 @@ var clone = function (obj, copy)
         copy = {};
         for (var attr in obj) 
         {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+            if (obj.hasOwnProperty(attr)) copy[attr] = cloneObject(obj[attr]);
         }
         return copy;
     }
@@ -127,7 +126,7 @@ var extendClass = function(baseClass, subClass)
 module.exports = 
 {
     isNumber        : isNumber,
-    clone           : clone,
+    cloneObject     : cloneObject,
     extendObject    : extendObject,
     addProperties   : addProperties,
     extendClass     : extendClass

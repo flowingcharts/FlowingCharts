@@ -112,12 +112,12 @@ Canvas.prototype.setSize = function (w, h)
  *
  * @since 0.1.0
  *
- * @param {string} type             The marker type.
- * @param {number} cx               The x position of the center of the marker (data units).
- * @param {number} cy               The y position of the center of the marker (data units).
- * @param {number} size             The size of the marker (pixel units).
+ * @param {string} type     The marker type.
+ * @param {number} [cx]     The x position of the center of the marker (data units).
+ * @param {number} [cy]     The y position of the center of the marker (data units).
+ * @param {number} [size]   The size of the marker (pixel units).
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.marker = function (type, cx, cy, size)
 {
@@ -131,13 +131,13 @@ Canvas.prototype.marker = function (type, cx, cy, size)
  *
  * @since 0.1.0
  *
- * @param {string} type             The shape type.
- * @param {number} x                The x position of the top left corner (data units).
- * @param {number} y                The y position of the top left corner (data units).
- * @param {number} w                The width (data units).
- * @param {number} h                The height (data units).
+ * @param {string} type The shape type.
+ * @param {number} [x]  The x position of the top left corner (data units).
+ * @param {number} [y]  The y position of the top left corner (data units).
+ * @param {number} [w]  The width (data units).
+ * @param {number} [h]  The height (data units).
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.shape = function (type, x, y, w, h)
 {
@@ -151,12 +151,12 @@ Canvas.prototype.shape = function (type, x, y, w, h)
  *
  * @since 0.1.0
  *
- * @param {number} cx               The x position of the center of the circle.
- * @param {number} cy               The y position of the center of the circle
- * @param {number} r                The radius of the circle.
+ * @param {number} [cx]             The x position of the center of the circle.
+ * @param {number} [cy]             The y position of the center of the circle
+ * @param {number} [r]              The radius of the circle.
  * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.circle = function (cx, cy, r, units)
 {
@@ -168,13 +168,13 @@ Canvas.prototype.circle = function (cx, cy, r, units)
  *
  * @since 0.1.0
  *
- * @param {number} cx               The x position of the center of the ellipse.
- * @param {number} cy               The y position of the center of the ellipse
- * @param {number} rx               The x radius of the ellipse.
- * @param {number} ry               The y radius of the ellipse.
+ * @param {number} [cx]             The x position of the center of the ellipse.
+ * @param {number} [cy]             The y position of the center of the ellipse
+ * @param {number} [rx]             The x radius of the ellipse.
+ * @param {number} [ry]             The y radius of the ellipse.
  * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
 {
@@ -186,13 +186,13 @@ Canvas.prototype.ellipse = function (cx, cy, rx, ry, units)
  *
  * @since 0.1.0
  *
- * @param {number} x                The x position of the top left corner.
- * @param {number} y                The y position of the top left corner.
- * @param {number} w                The width.
- * @param {number} h                The height.
+ * @param {number} [x]              The x position of the top left corner.
+ * @param {number} [y]              The y position of the top left corner.
+ * @param {number} [w]              The width.
+ * @param {number} [h]              The height.
  * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.rect = function (x, y, w, h, units)
 {
@@ -204,13 +204,13 @@ Canvas.prototype.rect = function (x, y, w, h, units)
  *
  * @since 0.1.0
  *
- * @param {number} x1               The x position of point 1.
- * @param {number} y1               The y position of point 1.
- * @param {number} x2               The x position of point 2.
- * @param {number} y2               The y position of point 2.
+ * @param {number} [x1]             The x position of point 1.
+ * @param {number} [y1]             The y position of point 1.
+ * @param {number} [x2]             The x position of point 2.
+ * @param {number} [y2]             The y position of point 2.
  * @param {number} [units = pixel]  The units - 'pixel' or 'data'.
  *
- * @return {Object}             A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.line = function (x1, y1, x2, y2, units)
 {
@@ -225,7 +225,7 @@ Canvas.prototype.line = function (x1, y1, x2, y2, units)
  * @param {number[]}    arrCoords       An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
  * @param {number}      [units = pixel] The units - 'pixel' or 'data'.
  *
- * @return {Object}                 A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.polyline = function (arrCoords, units)
 {
@@ -240,7 +240,7 @@ Canvas.prototype.polyline = function (arrCoords, units)
  * @param {number[]}    arrCoords       An array of xy positions of the form [x1, y1, x2, y2, x3, y3, x4, y4...].
  * @param {number}      [units = pixel] The units - 'pixel' or 'data'.
  *
- * @return {Object}                 A canvas item.
+ * @return {Object} A canvas item.
  */
 Canvas.prototype.polygon = function (arrCoords, units)
 {
@@ -372,18 +372,6 @@ Canvas.prototype.addItem = function (item)
 
     this._items.push(item);
     return item;
-};
-
-/** 
- * Clone an item.
- *
- * @since 0.1.0
- *
- * @param {Object} item A canvas item.
- */
-Canvas.prototype.clone = function (item)
-{
-
 };
 
 /** 

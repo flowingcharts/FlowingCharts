@@ -214,7 +214,7 @@ Chart.prototype.options = function(options)
                 me._interactionCanvas.empty();
                 if (hitItem !== undefined) 
                 {
-                    var highlightItem = util.clone(hitItem);
+                    var highlightItem = util.cloneObject(hitItem);
                     me._interactionCanvas.addItem(highlightItem);
 
                     highlightItem.style.lineWidth = 3;
