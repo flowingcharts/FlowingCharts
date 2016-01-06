@@ -274,8 +274,7 @@ Chart.prototype.addEventHandler = function (options)
                     highlightItem.style.lineColor   = highlightItem.style.fillColor;
                     highlightItem.style.lineWidth   = 2;
                     highlightItem.style.lineOpacity = 1;
-                    highlightItem.style.fillOpacity = 0;
-                    window.console.log(highlightItem);
+                    //window.console.log(highlightItem);
                 }
                 else if (highlightItem.shape === true)
                 {

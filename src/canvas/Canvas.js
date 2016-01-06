@@ -325,6 +325,44 @@ Canvas.prototype.drawItem = function (item)
 };
 
 /** 
+ * Adds an item.
+ *
+ * @since 0.1.0
+ *
+ * @param {Object} item A canvas item.
+ *
+ * @return {Object} The canvas item.
+ */
+Canvas.prototype.addItem = function (item)
+{
+    if (this._renderer === 'svg')
+    {
+        item.context = this._g.createElement(item.type);
+        this.canvas.appendChild(item.context);
+    }
+    else item.context = this._ctx;
+
+    this._items.push(item);
+    return item;
+};
+
+/** 
+ * Returns a canvas item.
+ *
+ * @since 0.1.0
+ * @private
+ *
+ * @param {string} type     The shape type.
+ * @param {Object} coords   The coords.
+ *
+ * @return {Object} The canvas item.
+ */
+Canvas.prototype.getItem = function (type, coords)
+{
+    return this.addItem({type:type, coords:coords});
+};
+
+/** 
  * Returns the nearest item to the given coords.
  *
  * @since 0.1.0
@@ -356,42 +394,6 @@ Canvas.prototype.nearestItem = function(x, y)
         }
     }
     return nearestItem;
-};
-
-/** 
- * Adds an item.
- *
- * @since 0.1.0
- *
- * @param {Object} item A canvas item.
- */
-Canvas.prototype.addItem = function (item)
-{
-    if (this._renderer === 'svg')
-    {
-        item.context = this._g.createElement(item.type);
-        this.canvas.appendChild(item.context);
-    }
-    else item.context = this._ctx;
-
-    this._items.push(item);
-    return item;
-};
-
-/** 
- * Returns a canvas item.
- *
- * @since 0.1.0
- * @private
- *
- * @param {string} type     The shape type.
- * @param {Object} coords   The coords.
- *
- * @return {Object} The canvas item.
- */
-Canvas.prototype.getItem = function (type, coords)
-{
-    return this.addItem({type:type, coords:coords});
 };
 
 /** 
