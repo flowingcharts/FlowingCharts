@@ -124,17 +124,25 @@ Chart.prototype.options = function(options)
         };
 
         // Extend default options with passed in options.
-        if (options.chart.border !== undefined) util.addProperties(options.chart.border, this._options.border);
+        if (options.chart.border !== undefined) util.extendObject(options.chart.border, this._options.border, false);
         util.extendObject(this._options, options.chart);
 
         // Holds the canvases.
         this._arrCanvas = [];
 
-        // Coordinate system.
-        this._coords = getCoords(this._options.coordinateSystem);
+        // Get the coords object for the given coordinate system.
+        if (this._options.coordinateSystem === 'polar') this._coords = new PolarCoords();     // Polar.
+        else                                            this._coords = new CartesianCoords(); // Cartesian.    
 
         // Container for holding the drawing canvases.
-        this._canvasContainer = getCanvasContainer(this._options.renderer);
+        if (this._options.renderer === 'svg') 
+            this._canvasContainer = svg.createElement('svg');   // SVG.
+        else                   
+        {
+            // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
+            this._canvasContainer  = dom.createElement('div');
+            dom.style(this._canvasContainer , {position : 'relative'});
+        } 
         dom.appendChild(this._options.container, this._canvasContainer);
 
         // Background canvas.
@@ -166,10 +174,10 @@ Chart.prototype.options = function(options)
         }
 
         // Border elements.
-        util.addProperties(this._options.borderTop,    this._options.border);
-        util.addProperties(this._options.borderRight,  this._options.border);
-        util.addProperties(this._options.borderBottom, this._options.border);
-        util.addProperties(this._options.borderLeft,   this._options.border);
+        util.extendObject(this._options.borderTop,    this._options.border, false);
+        util.extendObject(this._options.borderRight,  this._options.border, false);
+        util.extendObject(this._options.borderBottom, this._options.border, false);
+        util.extendObject(this._options.borderLeft,   this._options.border, false);
         this._borderTop             = this._backgroundCanvas.line();
         this._borderRight           = this._backgroundCanvas.line();
         this._borderBottom          = this._backgroundCanvas.line();
@@ -267,44 +275,6 @@ Chart.prototype.addCanvas = function()
     this._arrCanvas.push(canvas);
     return canvas;
 };
-
-/** 
- * Get the coords object for the given coordinate system.
- *
- * @since 0.1.0
- * @private
- *
- * @param {string} [coordinateSystem = cartesian] The coordinate system 'cartesian' or 'polar'.
- *
- * @return {CartesianCoords|PolarCoords}          The container.
- */
-function getCoords(coordinateSystem)
-{
-    if (coordinateSystem === 'polar') return new PolarCoords();     // Polar.
-    else                              return new CartesianCoords(); // Cartesian.    
-}
-
-/** 
- * Returns a container for holding canvases.
- *
- * @since 0.1.0
- * @private
- *
- * @param {string} [renderer = canvas] The renderer 'svg' or 'canvas'.
- *
- * @return {HTMLElement|SVGElement}    The container.
- */
-function getCanvasContainer(renderer)
-{
-    if (renderer === 'svg') return svg.createElement('svg');    // SVG.
-    else                   
-    {
-        var div = dom.createElement('div');                     // Canvas.
-        dom.style(div, {position : 'relative'});
-        return div;
-    } 
-    // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
-}
 
 /** 
  * Set the size of the canvas.

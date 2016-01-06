@@ -78,30 +78,22 @@ var cloneObject = function (obj)
  *
  * @since 0.1.0
  *
- * @param {Object} objA The object to be extended.
- * @param {Object} objB The object to add to the first one.
+ * @param {Object}  objA                            The object to be extended.
+ * @param {Object}  objB                            The object whose properties will be added to objA.
+ * @param {Boolean} [overwriteProperties = true]    Should objA properties be overwritten if they already exist.
  */
-var extendObject = function (objA, objB)
+var extendObject = function (objA, objB, overwriteProperties)
 {
     for (var key in objB)
     {
-        if (objB.hasOwnProperty(key)) objA[key] = objB[key];
-    }
-};
-
-/** 
- * Add properties to object objA from object objB if object a does not already contain the properties.
- *
- * @since 0.1.0
- *
- * @param {Object} objA The object that the properties are added to.
- * @param {Object} objB The object that provides the properties.
- */
-var addProperties = function (objA, objB)
-{
-    for (var key in objB)
-    {
-        if (objA[key] === undefined && objB.hasOwnProperty(key)) objA[key] = objB[key];
+         if (objB.hasOwnProperty(key))
+         {
+            if (overwriteProperties === false)
+            {
+                if (objA[key] === undefined) objA[key] = objB[key];
+            } 
+            else objA[key] = objB[key];
+         }
     }
 };
 
@@ -128,6 +120,5 @@ module.exports =
     isNumber        : isNumber,
     cloneObject     : cloneObject,
     extendObject    : extendObject,
-    addProperties   : addProperties,
     extendClass     : extendClass
 };
