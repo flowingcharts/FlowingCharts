@@ -245,51 +245,29 @@ var polygon = function (ctx, arrCoords, style)
  * @param {HtmlCanvasContext}   ctx                         The canvas context to draw to.
  * @param {Object}              [style]                     The style properties.
  * @param {string}              [style.fillColor]           The fill color.
- * @param {number}              [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {number}              [style.fillOpacity = 1]     The fill opacity.
  * @param {string}              [style.lineColor]           The line color.
  * @param {number}              [style.lineWidth = 1]       The line width.
  * @param {string}              [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
  * @param {string}              [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
- * @param {number}              [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {number}              [style.lineOpacity = 1]     The line opacity. Overrides any alpha value on the fill color.
  */
 function draw (ctx, style)
 {
     // Fill.
-    if (style.fillColor !== undefined)
+    if (style.fillColor !== undefined && style.fillOpacity !== 0)
     {
-        var fillColor     = style.fillColor;
-        var fillOpacity   = style.fillOpacity !== undefined ? style.fillOpacity : 1;
-
-        if (fillOpacity < 1)
-        {
-            var rgbaFillStyle = fillColor;
-            if (colorUtil.isRGBA(rgbaFillStyle) === false) rgbaFillStyle = colorUtil.toRGBA(fillColor, fillOpacity);
-            ctx.fillStyle = rgbaFillStyle;       
-        }
-        else ctx.fillStyle = fillColor; 
+        ctx.fillStyle   = style.fillOpacity !== undefined ? colorUtil.toRGBA(style.fillColor, style.fillOpacity) : style.fillColor;
         ctx.fill();
     }
 
     // Stroke.
-    if (style.lineColor !== undefined && style.lineWidth !== 0)
+    if (style.lineColor !== undefined && style.lineWidth !== 0 && style.lineOpacity !== 0)
     {
-        var lineColor     = style.lineColor;
-        var lineWidth     = style.lineWidth !== undefined ? style.lineWidth : 1;
-        var lineJoin      = style.lineJoin !== undefined ? style.lineJoin : 'round';
-        var lineCap       = style.lineCap !== undefined ? style.lineCap : 'butt';
-        var lineOpacity   = style.lineOpacity !== undefined ? style.lineOpacity : 1;
-
-        if (lineOpacity < 1)
-        {
-            var rgbaLineStyle = lineColor;
-            if (colorUtil.isRGBA(rgbaLineStyle) === false) rgbaLineStyle = colorUtil.toRGBA(lineColor, lineOpacity);
-            ctx.strokeStyle = rgbaLineStyle;
-        }
-        else ctx.strokeStyle = lineColor;
-
-        if (ctx.lineWidth !== undefined) ctx.lineWidth = lineWidth;
-        if (ctx.lineJoin !== undefined)  ctx.lineJoin  = lineJoin;
-        if (ctx.lineCap !== undefined)   ctx.lineCap   = lineCap;
+        ctx.lineWidth   = style.lineWidth   !== undefined ? style.lineWidth : 1;
+        ctx.lineJoin    = style.lineJoin    !== undefined ? style.lineJoin  : 'round';
+        ctx.lineCap     = style.lineCap     !== undefined ? style.lineCap   : 'butt';
+        ctx.strokeStyle = style.lineOpacity !== undefined ? colorUtil.toRGBA(style.lineColor, style.lineOpacity) : style.lineColor;
         ctx.stroke();
     }
 }

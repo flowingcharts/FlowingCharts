@@ -43,6 +43,12 @@ function EventHandler (options)
         type.replace(/^(on\.)/,''); // For event types with 'on' prefix.
 
         var pixelCoords = getPixelCoords(event);
+        if (pixelCoords.x >= 0 && 
+            pixelCoords.x <= coords.viewPort().width() && 
+            pixelCoords.y >= 0 && 
+            pixelCoords.y <= coords.viewPort().height())  isOver = true;
+        else                                              isOver = false;
+
         switch(type)
         {
             case 'mousemove' : 
@@ -118,8 +124,6 @@ function EventHandler (options)
     {
         var x = event.clientX - elementPosition.x - coords.viewPort().x();
         var y = event.clientY - elementPosition.y - coords.viewPort().y();
-        if (x >= 0 && x <= coords.viewPort().width() && y >= 0 && y <= coords.viewPort().height())  isOver = true;
-        else                                                                                        isOver = false;
         return {x:x, y:y};
     }
 

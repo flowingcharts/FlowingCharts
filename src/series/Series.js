@@ -150,7 +150,7 @@ Series.prototype.options = function(options)
             lineWidth   : undefined, 
             lineJoin    : undefined, 
             lineCap     : undefined, 
-            lineOpacity : 1
+            lineOpacity : undefined
         };   
 
         // Extend default options with passed in options.
@@ -232,9 +232,8 @@ Series.prototype.render = function()
     this.canvas.render();
 };
 
-
 /** 
- * Returns any item that is hit by the given coords.
+ * Returns the nearest item to the given coords.
  *
  * @since 0.1.0
  *
@@ -243,7 +242,7 @@ Series.prototype.render = function()
  *
  * @return {CanvasItem} The canvas item.
  */
-Series.prototype.hitItem = function(x, y)
+Series.prototype.nearestItem = function(x, y)
 {
     return this.canvas.nearestItem(x, y);
 };

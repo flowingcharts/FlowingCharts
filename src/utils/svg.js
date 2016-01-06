@@ -8,9 +8,12 @@
  * @copyright       FlowingCharts 2015
  * @module          svg 
  * @requires        utils/dom
+ * @requires        utils/color
  */
 
-var dom = require('../utils/dom');
+// Required modules.
+var dom       = require('../utils/dom');
+var colorUtil = require('../utils/color');
 
 /** 
  * Creates an svg element with the given attributes.
@@ -252,32 +255,35 @@ function getCoordsAsString (arrCoords)
  * @param {SVGElement}  element                     The svg element.
  * @param {Object}      [style]                     The style properties.
  * @param {string}      [style.fillColor = none]    The fill color.
- * @param {number}      [style.fillOpacity = 1]     The fill opacity. This is overriden by the fillColor if it contains an alpha value.
+ * @param {number}      [style.fillOpacity = 1]     The fill opacity. .
  * @param {string}      [style.lineColor = none]    The line color.
  * @param {number}      [style.lineWidth = 1]       The line width.
  * @param {string}      [style.lineJoin = round]    The line join, one of "bevel", "round", "miter".
  * @param {string}      [style.lineCap = butt]      The line cap, one of "butt", "round", "square".
- * @param {number}      [style.lineOpacity = 1]     The line opacity. This is overriden by the lineColor if it contains an alpha value.
+ * @param {number}      [style.lineOpacity = 1]     The line opacity. Overrides any alpha value on the fill color.
  */
 function draw(element, style)
 {
     // Fill.
     var fillColor   = style.fillColor !== undefined ? style.fillColor : 'none';
-    var fillOpacity = style.fillOpacity !== undefined ? style.fillOpacity : 1;
     var lineColor   = style.lineColor !== undefined ? style.lineColor : 'none';
     var lineWidth   = style.lineWidth !== undefined ? style.lineWidth : 1;
-    var lineOpacity = style.lineOpacity !== undefined ? style.lineOpacity : 1;
-    var lineJoin    = style.lineJoin !== undefined ? style.lineJoin : 'round';
-    var lineCap     = style.lineCap !== undefined ? style.lineCap : 'butt';
+    var lineJoin    = style.lineJoin  !== undefined ? style.lineJoin  : 'round';
+    var lineCap     = style.lineCap   !== undefined ? style.lineCap   : 'butt';
+
+    if (style.fillOpacity === 0) fillColor = 'none';
+    if (style.lineOpacity === 0) lineColor = 'none';
+
+    if (fillColor != 'none') fillColor = style.fillOpacity !== undefined ? colorUtil.toRGBA(fillColor, style.fillOpacity) : fillColor;
+    if (lineColor != 'none') lineColor = style.lineOpacity !== undefined ? colorUtil.toRGBA(lineColor, style.lineOpacity) : lineColor;
+
     dom.attr(element, 
     {
         'fill'            : fillColor,
-        'fill-opacity'    : fillOpacity,
         'stroke'          : lineColor,
         'stroke-width'    : lineWidth,
         'stroke-linejoin' : lineJoin,
         'stroke-linecap'  : lineCap,
-        'stroke-opacity'  : lineOpacity
     });
 }
 

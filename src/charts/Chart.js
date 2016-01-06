@@ -102,8 +102,6 @@ Chart.prototype.options = function(options)
 {
     if (arguments.length > 0)
     {
-        var me = this;
-
         this._options = // Default chart options.
         {
             container           : undefined,
@@ -145,8 +143,8 @@ Chart.prototype.options = function(options)
         } 
         dom.appendChild(this._options.container, this._canvasContainer);
 
-        // Background canvas.
-        this._backgroundCanvas = this.addCanvas();
+        // Chart formatting.
+        this.addChartFormatting(this._options);
 
         // Series.
         this._series = [];
@@ -166,89 +164,8 @@ Chart.prototype.options = function(options)
         // Interaction canvas.
         this._interactionCanvas = this.addCanvas();
 
-        // Background elements.
-        if (this._options.background !== undefined) 
-        {
-            this._background = this._backgroundCanvas.rect();
-            this._background.style = this._options.background;
-        }
-
-        // Border elements.
-        util.extendObject(this._options.borderTop,    this._options.border, false);
-        util.extendObject(this._options.borderRight,  this._options.border, false);
-        util.extendObject(this._options.borderBottom, this._options.border, false);
-        util.extendObject(this._options.borderLeft,   this._options.border, false);
-        this._borderTop             = this._backgroundCanvas.line();
-        this._borderRight           = this._backgroundCanvas.line();
-        this._borderBottom          = this._backgroundCanvas.line();
-        this._borderLeft            = this._backgroundCanvas.line();
-        this._borderTop.style       = this._options.borderTop;
-        this._borderRight.style     = this._options.borderRight;
-        this._borderBottom.style    = this._options.borderBottom;
-        this._borderLeft.style      = this._options.borderLeft;
-
-        // Padding elements.
-        this._options.paddingTop    = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-        this._options.paddingRight  = this._options.paddingRight !== undefined ? this._options.paddingRight : this._options.padding;
-        this._options.paddingBottom = this._options.paddingBottom !== undefined ? this._options.paddingBottom : this._options.padding;
-        this._options.paddingLeft   = this._options.paddingTop !== undefined ? this._options.paddingTop : this._options.padding;
-
-        // Event handler
-        var eventHandler = new EventHandler(
-        {
-            element : this._canvasContainer,
-            coords  : this._coords,
-            click : function (dataEvent)
-            {
-
-            },
-            mousedown : function (dataEvent)
-            {
-
-            },
-            mouseup : function (dataEvent)
-            {
-
-            },
-            mousemove : function (dataEvent)
-            {
-                var hitItem;
-                var shortestDistance = Infinity;
-                for (var i = 0; i < me._series.length; i++)  
-                {
-                    var s = me._series[i];
-                    var hitEvent = s.hitItem(dataEvent.dataX, dataEvent.dataY);
-                    if (hitEvent.distance < shortestDistance) 
-                    {
-                        hitItem = hitEvent.item; 
-                        shortestDistance = hitEvent.distance;
-                    }
-                }
-
-                me._interactionCanvas.empty();
-                if (hitItem !== undefined) 
-                {
-                    var highlightItem = util.cloneObject(hitItem);
-                    me._interactionCanvas.addItem(highlightItem);
-
-                    highlightItem.style.lineWidth = 5;
-                    highlightItem.style.lineColor = highlightItem.style.fillColor;
-                    highlightItem.style.fillColor = undefined;
-                    highlightItem.style.lineOpacity = 0.7;
-                    window.console.log(highlightItem);
-
-                    me._interactionCanvas.render();
-                }
-            },
-            mouseout : function (dataEvent)
-            {
-                me._interactionCanvas.empty();
-            },
-            mousedragstart : function (dataEvent)
-            {
-                me._interactionCanvas.empty();
-            }
-        });
+        // Event handler.
+        this.addEventHandler(this._options);
 
         // Set charts size to that of the container - it will subsequently be rendered.
         // TODO What happens if the container has padding applied to it.
@@ -261,7 +178,7 @@ Chart.prototype.options = function(options)
 };
 
 /** 
- * Adds a canvas.
+ * Add a canvas.
  *
  * @since 0.1.0
  * @private
@@ -274,6 +191,136 @@ Chart.prototype.addCanvas = function()
     canvas.appendTo(this._canvasContainer);   
     this._arrCanvas.push(canvas);
     return canvas;
+};
+
+/** 
+ * Add chart formatting.
+ *
+ * @since 0.1.0
+ * @private
+ */
+Chart.prototype.addChartFormatting = function (options)
+{
+    // Background canvas.
+    this._backgroundCanvas = this.addCanvas();
+
+    // Background elements.
+    if (options.background !== undefined) 
+    {
+        this._background = this._backgroundCanvas.rect();
+        this._background.style = options.background;
+    }
+
+    // Border elements.
+    util.extendObject(options.borderTop,    options.border, false);
+    util.extendObject(options.borderRight,  options.border, false);
+    util.extendObject(options.borderBottom, options.border, false);
+    util.extendObject(options.borderLeft,   options.border, false);
+    this._borderTop           = this._backgroundCanvas.line();
+    this._borderRight         = this._backgroundCanvas.line();
+    this._borderBottom        = this._backgroundCanvas.line();
+    this._borderLeft          = this._backgroundCanvas.line();
+    this._borderTop.style     = options.borderTop;
+    this._borderRight.style   = options.borderRight;
+    this._borderBottom.style  = options.borderBottom;
+    this._borderLeft.style    = options.borderLeft;
+
+    // Padding elements.
+    options.paddingTop    = options.paddingTop !== undefined ? options.paddingTop : options.padding;
+    options.paddingRight  = options.paddingRight !== undefined ? options.paddingRight : options.padding;
+    options.paddingBottom = options.paddingBottom !== undefined ? options.paddingBottom : options.padding;
+    options.paddingLeft   = options.paddingTop !== undefined ? options.paddingTop : options.padding;
+};
+
+/** 
+ * Add the event handler.
+ *
+ * @since 0.1.0
+ * @private
+ */
+Chart.prototype.addEventHandler = function (options)
+{
+    var me = this;
+
+    // Event handler
+    var eventHandler = new EventHandler(
+    {
+        element : this._canvasContainer,
+        coords  : this._coords,
+        click : function (dataEvent)
+        {
+
+        },
+        mousedown : function (dataEvent)
+        {
+
+        },
+        mouseup : function (dataEvent)
+        {
+
+        },
+        mousemove : function (dataEvent)
+        {
+            var nearestItem = me.nearestItem(dataEvent.dataX, dataEvent.dataY);
+
+            me._interactionCanvas.empty();
+            if (nearestItem !== undefined) 
+            {
+                var highlightItem = util.cloneObject(nearestItem);
+                me._interactionCanvas.addItem(highlightItem);
+
+                if (highlightItem.marker === true)
+                {
+                    highlightItem.style.lineColor   = highlightItem.style.fillColor;
+                    highlightItem.style.lineWidth   = 2;
+                    highlightItem.style.lineOpacity = 1;
+                    highlightItem.style.fillOpacity = 0;
+                    window.console.log(highlightItem);
+                }
+                else if (highlightItem.shape === true)
+                {
+
+                }
+
+                me._interactionCanvas.render();
+            }
+        },
+        mouseout : function (dataEvent)
+        {
+            me._interactionCanvas.empty();
+        },
+        mousedragstart : function (dataEvent)
+        {
+            me._interactionCanvas.empty();
+        }
+    });
+};
+
+/** 
+ * Returns the nearest item to the given coords.
+ *
+ * @since 0.1.0
+ *
+ * @param {number} x The x coord.
+ * @param {number} y The y coord.
+ *
+ * @return {CanvasItem} The canvas item.
+ */
+Chart.prototype.nearestItem = function(x, y)
+{
+    var nearestItem;
+    var shortestDistance = Infinity;
+    for (var i = 0; i < this._series.length; i++)  
+    {
+        var s = this._series[i];
+        var hitEvent = s.nearestItem(x, y);
+        if (hitEvent.distance < shortestDistance) 
+        {
+            nearestItem = hitEvent.item; 
+            shortestDistance = hitEvent.distance;
+        }
+    }
+    return nearestItem;
 };
 
 /** 
