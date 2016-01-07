@@ -23,6 +23,20 @@ var appendChild = function (parentElement, childElement)
 };
 
 /** 
+ * Appends text to the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ * @param {string}      text    The text to add
+ */
+var appendText = function (element, text)
+{
+    var textNode = document.createTextNode(text);                       
+    appendChild(element, textNode);
+};
+
+/** 
  * Removes an element.
  * 
  * @since 0.1.0
@@ -179,8 +193,8 @@ var getPosition = function (element)
     var yPosition = 0;
     while (element) 
     {
-        xPosition   += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-        yPosition   += (element.offsetTop - element.scrollTop + element.clientTop);
+        xPosition   += (element.getBoundingClientRect().left - element.scrollLeft + element.clientLeft);
+        yPosition   += (element.getBoundingClientRect().top - element.scrollTop + element.clientTop);
         element     = element.offsetParent;
     }
     return {x:xPosition, y:yPosition};
@@ -189,6 +203,7 @@ var getPosition = function (element)
 module.exports = 
 {
     appendChild     : appendChild,
+    appendText      : appendText,
     remove          : remove,
     empty           : empty,
     attr            : attr,

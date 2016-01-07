@@ -242,26 +242,38 @@ Chart.prototype.addEventHandler = function (options)
 {
     var me = this;
 
+    var tooltip = dom.createElement('div');
+    dom.style(tooltip, 
+    {
+        position    : 'absolute', 
+        fontSize    : '8', 
+        background  : 'rgba(255, 255, 255, 0.7)', 
+        padding     : '5px', 
+        whiteSpace  : 'nowrap'
+    });
+    dom.appendChild(window.document.body, tooltip);
+    dom.appendText(tooltip, 'This will be a tooltip');
+
     // Event handler
     var eventHandler = new EventHandler(
     {
         element : this._canvasContainer,
         coords  : this._coords,
-        click : function (dataEvent)
+        click : function (event)
         {
 
         },
-        mousedown : function (dataEvent)
+        mousedown : function (event)
         {
 
         },
-        mouseup : function (dataEvent)
+        mouseup : function (event)
         {
 
         },
-        mousemove : function (dataEvent)
+        mousemove : function (event)
         {
-            var nearestItem = me.nearestItem(dataEvent.dataX, dataEvent.dataY);
+            var nearestItem = me.nearestItem(event.dataX, event.dataY);
 
             me._interactionCanvas.empty();
             if (nearestItem !== undefined) 
@@ -280,14 +292,18 @@ Chart.prototype.addEventHandler = function (options)
 
                 }
 
+                tooltip.style.left   = event.pageX + 'px';
+                tooltip.style.top    = event.pageY + 'px';
+                tooltip.style.border = '1px solid ' + highlightItem.style.fillColor;
+
                 me._interactionCanvas.render();
             }
         },
-        mouseout : function (dataEvent)
+        mouseout : function (event)
         {
             me._interactionCanvas.empty();
         },
-        mousedragstart : function (dataEvent)
+        mousedragstart : function (event)
         {
             me._interactionCanvas.empty();
         }

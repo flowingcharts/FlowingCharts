@@ -107,7 +107,11 @@ function EventHandler (options)
                 pixelX  : pixelCoords.x,
                 pixelY  : pixelCoords.y,
                 dataX   : coords.getDataX(pixelCoords.x),
-                dataY   : coords.getDataY(pixelCoords.y)
+                dataY   : coords.getDataY(pixelCoords.y),
+                clientX : event.clientX,
+                clientY : event.clientY,
+                pageX   : event.pageX,
+                pageY   : event.pageY
             });
         }
     }

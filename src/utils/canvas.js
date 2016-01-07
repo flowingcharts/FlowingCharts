@@ -178,8 +178,8 @@ var rect = function (ctx, x, y, w, h, style)
 var line = function (ctx, x1, y1, x2, y2, style)
 {
     ctx.beginPath();
-    ctx.moveTo(x1 + 0.5, y1 + 0.5); // +0.5 to prevent antialiasing.
-    ctx.lineTo(x2 + 0.5, y2 + 0.5);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
     draw(ctx, style);
 };
 
