@@ -178,8 +178,8 @@ var rect = function (ctx, x, y, w, h, style)
 var line = function (ctx, x1, y1, x2, y2, style)
 {
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(x1 + 0.5, y1 + 0.5); // +0.5 to prevent antialiasing.
+    ctx.lineTo(x2 + 0.5, y2 + 0.5);
     draw(ctx, style);
 };
 
@@ -255,19 +255,19 @@ var polygon = function (ctx, arrCoords, style)
 function draw (ctx, style)
 {
     // Fill.
-    if (style.fillColor !== undefined && style.fillOpacity !== 0)
+    if (style.fillColor !== undefined)
     {
-        ctx.fillStyle   = style.fillOpacity !== undefined ? colorUtil.toRGBA(style.fillColor, style.fillOpacity) : style.fillColor;
+        ctx.fillStyle   = style.fillOpacity !== undefined ? colorUtil.toRGBA(style.fillColor, style.fillOpacity) : colorUtil.toRGBA(style.fillColor);
         ctx.fill();
     }
 
     // Stroke.
-    if (style.lineColor !== undefined && style.lineWidth !== 0 && style.lineOpacity !== 0)
+    if (style.lineColor !== undefined && style.lineWidth !== 0)
     {
         ctx.lineWidth   = style.lineWidth   !== undefined ? style.lineWidth : 1;
         ctx.lineJoin    = style.lineJoin    !== undefined ? style.lineJoin  : 'round';
         ctx.lineCap     = style.lineCap     !== undefined ? style.lineCap   : 'butt';
-        ctx.strokeStyle = style.lineOpacity !== undefined ? colorUtil.toRGBA(style.lineColor, style.lineOpacity) : style.lineColor;
+        ctx.strokeStyle = style.lineOpacity !== undefined ? colorUtil.toRGBA(style.lineColor, style.lineOpacity) : colorUtil.toRGBA(style.lineColor);
         ctx.stroke();
     }
 }

@@ -271,9 +271,7 @@ Chart.prototype.addEventHandler = function (options)
 
                 if (highlightItem.marker === true)
                 {
-                    highlightItem.style.lineColor   = highlightItem.style.fillColor;
-                    highlightItem.style.lineWidth   = 2;
-                    highlightItem.style.lineOpacity = 1;
+                    highlightItem.style.lineColor   = 'black';
                     //window.console.log(highlightItem);
                 }
                 else if (highlightItem.shape === true)

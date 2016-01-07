@@ -34,7 +34,7 @@ var util = require('../utils/util');
  * @param {string} [options.imageField = image]     The data property that contains the image value.
  * @param {string} [options.shape = circle]         The shape to use for rendering.
  * @param {string} [options.image]                  The image to use for rendering.
- * @param {string} [options.markerSize = 10]        The marker size.
+ * @param {string} [options.markerSize = 8]         The marker size.
  * @param {string} [options.fillColor = #ffffff]    The fill color.
  * @param {number} [options.fillOpacity = 1]        The fill opacity.
  * @param {string} [options.lineColor = #000000]    The line color.
@@ -115,7 +115,7 @@ function Series (canvas, options)
  * @param {string} [options.imageField = image]     The data property that contains the image value.
  * @param {string} [options.shape = circle]         The shape to use for rendering.
  * @param {string} [options.image = ]               The image to use for rendering.
- * @param {string} [options.markerSize = 10]        The marker size.
+ * @param {string} [options.markerSize = 8]         The marker size.
  * @param {string} [options.fillColor]              The fill color.
  * @param {number} [options.fillOpacity = 1]        The fill opacity.
  * @param {string} [options.lineColor]              The line color.
@@ -143,7 +143,7 @@ Series.prototype.options = function(options)
             imageField  : 'image',
             shape       : 'circle',
             image       : undefined,
-            markerSize  : 10,
+            markerSize  : 8,
             fillColor   : undefined, 
             fillOpacity : undefined,
             lineColor   : undefined,  

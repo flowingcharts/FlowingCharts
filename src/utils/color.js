@@ -187,8 +187,7 @@ var componentColors = function(rgba)
         g : Math.floor(arr[1]), 
         b : Math.floor(arr[2])
     };
-    if (arr.length > 3) o.a = arr[3];
-    return o;
+    return  o;
 };
 
 /**
@@ -199,21 +198,23 @@ var componentColors = function(rgba)
  * @param {string} c        The color.
  * @param {number} opacity  The opacity value 0 to 1.
  *
- * @return {string} An rgba color string 'rgba(255, 255, 255, 0.5)'.
+ * @return {string} An rgba color string 'rgba(255, 255, 255, 0.5)' or undefined if not a valid color.
  */
 var toRGBA = function(c, opacity)
 {
     var o;
-    if (isHex(c))       
-        o = hexToRGB(c);
+    if (isRGBA(c) && opacity === undefined)
+        return c; 
     else if (isRGB(c))
         o = componentColors(c); 
+    else if (isHex(c))       
+        o = hexToRGB(c);
     else if (isColorName(c))
     {
         var hex = colorNameToHex(c);
         o = hexToRGB(hex);
     }   
-    else return 'rgba(0,0,0,1)';
+    else return undefined;
     
     o.a = opacity !== undefined ? opacity : 1;  
     return 'rgba('+o.r+','+o.g+','+o.b+','+o.a+')';

@@ -265,17 +265,15 @@ function getCoordsAsString (arrCoords)
 function draw(element, style)
 {
     // Fill.
-    var fillColor   = style.fillColor !== undefined ? style.fillColor : 'none';
-    var lineColor   = style.lineColor !== undefined ? style.lineColor : 'none';
+    var fillColor = style.fillColor !== undefined ? colorUtil.toRGBA(style.fillColor) : 'none';
+    if (fillColor != 'none' && style.fillOpacity !== undefined) fillColor = colorUtil.toRGBA(fillColor, style.fillOpacity);
+
+    // Stroke.
     var lineWidth   = style.lineWidth !== undefined ? style.lineWidth : 1;
     var lineJoin    = style.lineJoin  !== undefined ? style.lineJoin  : 'round';
     var lineCap     = style.lineCap   !== undefined ? style.lineCap   : 'butt';
-
-    if (style.fillOpacity === 0) fillColor = 'none';
-    if (style.lineOpacity === 0) lineColor = 'none';
-
-    if (fillColor != 'none') fillColor = style.fillOpacity !== undefined ? colorUtil.toRGBA(fillColor, style.fillOpacity) : fillColor;
-    if (lineColor != 'none') lineColor = style.lineOpacity !== undefined ? colorUtil.toRGBA(lineColor, style.lineOpacity) : lineColor;
+    var lineColor   = style.lineColor !== undefined ? colorUtil.toRGBA(style.lineColor) : 'none';
+    if (lineColor != 'none' && style.lineOpacity !== undefined) lineColor = colorUtil.toRGBA(lineColor, style.lineOpacity);
 
     dom.attr(element, 
     {
