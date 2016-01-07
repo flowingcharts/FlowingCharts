@@ -38,7 +38,7 @@ var svg                 = require('../utils/svg');
  * @param {Object}      options                                 The chart options.
  * @param {HTMLElement} options.container                       The html element that will contain the chart.
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
- * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string}      [options.renderer = svg]                The graphics renderer. Possible values are 'canvas' or 'svg'.
  * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
  * @param {number}      [options.padding = 20]                  The chart padding.
  * @param {number}      [options.paddingTop]                    The chart top padding.
@@ -82,7 +82,7 @@ function Chart (options)
  * @param {Object}      options                                 The chart options.
  * @param {HTMLElement} options.container                       The html element that will contain the chart.
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
- * @param {string}      [options.renderer = canvas]             The graphics renderer. Possible values are 'canvas' or 'svg'.
+ * @param {string}      [options.renderer = svg]                The graphics renderer. Possible values are 'canvas' or 'svg'.
  * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
  * @param {number}      [options.padding = 20]                  The chart padding.
  * @param {number}      [options.paddingTop]                    The chart top padding.
@@ -106,7 +106,7 @@ Chart.prototype.options = function(options)
         {
             container           : undefined,
             coordinateSystem    : 'cartesian',
-            renderer            : 'canvas',
+            renderer            : 'svg',
             renderRate          : 20,
             padding             : 20,
             paddingTop          : undefined,
@@ -271,8 +271,9 @@ Chart.prototype.addEventHandler = function (options)
 
                 if (highlightItem.marker === true)
                 {
-                    highlightItem.style.lineColor   = 'black';
-                    //window.console.log(highlightItem);
+                    highlightItem.style.fillOpacity = 0.3;
+                    highlightItem.style.lineColor   = highlightItem.style.fillColor;
+                    highlightItem.coords.size       = highlightItem.coords.size * 2;
                 }
                 else if (highlightItem.shape === true)
                 {
