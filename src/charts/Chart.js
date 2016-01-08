@@ -242,12 +242,10 @@ Chart.prototype.addEventHandler = function (options)
         background      : 'rgba(255, 255, 255, 0.8)', 
         padding         : '5px', 
         whiteSpace      : 'nowrap',
-        webkitBoxShadow : '2px 2px 2px 0px rgba(156,156,156,1)',
-        mozBoxShadow    : '2px 2px 2px 0px rgba(156,156,156,1)',
         boxShadow       : '2px 2px 2px 0px rgba(156,156,156,1)',
     });
     dom.appendChild(window.document.body, tooltip);
-    dom.appendText(tooltip, 'Tooltip');
+    dom.appendText(tooltip, 'Tooltip that should always be visible in viewport');
 
     // Event handler
     var eventHandler = new EventHandler(
@@ -287,13 +285,17 @@ Chart.prototype.addEventHandler = function (options)
 
                 }
 
+                var o = dom.isElementInViewport(tooltip, 20);
+                var l = event.pageX - o.right + o.left;
+                var t = event.pageY - o.bottom + o.top;
+                window.console.log(o);
+
                 dom.style(tooltip, 
                 {
-                    left   : event.pageX + 'px',
-                    top    : event.pageY + 'px',
+                    left   : l + 'px',
+                    top    : t + 'px',
                     border : '1px solid ' + highlightItem.style.fillColor
                 });
-
                 me._interactionCanvas.render();
             }
         },

@@ -227,21 +227,50 @@ var getPosition = function (element)
     return {x:rect.left, y:rect.top};
 };
 
+/** 
+ * Check if the target element is fully visible within the viewport.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ * 
+ * @return {Boolean} true or false.
+ */
+var isElementInViewport = function (element, buffer) 
+{
+    /*return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) 
+    );*/
 
+    var rect = element.getBoundingClientRect();
+    var w = (window.innerWidth || document.documentElement.clientWidth);
+    var h = (window.innerHeight || document.documentElement.clientHeight);
+
+    return {
+        top     : rect.top - buffer < 0 ? rect.top : 0,
+        right   : rect.right + buffer > w ? rect.right - w  : 0,
+        bottom  : rect.bottom + buffer > h ? rect.bottom - h : 0,
+        left    : rect.left - buffer < 0 ? rect.left : 0
+    };
+};
 
 module.exports = 
 {
-    appendChild     : appendChild,
-    appendText      : appendText,
-    remove          : remove,
-    empty           : empty,
-    attr            : attr,
-    removeAttr      : removeAttr,
-    style           : style,
-    createElement   : createElement,
-    on              : on,
-    off             : off,
-    hide            : hide,
-    show            : show,
-    getPosition     : getPosition
+    appendChild         : appendChild,
+    appendText          : appendText,
+    remove              : remove,
+    empty               : empty,
+    attr                : attr,
+    removeAttr          : removeAttr,
+    style               : style,
+    createElement       : createElement,
+    on                  : on,
+    off                 : off,
+    hide                : hide,
+    show                : show,
+    getPosition         : getPosition,
+    isElementInViewport : isElementInViewport
 };
