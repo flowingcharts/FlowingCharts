@@ -49,7 +49,7 @@ function EventHandler (options)
             pixelCoords.y <= coords.viewPort().height())  isOver = true;
         else                                              isOver = false;
 
-        switch(type)
+        switch (type)
         {
             case 'mousemove' : 
                 if (!isDragging && isDown && isOver && (downX !== pixelCoords.x || downY !== pixelCoords.y)) 

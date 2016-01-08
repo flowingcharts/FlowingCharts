@@ -33,17 +33,15 @@ var dom        = require('../utils/dom');
 function Canvas (renderer, coords)
 {
     // Private instance members.  
-    this._renderer  = renderer;
     this._coords    = coords;
     this._items     = [];
 
     // Choose which canvas functions to use.
-    if (this._renderer === 'svg')   this._g = svgUtil;
-    else                            this._g = canvasUtil;
+    if (renderer === 'svg') this._g = svgUtil;
+    else                    this._g = canvasUtil;
 
     // Get the actual drawing canvas.
     this.canvas = this._g.getCanvas();
-    if (this._renderer === 'canvas') this._ctx = this.canvas.getContext('2d');
 }
 
 /** 
@@ -257,7 +255,7 @@ Canvas.prototype.polygon = function (arrCoords, units)
 Canvas.prototype.empty = function ()
 {
     this._items = [];
-    this._g.empty(this.canvas, this._ctx);
+    this._g.empty(this.canvas);
 };
 
 /** 
@@ -267,7 +265,7 @@ Canvas.prototype.empty = function ()
  */
 Canvas.prototype.render = function ()
 {
-    this._g.clear(this.canvas, this._ctx);
+    this._g.clear(this.canvas);
     
     var n = this._items.length;
     for (var i = 0; i < n; i++)  
@@ -335,13 +333,7 @@ Canvas.prototype.drawItem = function (item)
  */
 Canvas.prototype.addItem = function (item)
 {
-    if (this._renderer === 'svg')
-    {
-        item.context = this._g.createElement(item.type);
-        this.canvas.appendChild(item.context);
-    }
-    else item.context = this._ctx;
-
+    item.context = this._g.getContext(this.canvas, item.type);
     this._items.push(item);
     return item;
 };

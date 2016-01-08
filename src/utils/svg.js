@@ -44,26 +44,44 @@ var isSupported = function ()
 };
 
 /** 
- * Returns a group element.
+ * Returns a drawing canvas.
  *
  * @since 0.1.0
  *
- * @param {SVGElement} The group element.
+ * @return {SVGElement} An svg element.
  */
 var getCanvas = function ()
 {
-    return createElement('g');
+    var canvas = createElement('svg'); 
+    dom.style(canvas, {position:'absolute', left:0, right:0});
+    return canvas;
 };
 
 /** 
- * Clears the canvas.
+ * Returns an svg element of the given type.
  *
  * @since 0.1.0
  *
- * @param {HtmlCanvas}          canvas  The canvas.
- * @param {HtmlCanvasContext}   ctx     The canvas context.
+ * @param {SVGElement}  parentElement   The parent element.
+ * @param {string}      type            The element type.
+ *
+ * @return {SVGElement} An svg element.
  */
-var clear = function (canvas, ctx)
+var getContext = function (parentElement, type)
+{
+    var element = createElement(type);
+    dom.appendChild(parentElement, element);
+    return element;
+};
+
+/** 
+ * Clears the element.
+ *
+ * @since 0.1.0
+ *
+ * @param {SVGElement} element The svg element.
+ */
+var clear = function (element)
 {
 
 };
@@ -290,6 +308,7 @@ module.exports =
     createElement : createElement,
     isSupported   : isSupported,
     getCanvas     : getCanvas,
+    getContext  : getContext,
     clear         : clear,
     empty         : empty,
     circle        : circle,

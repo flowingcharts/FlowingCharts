@@ -135,6 +135,30 @@ var createElement = function (type, attributes)
 };
 
 /** 
+ * Hides the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ */
+var hide = function (element)
+{
+    element.style.visibility = 'hidden';
+};
+
+/** 
+ * Sows the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ */
+var show = function (element)
+{
+    element.style.visibility = 'visible';
+};
+
+/** 
  * Add event listeners to the target element.
  * 
  * @since 0.1.0
@@ -189,16 +213,21 @@ var off = function (element, types, listener)
  */
 var getPosition = function (element) 
 {
-    var xPosition = 0;
+    /*var xPosition = 0;
     var yPosition = 0;
     while (element) 
     {
-        xPosition   += (element.getBoundingClientRect().left - element.scrollLeft + element.clientLeft);
-        yPosition   += (element.getBoundingClientRect().top - element.scrollTop + element.clientTop);
+        xPosition   += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+        yPosition   += (element.offsetTop - element.scrollTop + element.clientTop);
         element     = element.offsetParent;
     }
-    return {x:xPosition, y:yPosition};
+    return {x:xPosition, y:yPosition};*/
+
+    var rect = element.getBoundingClientRect();
+    return {x:rect.left, y:rect.top};
 };
+
+
 
 module.exports = 
 {
@@ -212,5 +241,7 @@ module.exports =
     createElement   : createElement,
     on              : on,
     off             : off,
+    hide            : hide,
+    show            : show,
     getPosition     : getPosition
 };

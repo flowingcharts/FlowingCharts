@@ -32,7 +32,7 @@ var isSupported = function ()
  *
  * @since 0.1.0
  *
- * @param {HtmlCanvas} The canvas.
+ * @return {HtmlCanvas} A canvas.
  */
 var getCanvas = function ()
 {
@@ -42,16 +42,30 @@ var getCanvas = function ()
 };
 
 /** 
+ * Returns a drawing context.
+ *
+ * @since 0.1.0
+ *
+ * @param {HtmlCanvas}  canvas The canvas.
+ * @param {string}      type   The element type.
+ *
+ * @return {HtmlCanvasContext} A canvas context.
+ */
+var getContext = function (canvas, type)
+{
+    return canvas.getContext('2d');
+};
+
+/** 
  * Clears the canvas.
  *
  * @since 0.1.0
  *
- * @param {HtmlCanvas}          canvas  The canvas.
- * @param {HtmlCanvasContext}   ctx     The canvas context.
+ * @param {HtmlCanvas} canvas The canvas.
  */
-var clear = function (canvas, ctx)
+var clear = function (canvas)
 {
-    empty(canvas, ctx);
+    empty(canvas);
 };
 
 /** 
@@ -59,12 +73,11 @@ var clear = function (canvas, ctx)
  *
  * @since 0.1.0
  *
- * @param {HtmlCanvas}          canvas  The canvas.
- * @param {HtmlCanvasContext}   ctx     The canvas context.
+ * @param {HtmlCanvas} canvas The canvas.
  */
-var empty = function (canvas, ctx)
+var empty = function (canvas)
 {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    getContext(canvas).clearRect(0, 0, canvas.width, canvas.height);
 };
 
 /** 
@@ -276,6 +289,7 @@ module.exports =
 {
     isSupported : isSupported,
     getCanvas   : getCanvas,
+    getContext  : getContext,
     clear       : clear,
     empty       : empty,
     draw        : draw,

@@ -289,7 +289,7 @@ module.exports = function (grunt)
         {
             dev : 
             {
-                path: 'file:///C:/Work/GitHub/flowingcharts/examples/scatter/svg/sindex.html',
+                path: 'file:///C:/Work/GitHub/flowingcharts/examples/svg/scatter/index.html',
                 app: 'Chrome'
             },
             release : 

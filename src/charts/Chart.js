@@ -25,7 +25,6 @@ var PolarCoords         = require('../geom/PolarCoords');
 var Series              = require('../series/Series');
 var util                = require('../utils/util');
 var dom                 = require('../utils/dom');
-var svg                 = require('../utils/svg');
 
 /** 
  * @classdesc A base class for charts.
@@ -67,7 +66,7 @@ function Chart (options)
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function ()
         {        
-            me.setSize(container.offsetWidth, container.offsetHeight);
+            me.setSize(me._canvasContainer.offsetWidth, me._canvasContainer.offsetHeight);
         }, me._options.renderRate);
     });
 
@@ -132,15 +131,9 @@ Chart.prototype.options = function(options)
         if (this._options.coordinateSystem === 'polar') this._coords = new PolarCoords();     // Polar.
         else                                            this._coords = new CartesianCoords(); // Cartesian.    
 
-        // Container for holding the drawing canvases.
-        if (this._options.renderer === 'svg') 
-            this._canvasContainer = svg.createElement('svg');   // SVG.
-        else                   
-        {
-            // For 'canvas' we need a relative positioned container so we can stack html5 canvases inside it using absolute positioning.
-            this._canvasContainer  = dom.createElement('div');
-            dom.style(this._canvasContainer , {position : 'relative'});
-        } 
+        // Container for holding the drawing canvases. We need a relative positioned container so we can stack canvases inside it using absolute positioning.
+        this._canvasContainer  = dom.createElement('div');
+        dom.style(this._canvasContainer , {position : 'relative', width:'100%', height:'100%'});
         dom.appendChild(this._options.container, this._canvasContainer);
 
         // Chart formatting.
@@ -168,9 +161,7 @@ Chart.prototype.options = function(options)
         this.addEventHandler(this._options);
 
         // Set charts size to that of the container - it will subsequently be rendered.
-        // TODO What happens if the container has padding applied to it.
-        // http://stackoverflow.com/questions/21064101/understanding-offsetwidth-clientwidth-scrollwidth-and-height-respectively
-        this.setSize(this._options.container.offsetWidth, this._options.container.offsetHeight);
+        this.setSize(this._canvasContainer.offsetWidth, this._canvasContainer.offsetHeight);
 
         return this;
     }
@@ -243,16 +234,20 @@ Chart.prototype.addEventHandler = function (options)
     var me = this;
 
     var tooltip = dom.createElement('div');
+    dom.hide(tooltip);
     dom.style(tooltip, 
     {
-        position    : 'absolute', 
-        fontSize    : '8', 
-        background  : 'rgba(255, 255, 255, 0.7)', 
-        padding     : '5px', 
-        whiteSpace  : 'nowrap'
+        position        : 'absolute', 
+        fontSize        : '8', 
+        background      : 'rgba(255, 255, 255, 0.8)', 
+        padding         : '5px', 
+        whiteSpace      : 'nowrap',
+        webkitBoxShadow : '2px 2px 2px 0px rgba(156,156,156,1)',
+        mozBoxShadow    : '2px 2px 2px 0px rgba(156,156,156,1)',
+        boxShadow       : '2px 2px 2px 0px rgba(156,156,156,1)',
     });
     dom.appendChild(window.document.body, tooltip);
-    dom.appendText(tooltip, 'This will be a tooltip');
+    dom.appendText(tooltip, 'Tooltip');
 
     // Event handler
     var eventHandler = new EventHandler(
@@ -292,19 +287,28 @@ Chart.prototype.addEventHandler = function (options)
 
                 }
 
-                tooltip.style.left   = event.pageX + 'px';
-                tooltip.style.top    = event.pageY + 'px';
-                tooltip.style.border = '1px solid ' + highlightItem.style.fillColor;
+                dom.style(tooltip, 
+                {
+                    left   : event.pageX + 'px',
+                    top    : event.pageY + 'px',
+                    border : '1px solid ' + highlightItem.style.fillColor
+                });
 
                 me._interactionCanvas.render();
             }
         },
+        mouseover : function (event)
+        {
+            dom.show(tooltip);
+        },
         mouseout : function (event)
         {
+            dom.hide(tooltip);
             me._interactionCanvas.empty();
         },
         mousedragstart : function (event)
         {
+            dom.show(tooltip);
             me._interactionCanvas.empty();
         }
     });
@@ -371,14 +375,8 @@ Chart.prototype.setSize = function (w, h)
     if (this._borderBottom !== undefined)   this._borderBottom.coords  = {x1:x1Chart, y1:y2Chart, x2:x2Chart, y2:y2Chart};
     if (this._borderLeft !== undefined)     this._borderLeft.coords    = {x1:x1Chart, y1:y1Chart, x2:x1Chart, y2:y2Chart};
 
-    // Set the canvas container size.
-    dom.attr(this._canvasContainer, {width:w, height:h});
-
     // Set the canvas sizes.
-    for (var i = 0; i < this._arrCanvas.length; i++)  
-    {
-        this._arrCanvas[i].setSize(w, h);
-    }
+    for (var i = 0; i < this._arrCanvas.length; i++)  {this._arrCanvas[i].setSize(w, h);}
 
     this.render();
 };
