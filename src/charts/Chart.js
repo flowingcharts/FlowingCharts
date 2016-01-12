@@ -7,7 +7,8 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          charts/Chart 
- * @requires        charts/EventHandelr
+ * @requires        charts/EventHandler
+ * @requires        charts/datatip
  * @requires        series/Series
  * @requires        canvas/Canvas
  * @requires        geom/CartesianCoords
@@ -15,16 +16,19 @@
  * @requires        utils/util
  * @requires        utils/dom
  * @requires        utils/svg
+ * @requires        utils/color
  */
 
 // Required modules.
 var EventHandler        = require('./EventHandler');
+var datatip             = require('./datatip');
 var Canvas              = require('../canvas/Canvas');
 var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
 var Series              = require('../series/Series');
 var util                = require('../utils/util');
 var dom                 = require('../utils/dom');
+var colorUtil           = require('../utils/color');
 
 /** 
  * @classdesc A base class for charts.
@@ -233,20 +237,6 @@ Chart.prototype.addEventHandler = function (options)
 {
     var me = this;
 
-    var tooltip = dom.createElement('div');
-    dom.hide(tooltip);
-    dom.style(tooltip, 
-    {
-        position        : 'absolute', 
-        fontSize        : '8', 
-        background      : 'rgba(255, 255, 255, 0.8)', 
-        padding         : '5px', 
-        whiteSpace      : 'nowrap',
-        boxShadow       : '2px 2px 2px 0px rgba(156,156,156,1)',
-    });
-    dom.appendChild(window.document.body, tooltip);
-    dom.appendText(tooltip, 'Tooltip that should always be visible in viewport');
-
     // Event handler
     var eventHandler = new EventHandler(
     {
@@ -285,33 +275,30 @@ Chart.prototype.addEventHandler = function (options)
 
                 }
 
-                var o = dom.isElementInViewport(tooltip, 20);
-                var l = event.pageX - o.right + o.left;
-                var t = event.pageY - o.bottom + o.top;
-                window.console.log(o);
+                datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
+                datatip.style({borderColor : highlightItem.style.fillColor});
+                datatip.position(event.pageX, event.pageY, 'top', highlightItem.coords.size / 2);
 
-                dom.style(tooltip, 
-                {
-                    left   : l + 'px',
-                    top    : t + 'px',
-                    border : '1px solid ' + highlightItem.style.fillColor
-                });
                 me._interactionCanvas.render();
             }
         },
         mouseover : function (event)
         {
-            dom.show(tooltip);
+            datatip.show();
         },
         mouseout : function (event)
         {
-            dom.hide(tooltip);
+            datatip.hide();
             me._interactionCanvas.empty();
         },
         mousedragstart : function (event)
         {
-            dom.show(tooltip);
+            datatip.hide();
             me._interactionCanvas.empty();
+        },
+        mousedragend : function (event)
+        {                  
+            if (event.isOver) datatip.show();
         }
     });
 };

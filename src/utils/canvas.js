@@ -24,7 +24,7 @@ var colorUtil = require('../utils/color');
  */
 var isSupported = function ()
 {
-    return !!document.dom.createElement('canvas').getContext;
+    return !!dom.createElement('canvas').getContext('2d');
 };
 
 /** 

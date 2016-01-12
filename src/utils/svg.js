@@ -26,9 +26,7 @@ var colorUtil = require('../utils/color');
  */
 var createElement = function (type, attributes)
 {
-    var svgElement = document.createElementNS('http://www.w3.org/2000/svg', type);
-    dom.attr(svgElement, attributes);
-    return svgElement;
+    return dom.createSVGElement(type, attributes);
 };
 
 /** 
@@ -40,7 +38,7 @@ var createElement = function (type, attributes)
  */
 var isSupported = function ()
 {
-    return document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Shape', '1.0');
+    return dom.isSupported('http://www.w3.org/TR/SVG11/feature#Shape', '1.0');
 };
 
 /** 

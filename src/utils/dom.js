@@ -10,6 +10,21 @@
  */
 
 /** 
+ * Check for support of a feature.
+ *
+ * @since 0.1.0
+ *
+ * @param {string} The feature name.
+ * @param {string} The version of the specification defining the feature.
+ *
+ * @return {boolean} true if the browser supports the functionality, otherwise false.
+ */
+var isSupported = function (feature, version)
+{
+    return document.implementation.hasFeature(feature, version);
+};
+
+/** 
  * Appends the child element to the parent.
  * 
  * @since 0.1.0
@@ -28,12 +43,25 @@ var appendChild = function (parentElement, childElement)
  * @since 0.1.0
  * 
  * @param {HTMLElement} element The target element.
- * @param {string}      text    The text to add
+ * @param {string}      text    The text to add.
  */
 var appendText = function (element, text)
 {
     var textNode = document.createTextNode(text);                       
     appendChild(element, textNode);
+};
+
+/** 
+ * Appends html to the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ * @param {string}      html    The html to add.
+ */
+var html = function (element, html)
+{
+    element.innerHTML = html;
 };
 
 /** 
@@ -135,6 +163,23 @@ var createElement = function (type, attributes)
 };
 
 /** 
+ * Creates an svg element with the given attributes.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {string} type         The element type.
+ * @param {object} attributes   The list of attributes.
+ * 
+ * @return {HTMLElement}        The html element.
+ */
+var createSVGElement = function (type, attributes)
+{
+    var svgElement = document.createElementNS('http://www.w3.org/2000/svg', type);
+    attr(svgElement, attributes);
+    return svgElement;
+};
+
+/** 
  * Hides the target element.
  * 
  * @since 0.1.0
@@ -147,7 +192,7 @@ var hide = function (element)
 };
 
 /** 
- * Sows the target element.
+ * Shows the target element.
  * 
  * @since 0.1.0
  * 
@@ -156,6 +201,76 @@ var hide = function (element)
 var show = function (element)
 {
     element.style.visibility = 'visible';
+};
+
+
+/** 
+ * Check if an element is visible.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ * 
+ * @return {Boolean} true if visible, otherwise false.
+ */
+var isVisible = function (element) 
+{
+    if (element.style.visibility === 'hidden')  return false;
+    else                                        return true;
+};
+
+var fadeTimer;
+var fadeOpacity = 1;
+/** 
+ * Fade out the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ */
+var fadeOut = function (element) 
+{ 
+    clearTimeout(fadeTimer);
+    clearInterval(fadeTimer);
+
+    fadeTimer = setTimeout(function ()
+    {
+        if (isVisible) fadeOpacity = 1;  // Initial opacity.
+
+        fadeTimer = setInterval(function () 
+        {
+            if (fadeOpacity <= 0.1)
+            {
+                clearInterval(fadeTimer);
+                hide(element);
+            }
+            style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
+            fadeOpacity -= fadeOpacity * 0.1;
+        }, 10);
+    }, 1000);
+};
+
+/** 
+ * Fade in the target element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement} element The target element.
+ */
+var fadeIn = function (element) 
+{
+    clearTimeout(fadeTimer);
+    clearInterval(fadeTimer);
+
+    if (!isVisible) fadeOpacity = 0.1;  // Initial opacity.
+    show(element);
+
+    fadeTimer = setInterval(function () 
+    {
+        if (fadeOpacity >= 1) clearInterval(fadeTimer);
+        style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
+        fadeOpacity += fadeOpacity * 0.1;
+    }, 7);
 };
 
 /** 
@@ -173,10 +288,8 @@ var on = function (element, types, listener)
     for (var i = 0; i < arrTypes.length; i++)  
     {
         var type = arrTypes[i].trim();
-        if (element.attachEvent)
-            element.attachEvent('on'+type, listener); // <IE9.
-        else
-            element.addEventListener(type, listener);
+        if (element.attachEvent) element.attachEvent('on'+type, listener); // <IE9.
+        else                     element.addEventListener(type, listener);
     }
 };
 
@@ -195,82 +308,115 @@ var off = function (element, types, listener)
     for (var i = 0; i < arrTypes.length; i++)  
     {
         var type = arrTypes[i].trim();
-        if (element.attachEvent)
-            element.detachEvent('on'+type, listener); // <IE9.
-        else
-            element.removeEventListener(type, listener);
+        if (element.attachEvent) element.detachEvent('on'+type, listener); // <IE9.
+        else                     element.removeEventListener(type, listener);
     }
 };
 
 /** 
- * Return the position of the target element.
+ * Return the bounds of the target element relative to the viewport.
  * 
  * @since 0.1.0
  * 
  * @param {HTMLElement} element The target element.
  * 
- * @return {Object}     {x:number, y:number}.
+ * @return {DOMRect} A dom rectangle.
  */
-var getPosition = function (element) 
+var bounds = function (element) 
 {
-    /*var xPosition = 0;
-    var yPosition = 0;
-    while (element) 
-    {
-        xPosition   += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-        yPosition   += (element.offsetTop - element.scrollTop + element.clientTop);
-        element     = element.offsetParent;
-    }
-    return {x:xPosition, y:yPosition};*/
-
-    var rect = element.getBoundingClientRect();
-    return {x:rect.left, y:rect.top};
+    return element.getBoundingClientRect();
 };
 
 /** 
- * Check if the target element is fully visible within the viewport.
+ * Check if a rect is fully contained within the viewport.
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element The target element.
+ * @param {Object} rect         The rectangle to test - coords should be relative to the viewport.
+ * @param {number} rect.top     The top value.
+ * @param {number} rect.right   The right value.
+ * @param {number} rect.bottom  The bottom value.
+ * @param {number} rect.left    The left value.
+ * @param {number} [margin = 0] An optional margin that is applied to the rect.
  * 
- * @return {Boolean} true or false.
+ * @return {object} A rectangle that contains the amount of overlap for each edge rect{top:0, right:0, bottom:0, left:0}.
  */
-var isElementInViewport = function (element, buffer) 
+var isRectInViewport = function (rect, margin) 
 {
-    /*return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) 
-    );*/
-
-    var rect = element.getBoundingClientRect();
-    var w = (window.innerWidth || document.documentElement.clientWidth);
-    var h = (window.innerHeight || document.documentElement.clientHeight);
-
+    var w = viewportWidth();
+    var h = viewportHeight();
+    margin = margin !== undefined ? margin : 0;
     return {
-        top     : rect.top - buffer < 0 ? rect.top : 0,
-        right   : rect.right + buffer > w ? rect.right - w  : 0,
-        bottom  : rect.bottom + buffer > h ? rect.bottom - h : 0,
-        left    : rect.left - buffer < 0 ? rect.left : 0
+        top     : rect.top  - margin < 0   ? (rect.top - margin) * -1  : 0,
+        right   : rect.right + margin > w  ? rect.right + margin - w   : 0,
+        bottom  : rect.bottom + margin > h ? rect.bottom + margin - h  : 0,
+        left    : rect.left - margin < 0   ? (rect.left - margin) * -1 : 0
+    };
+};
+
+/** 
+ * Get the viewport width.
+ * 
+ * @since 0.1.0
+ * 
+ * @return {number} The viewport width.
+ */
+var viewportWidth = function () 
+{
+    return (window.innerWidth || document.documentElement.clientWidth);
+};
+
+/** 
+ * Get the viewport height.
+ * 
+ * @since 0.1.0
+ * 
+ * @return {number} The viewport height.
+ */
+var viewportHeight = function () 
+{
+    return (window.innerHeight || document.documentElement.clientHeight);
+};
+
+/** 
+ * Return the page offset (the amount the page is scrolled).
+ * 
+ * @since 0.1.0
+ * 
+ * @return {Object} {x:number, y:number}.
+ */
+var pageOffset = function () 
+{
+    var doc = document.documentElement;
+    return {
+        x : (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0),
+        y : (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
     };
 };
 
 module.exports = 
 {
-    appendChild         : appendChild,
-    appendText          : appendText,
-    remove              : remove,
-    empty               : empty,
-    attr                : attr,
-    removeAttr          : removeAttr,
-    style               : style,
-    createElement       : createElement,
-    on                  : on,
-    off                 : off,
-    hide                : hide,
-    show                : show,
-    getPosition         : getPosition,
-    isElementInViewport : isElementInViewport
+    isSupported             : isSupported,
+    appendChild             : appendChild,
+    appendText              : appendText,
+    html                    : html,
+    remove                  : remove,
+    empty                   : empty,
+    attr                    : attr,
+    removeAttr              : removeAttr,
+    style                   : style,
+    createElement           : createElement,
+    createSVGElement        : createSVGElement,
+    on                      : on,
+    off                     : off,
+    hide                    : hide,
+    show                    : show,
+    isVisible               : isVisible,
+    fadeOut                 : fadeOut,
+    fadeIn                  : fadeIn,
+    bounds                  : bounds,
+    isRectInViewport        : isRectInViewport,
+    viewportWidth           : viewportWidth,
+    viewportHeight          : viewportHeight,
+    pageOffset              : pageOffset
 };

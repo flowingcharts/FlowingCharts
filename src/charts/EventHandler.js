@@ -28,7 +28,7 @@ function EventHandler (options)
 {
     var element         = options.element;
     var coords          = options.coords;
-    var elementPosition = {};
+    var elementPosition;
     var isOver          = false;
     var isDragging      = false;
     var isDown          = false;
@@ -87,6 +87,14 @@ function EventHandler (options)
                 isDragging = false;
                 isDown     = false; 
             break;
+            case 'mouseleave' : 
+                window.console.log('this doesnt work if mouse is over svg point when exiting - but does it matter?');
+                if (isOver && dispatchedOver)
+                {
+                    dispatchedOver = false;
+                    dispatch('mouseout', event, pixelCoords);
+                }
+            break;
         }
     }
 
@@ -104,6 +112,7 @@ function EventHandler (options)
             options[eventType](
             {
                 event   : event,
+                isOver  : isOver,
                 pixelX  : pixelCoords.x,
                 pixelY  : pixelCoords.y,
                 dataX   : coords.getDataX(pixelCoords.x),
@@ -119,20 +128,21 @@ function EventHandler (options)
     // Updated the position of the element when the window is resize or scrolled.
     function updateElementPosition () 
     {
-        elementPosition = dom.getPosition(element);
+        elementPosition = dom.bounds(element);
     }
     updateElementPosition();
 
     // Return the actual pixel coords within the viewport.
     function getPixelCoords (event) 
     {
-        var x = event.clientX - elementPosition.x - coords.viewPort().x();
-        var y = event.clientY - elementPosition.y - coords.viewPort().y();
+        var x = event.clientX - elementPosition.left - coords.viewPort().x();
+        var y = event.clientY - elementPosition.top - coords.viewPort().y();
         return {x:x, y:y};
     }
 
     // Events listeners.
     dom.on(window, 'mousemove mouseup mousedown', mouseEventHandler);
+    dom.on(document, 'mouseleave', mouseEventHandler);
     dom.on(window, 'scroll resize', updateElementPosition);
     dom.on(window, 'touchstart touchmove touchend', touchEventHandler);
 }
