@@ -88,7 +88,7 @@ function EventHandler (options)
                 isDown     = false; 
             break;
             case 'mouseleave' : 
-                window.console.log('this doesnt work if mouse is over svg point when exiting - but does it matter?');
+                window.console.log('this doesnt work if mouse is over svg point when exiting - but does it matter? Just check if mouse is in viewport on mousemove');
                 if (isOver && dispatchedOver)
                 {
                     dispatchedOver = false;
