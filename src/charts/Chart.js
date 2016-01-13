@@ -110,7 +110,7 @@ Chart.prototype.options = function(options)
             container           : undefined,
             coordinateSystem    : 'cartesian',
             renderer            : 'svg',
-            renderRate          : 20,
+            renderRate          : 250,
             padding             : 20,
             paddingTop          : undefined,
             paddingRight        : undefined,
@@ -159,7 +159,7 @@ Chart.prototype.options = function(options)
         }
 
         // Interaction canvas.
-        this._interactionCanvas = this.addCanvas();
+        this._uiCanvas = this.addCanvas();
 
         // Event handler.
         this.addEventHandler(this._options);
@@ -258,11 +258,11 @@ Chart.prototype.addEventHandler = function (options)
         {
             var nearestItem = me.nearestItem(event.dataX, event.dataY);
 
-            me._interactionCanvas.empty();
-            if (nearestItem !== undefined) 
+            me._uiCanvas.empty();
+            if (nearestItem !== undefined)  
             {
                 var highlightItem = util.cloneObject(nearestItem);
-                me._interactionCanvas.addItem(highlightItem);
+                me._uiCanvas.addItem(highlightItem);
 
                 if (highlightItem.marker === true)
                 {
@@ -279,26 +279,26 @@ Chart.prototype.addEventHandler = function (options)
                 datatip.style({borderColor : highlightItem.style.fillColor});
                 datatip.position(event.pageX, event.pageY, 'top', highlightItem.coords.size / 2);
 
-                me._interactionCanvas.render();
+                me._uiCanvas.render();
             }
         },
         mouseover : function (event)
         {
-            datatip.show();
+            datatip.fadeIn();
         },
         mouseout : function (event)
         {
-            datatip.hide();
-            me._interactionCanvas.empty();
+            datatip.fadeOut(700);    
+            me._uiCanvas.empty();
         },
         mousedragstart : function (event)
         {
-            datatip.hide();
-            me._interactionCanvas.empty();
+            datatip.fadeOut();
+            me._uiCanvas.empty();
         },
         mousedragend : function (event)
         {                  
-            if (event.isOver) datatip.show();
+            if (event.isOver) datatip.fadeIn();
         }
     });
 };

@@ -29,6 +29,7 @@ function EventHandler (options)
     var element         = options.element;
     var coords          = options.coords;
     var elementPosition;
+    var pixelCoords;
     var isOver          = false;
     var isDragging      = false;
     var isDown          = false;
@@ -42,35 +43,41 @@ function EventHandler (options)
         var type = event.type;
         type.replace(/^(on\.)/,''); // For event types with 'on' prefix.
 
-        var pixelCoords = getPixelCoords(event);
-        if (pixelCoords.x >= 0 && 
-            pixelCoords.x <= coords.viewPort().width() && 
-            pixelCoords.y >= 0 && 
-            pixelCoords.y <= coords.viewPort().height())  isOver = true;
-        else                                              isOver = false;
-
         switch (type)
         {
             case 'mousemove' : 
+                pixelCoords = getPixelCoords(event);
+                if (pixelCoords.x >= 0 && 
+                    pixelCoords.x <= coords.viewPort().width() && 
+                    pixelCoords.y >= 0 && 
+                    pixelCoords.y <= coords.viewPort().height())  isOver = true;
+                else                                              isOver = false;
+
                 if (!isDragging && isDown && isOver && (downX !== pixelCoords.x || downY !== pixelCoords.y)) 
                 {
                     isDragging = true;
                     dispatch('mousedragstart', event, pixelCoords);
                 }
-                else if (isDragging)    dispatch('mousedrag', event, pixelCoords);
-                else if (isOver)        dispatch('mousemove', event, pixelCoords);
-
-                if (isOver && !dispatchedOver)
+                else if (isDragging) 
+                {
+                    dispatch('mousedrag', event, pixelCoords);
+                }   
+                else if (isOver && !dispatchedOver)
                 {
                     dispatchedOver = true;
                     dispatch('mouseover', event, pixelCoords);
                 }
-                if (!isOver && dispatchedOver)
+                else if (!isOver && dispatchedOver)
                 {
                     dispatchedOver = false;
                     dispatch('mouseout', event, pixelCoords);
                 }
+                else if (isOver) 
+                {
+                    dispatch('mousemove', event, pixelCoords);
+                }
             break;
+
             case 'mousedown' : 
                 if (isOver)      
                 {
@@ -80,19 +87,27 @@ function EventHandler (options)
                     isDown = true; 
                 } 
             break;
+
             case 'mouseup' : 
                 if      (isDragging)    dispatch('mousedragend', event, pixelCoords);
-                else if (isOver)        dispatch('click', event, pixelCoords); 
-                if      (isOver)        dispatch('mouseup', event, pixelCoords);    
+                else if (isOver)      
+                {  
+                    dispatch('click', event, pixelCoords); 
+                    dispatch('mouseup', event, pixelCoords);    
+                }
                 isDragging = false;
                 isDown     = false; 
             break;
-            case 'mouseleave' : 
-                window.console.log('this doesnt work if mouse is over svg point when exiting - but does it matter? Just check if mouse is in viewport on mousemove');
-                if (isOver && dispatchedOver)
+
+            case 'mouseout' : 
+                // Chrome, FF and Opera dont dispatch a mouseout event if you leave the window whilst hovering an svg element.
+                if (event.toElement === null && event.relatedTarget === null) 
                 {
-                    dispatchedOver = false;
-                    dispatch('mouseout', event, pixelCoords);
+                    if (isOver && dispatchedOver)
+                    {
+                        dispatchedOver = false;
+                        dispatch('mouseout', event, pixelCoords);
+                    }
                 }
             break;
         }
@@ -111,16 +126,18 @@ function EventHandler (options)
         {
             options[eventType](
             {
-                event   : event,
-                isOver  : isOver,
-                pixelX  : pixelCoords.x,
-                pixelY  : pixelCoords.y,
-                dataX   : coords.getDataX(pixelCoords.x),
-                dataY   : coords.getDataY(pixelCoords.y),
-                clientX : event.clientX,
-                clientY : event.clientY,
-                pageX   : event.pageX,
-                pageY   : event.pageY
+                event       : event,
+                isOver      : isOver,
+                isDragging  : isDragging,
+                isDown      : isDown,
+                pixelX      : pixelCoords.x,
+                pixelY      : pixelCoords.y,
+                dataX       : coords.getDataX(pixelCoords.x),
+                dataY       : coords.getDataY(pixelCoords.y),
+                clientX     : event.clientX,
+                clientY     : event.clientY,
+                pageX       : event.pageX,
+                pageY       : event.pageY
             });
         }
     }
@@ -141,8 +158,7 @@ function EventHandler (options)
     }
 
     // Events listeners.
-    dom.on(window, 'mousemove mouseup mousedown', mouseEventHandler);
-    dom.on(document, 'mouseleave', mouseEventHandler);
+    dom.on(window, 'mousemove mouseup mousedown mouseout', mouseEventHandler);
     dom.on(window, 'scroll resize', updateElementPosition);
     dom.on(window, 'touchstart touchmove touchend', touchEventHandler);
 }

@@ -42,39 +42,6 @@ dom.style(tip,
 dom.appendChild(window.document.body, tip);
 
 /** 
- * Hides the  data tip.
- * 
- * @since 0.1.0
- */
-var hide = function ()
-{
-    dom.fadeOut(tip);
-};
-hide();
-
-/** 
- * Shows the data tip.
- * 
- * @since 0.1.0
- */
-var show = function ()
-{
-    dom.fadeIn(tip);
-};
-
-/** 
- * Sets the html for the data tip.
- * 
- * @since 0.1.0
- * 
- * @param {string} html The html.
- */
-var html = function (text)
-{
-    dom.html(tip, text);
-};
-
-/** 
  * Position the data tip using absolute positioning.
  *
  * @since 0.1.0
@@ -89,6 +56,11 @@ var html = function (text)
  */
 var position = function (x, y, pos, margin)
 {
+    // TODO Mouse out bottom over svg element.
+    // TODO Width of tip on small screen.
+    // TODO Callout.
+    // TODO Position tip above point not mouse.
+
     pos = pos !== undefined ? pos : 'top';
     margin = margin !== undefined ? margin : 0;
     var viewportMargin = 20;
@@ -141,6 +113,63 @@ var position = function (x, y, pos, margin)
 };
 
 /** 
+ * Sets the html for the data tip.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {string} html The html.
+ */
+var html = function (text)
+{
+    dom.html(tip, text);
+};
+
+/** 
+ * Hides the  data tip.
+ * 
+ * @since 0.1.0
+ */
+var hide = function ()
+{
+    dom.hide(tip);
+};
+hide();
+
+/** 
+ * Shows the data tip.
+ * 
+ * @since 0.1.0
+ */
+var show = function ()
+{
+    dom.show(tip);
+};
+
+/** 
+ * Fade out the  data tip.
+ * 
+ * @since 0.1.0
+ *
+ * @param {number} [delay = 0] A delay before the fade starts.
+ */
+var fadeOut = function (delay)
+{
+    dom.fadeOut(tip, 7, delay);
+};
+
+/** 
+ * Fade in the data tip.
+ * 
+ * @since 0.1.0
+ *
+ * @param {number} [delay = 0] A delay before the fade starts.
+ */
+var fadeIn = function (delay)
+{
+    dom.fadeIn(tip, 10, delay);
+};
+
+/** 
  * Get the width.
  *
  * @since 0.1.0
@@ -165,18 +194,6 @@ var height = function ()
 };
 
 /** 
- * Set an edge buffer.
- *
- * @since 0.1.0
- *
- * @param {number} b The buffer.
- */
-var padding = function (b)
-{
-    return tip.offsetHeight;
-};
-
-/** 
  * Sets the style for the data tip
  * 
  * @since 0.1.0
@@ -190,10 +207,12 @@ var style = function (styles)
 
 module.exports = 
 {
+    position    : position,
+    html        : html,
     hide        : hide,
     show        : show,
-    html        : html,
-    position    : position,
+    fadeOut     : fadeOut,
+    fadeIn      : fadeIn,
     width       : width,
     height      : height,
     style       : style

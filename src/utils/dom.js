@@ -219,21 +219,29 @@ var isVisible = function (element)
     else                                        return true;
 };
 
+// Fade variables.
 var fadeTimer;
+var fadeDelay;
 var fadeOpacity = 1;
+
 /** 
  * Fade out the target element.
  * 
  * @since 0.1.0
  * 
  * @param {HTMLElement} element The target element.
+ * @param {number}      [duration = 10] The duration of the fade.
+ * @param {number}      [delay = 0]     A delay before the fade starts.
  */
-var fadeOut = function (element) 
-{ 
-    clearTimeout(fadeTimer);
+var fadeOut = function (element, duration, delay)
+{
+    duration = duration !== undefined ? duration : 10;
+    delay = delay !== undefined ? delay : 0;
+
+    clearTimeout(fadeDelay);
     clearInterval(fadeTimer);
 
-    fadeTimer = setTimeout(function ()
+    fadeDelay = setTimeout(function ()
     {
         if (isVisible) fadeOpacity = 1;  // Initial opacity.
 
@@ -246,8 +254,8 @@ var fadeOut = function (element)
             }
             style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
             fadeOpacity -= fadeOpacity * 0.1;
-        }, 10);
-    }, 1000);
+        }, duration);
+    }, delay);
 };
 
 /** 
@@ -255,22 +263,30 @@ var fadeOut = function (element)
  * 
  * @since 0.1.0
  * 
- * @param {HTMLElement} element The target element.
+ * @param {HTMLElement} element         The target element.
+ * @param {number}      [duration = 10] The duration of the fade.
+ * @param {number}      [delay = 0]     A delay before the fade starts.
  */
-var fadeIn = function (element) 
+var fadeIn = function (element, duration, delay) 
 {
-    clearTimeout(fadeTimer);
+    duration = duration !== undefined ? duration : 10;
+    delay = delay !== undefined ? delay : 0;
+
+    clearTimeout(fadeDelay);
     clearInterval(fadeTimer);
 
-    if (!isVisible) fadeOpacity = 0.1;  // Initial opacity.
-    show(element);
-
-    fadeTimer = setInterval(function () 
+    fadeDelay = setTimeout(function ()
     {
-        if (fadeOpacity >= 1) clearInterval(fadeTimer);
-        style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
-        fadeOpacity += fadeOpacity * 0.1;
-    }, 7);
+        if (!isVisible) fadeOpacity = 0.1;  // Initial opacity.
+        show(element);
+
+        fadeTimer = setInterval(function () 
+        {
+            if (fadeOpacity >= 1) clearInterval(fadeTimer);
+            style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
+            fadeOpacity += fadeOpacity * 0.1;
+        }, duration);
+    }, delay);
 };
 
 /** 
