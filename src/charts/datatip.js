@@ -18,20 +18,26 @@ var colorUtil = require('../utils/color');
 var tip = dom.createElement('div'); // Create the data tip.
 dom.style(tip, 
 {
-    position                : 'absolute',
-    overflow                : 'hidden',  
-    cursor                  : 'default', 
-    zIndex                  : 999999999, 
+    position                : 'absolute', 
+    zIndex                  : 999999999,  
+    cursor                  : 'default',
+    borderStyle             : 'solid',
+    borderWidth             : '1px',
+    borderRadius            : '3px',
     fontFamily              : 'arial,serif', 
     fontSize                : '12px', 
     color                   : '#666666', 
     padding                 : '7px', 
-    background              : 'rgba(255, 255, 255, 0.8)', 
-    borderStyle             : 'solid',
-    borderWidth             : '1px',
-    borderRadius            : '3px',
+    background              : 'rgba(255, 255, 255, 0.8)',     
+    boxShadow               : '2px 2px 2px 0px rgba(156,156,156,1)'
+});
+dom.appendChild(window.document.body, tip);
+
+var tipText = dom.createElement('div'); // Create the data tip.
+dom.style(tipText, 
+{
+    overflow                : 'hidden', 
     whiteSpace              : 'nowrap',
-    boxShadow               : '2px 2px 2px 0px rgba(156,156,156,1)',
     '-webkitTouchCallout'   : 'none',
     '-webkitUserSelect'     : 'none',
     '-khtmlUserSelect'      : 'none',
@@ -39,7 +45,22 @@ dom.style(tip,
     '-msUserSelect'         : 'none',
     userSelect              : 'none'
 });
-dom.appendChild(window.document.body, tip);
+dom.appendChild(tip, tipText);
+
+var notchBorder = dom.createElement('div'); // Create the notch border.
+dom.style(notchBorder, 
+{
+    position                : 'absolute'
+});
+dom.appendChild(tip, notchBorder);
+
+var notchFill   = dom.createElement('div'); // Create the notch fill.
+dom.style(notchFill, 
+{
+    position                : 'absolute'
+});
+dom.appendChild(tip, notchFill);
+
 
 /** 
  * Position the data tip using absolute positioning.
@@ -48,10 +69,8 @@ dom.appendChild(window.document.body, tip);
  *
  * @param {number} x            The absolute x position of the data tip.
  * @param {number} y            The absolute y position of the data tip.
- * @param {number} [pos = top]  The position of the data tip relative to the x and y coords.
- *                              'top-left', 'top', 'top-right' 
- *                              'left', 'center', 'right' 
- *                              'bottom-left', 'bottom', 'bottom-right'
+ * @param {number} [pos = top]  The position of the data tip relative to the x and y coords - one of top, bottom, left or right.
+ *
  * @param {number} [margin = 0] An optional margin around the data tip.
  */
 var position = function (x, y, pos, margin)
@@ -61,55 +80,128 @@ var position = function (x, y, pos, margin)
     // TODO Callout.
     // TODO Position tip above point not mouse.
 
-    pos = pos !== undefined ? pos : 'top';
+    pos    = pos !== undefined ? pos : 'top';
     margin = margin !== undefined ? margin : 0;
-    var viewportMargin = 20;
+
+    var viewportMargin  = 20; // Margin applied to edge of viewport.
+    var mx              = x;  // Store initial position x.
+    var my              = y;  // Store initial position y.
+
+    // Notch style.
+    var nSize           = 7;  
+    var nBorder         = nSize+'px solid #000000';
+    var nFill           = nSize+'px solid #ffffff';
+    var nTransparent    = nSize+'px solid transparent';
+    var nNone           = '0px';
+    if (pos === 'top')   
+    {
+        dom.style(notchBorder, {borderTop:nBorder, borderRight:nTransparent, borderBottom:nNone,  borderLeft:nTransparent});
+        dom.style(notchFill, {borderTop:nFill, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
+    }
+    else if (pos === 'bottom')   
+    {
+        dom.style(notchBorder, {borderTop:nNone, borderRight:nTransparent, borderBottom:nBorder,  borderLeft:nTransparent});
+        dom.style(notchFill, {borderTop:nNone, borderRight:nTransparent, borderBottom:nFill, borderLeft:nTransparent});
+    }
+    else if (pos === 'left')   
+    {
+        dom.style(notchBorder, {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent,  borderLeft:nBorder});
+        dom.style(notchFill, {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nFill});
+    }
+    else if (pos === 'right')   
+    {
+        dom.style(notchBorder, {borderTop:nTransparent, borderRight:nBorder, borderBottom:nTransparent,  borderLeft:nNone});
+        dom.style(notchFill, {borderTop:nTransparent, borderRight:nFill, borderBottom:nTransparent, borderLeft:nNone});
+    }
 
     // Tip dimensions.
     var w = tip.offsetWidth;
     var h = tip.offsetHeight;
 
-    // Apply positioning.
-    if (pos === 'top' || pos === 'center' || pos === 'bottom' ) x = x - (w / 2);
-    if (pos.indexOf('top') != -1)  y = y - h;
+    // Notch dimensions.
+    var nw = notchBorder.offsetWidth;
+    var nh = notchBorder.offsetHeight;
 
-    if (pos === 'left' || pos === 'center' || pos === 'right') y = y - (h / 2);
-    if (pos.indexOf('left') != -1) x = x - w;
+    // Adjust positioning to take account of position, margin and notch.
+    if (pos === 'top')   
+    {
+        x = x - (w / 2);
+        y = y - (h + margin + nh);
+    } 
+    else if (pos === 'bottom')   
+    {
+        x = x - (w / 2);
+        y = y + margin + nh;
+    }
+    else if (pos === 'left')   
+    {
+        x = x - (w + margin + nw);
+        y = y - (h / 2);
+    }
+    else if (pos === 'right')   
+    {
+        x = x + margin + nw;
+        y = y - (h / 2);
+    }
 
-    // Apply margin.
-    if (pos.indexOf('top') != -1)    y = y - margin;
-    if (pos.indexOf('bottom') != -1) y = y + margin;
-    if (pos.indexOf('left') != -1)   x = x - margin;
-    if (pos.indexOf('right') != -1)  x = x + margin;
+    // Resize the tip width if its bigger than the viewport width.
+    var vw = dom.viewportWidth() - (viewportMargin * 2);
+    if (w > vw) 
+    {
+        // Apply width resize.
+        dom.style(tip, {width : vw + 'px'});
+        dom.style(tipText, {whiteSpace : ''});
+    }
+    else 
+    {
+        // Clear width resize.
+        dom.style(tip, {width : ''});
+        dom.style(tipText, {whiteSpace : 'nowrap'});
+    }
 
-    // Get viewport x and y.
+    // Get viewport x and y of tip.
     var pageOffset  = dom.pageOffset();
     var viewportX   = x - pageOffset.x;
     var viewportY   = y - pageOffset.y;
 
     // Adjust position of tip to fit inside viewport.
-    var o = dom.isRectInViewport(
-    {
-        left    : viewportX, 
-        top     : viewportY, 
-        right   : viewportX + w, 
-        bottom  : viewportY + h
-    }, viewportMargin);
-
-    // If the tip is bigger than the viewport width resize to fit.
-    var vw = dom.viewportWidth() - (viewportMargin * 2);
-    if (w > vw) 
-    {
-        dom.style(tip, {width : vw + 'px', whiteSpace : ''});
-    }
-    else 
-    {
-        dom.style(tip, {width : '', whiteSpace : 'nowrap'});
-    }
+    var o = dom.isRectInViewport({left:viewportX, top:viewportY, right:viewportX + w, bottom:viewportY + h}, viewportMargin);
     x = x + o.left - o.right;
     y = y + o.top - o.bottom;
 
+    // Position the tip.
     dom.style(tip, {left: x + 'px', top: y + 'px'});
+
+    // Position the notch.
+    var nx, ny;
+    if (pos === 'top')   
+    {
+        nx = mx - (nw / 2) - x;
+        ny = nh * -1;
+        dom.style(notchBorder, {top:'', right:'', bottom:(ny-1)+'px', left:nx+'px' });
+        dom.style(notchFill, {top :'',  right:'', bottom:ny+'px', left:nx+'px'});
+    } 
+    else if (pos === 'bottom')   
+    {
+        nx = mx - (nw / 2) - x;
+        ny = nh * -1;
+        dom.style(notchBorder, {top:(ny-1)+'px', right:'', bottom:'', left:nx+'px'});
+        dom.style(notchFill, {top:ny+'px', right:'', bottom:'', left:nx+'px'});
+    }
+    else if (pos === 'left')   
+    {
+        nx = nw * -1;
+        ny = my - (nh / 2) - y;
+        dom.style(notchBorder, {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
+        dom.style(notchFill, {top:ny+'px',  right:nx+'px', bottom:'', left:''});
+    }
+    else if (pos === 'right')   
+    {
+        nx = nw * -1;
+        ny = my - (nh / 2) - y;
+        dom.style(notchBorder, {top:ny+'px', right:'', bottom:'', left:(nx-1)+'px'});
+        dom.style(notchFill, {top:ny+'px',  right:'', bottom:'', left:nx+'px'});
+    }
 };
 
 /** 
@@ -121,7 +213,7 @@ var position = function (x, y, pos, margin)
  */
 var html = function (text)
 {
-    dom.html(tip, text);
+    dom.html(tipText, text);
 };
 
 /** 
