@@ -178,29 +178,29 @@ var position = function (x, y, pos, margin)
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
-        dom.style(notchBorder, {top:'', right:'', bottom:(ny-1)+'px', left:nx+'px' });
-        dom.style(notchFill, {top :'',  right:'', bottom:ny+'px', left:nx+'px'});
+        dom.style(notchBorder,  {left:nx+'px', bottom:(ny-1)+'px',  top:'', right:''});
+        dom.style(notchFill,    {left:nx+'px', bottom:ny+'px',      top:'',  right:''});
     } 
     else if (pos === 'bottom')   
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
-        dom.style(notchBorder, {top:(ny-1)+'px', right:'', bottom:'', left:nx+'px'});
-        dom.style(notchFill, {top:ny+'px', right:'', bottom:'', left:nx+'px'});
+        dom.style(notchBorder,  {left:nx+'px', top:(ny-1)+'px',  bottom:'', right:''});
+        dom.style(notchFill,    {left:nx+'px', top:ny+'px',      bottom:'',  right:''});
     }
     else if (pos === 'left')   
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;
-        dom.style(notchBorder, {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
-        dom.style(notchFill, {top:ny+'px',  right:nx+'px', bottom:'', left:''});
+        dom.style(notchBorder,  {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
+        dom.style(notchFill,    {top:ny+'px', right:nx+'px',     bottom:'', left:''});
     }
     else if (pos === 'right')   
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;
-        dom.style(notchBorder, {top:ny+'px', right:'', bottom:'', left:(nx-1)+'px'});
-        dom.style(notchFill, {top:ny+'px',  right:'', bottom:'', left:nx+'px'});
+        dom.style(notchBorder,  {top:ny+'px', left:(nx-1)+'px', bottom:'', right:''});
+        dom.style(notchFill,    {top:ny+'px', left:nx+'px',     bottom:'', right:''});
     }
 };
 
