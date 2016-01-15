@@ -83,44 +83,96 @@ var position = function (x, y, pos, margin)
     pos    = pos !== undefined ? pos : 'top';
     margin = margin !== undefined ? margin : 0;
 
-    var viewportMargin  = 20; // Margin applied to edge of viewport.
-    var mx              = x;  // Store initial position x.
-    var my              = y;  // Store initial position y.
-
-    // Notch style.
-    var nSize           = 7;  
-    var nBorder         = nSize+'px solid #000000';
-    var nFill           = nSize+'px solid #ffffff';
-    var nTransparent    = nSize+'px solid transparent';
-    var nNone           = '0px';
-    if (pos === 'top')   
-    {
-        dom.style(notchBorder, {borderTop:nBorder, borderRight:nTransparent, borderBottom:nNone,  borderLeft:nTransparent});
-        dom.style(notchFill, {borderTop:nFill, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
-    }
-    else if (pos === 'bottom')   
-    {
-        dom.style(notchBorder, {borderTop:nNone, borderRight:nTransparent, borderBottom:nBorder,  borderLeft:nTransparent});
-        dom.style(notchFill, {borderTop:nNone, borderRight:nTransparent, borderBottom:nFill, borderLeft:nTransparent});
-    }
-    else if (pos === 'left')   
-    {
-        dom.style(notchBorder, {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent,  borderLeft:nBorder});
-        dom.style(notchFill, {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nFill});
-    }
-    else if (pos === 'right')   
-    {
-        dom.style(notchBorder, {borderTop:nTransparent, borderRight:nBorder, borderBottom:nTransparent,  borderLeft:nNone});
-        dom.style(notchFill, {borderTop:nTransparent, borderRight:nFill, borderBottom:nTransparent, borderLeft:nNone});
-    }
+    var tipPadding  = 5; // Tip padding.
+    var nSize       = 7; // Notch size.
+    var mx          = x; // Store initial position x.
+    var my          = y; // Store initial position y.
 
     // Tip dimensions.
     var w = tip.offsetWidth;
     var h = tip.offsetHeight;
+        window.console.log(w);
+
+    // Get viewport x and y of tip.
+    var pageOffset  = dom.pageOffset();
+    var viewportX   = x - pageOffset.x;
+    var viewportY   = y - pageOffset.y;
+
+    // Resize the tip width if its bigger than the viewport width.
+    var vw = dom.viewportWidth() - (tipPadding * 2);
+    if (w > vw) 
+    {
+        // Apply width resize.
+        dom.style(tip, {width : vw + 'px'});
+        dom.style(tipText, {whiteSpace : ''});
+
+        pos = 'top';
+        w = vw;
+        window.console.log(w);
+    }
+    else 
+    {
+        // Clear width resize.
+        dom.style(tip, {width : ''});
+        dom.style(tipText, {whiteSpace : 'nowrap'});
+    }
+
+    if (pos === 'left' || pos === 'right')
+    {
+        //if ((w * 2) > (dom.viewportWidth() - (tipPadding * 2))) pos = 'top';
+    }
+
+    if (pos === 'top' || pos === 'bottom')
+    {
+        if (viewportY > (dom.viewportHeight() - (h + tipPadding + nSize)))  pos = 'top';
+        if (viewportY < (h + tipPadding + nSize))                           pos = 'bottom';
+        if (viewportX + 5 > (dom.viewportWidth() - (tipPadding + nSize)))   pos = 'left';
+        if (viewportX - 5 < (tipPadding + nSize))                           pos = 'right';
+    }
+    else if (pos === 'left' || pos === 'right')
+    {
+        if (viewportX > (dom.viewportWidth() - (w + tipPadding + nSize)))   pos = 'left';
+        if (viewportX < (w + tipPadding + nSize))                           pos = 'right';
+        if (viewportY + 5 > (dom.viewportHeight() - (tipPadding + nSize)))  pos = 'top';
+        if (viewportY - 5 < (tipPadding + nSize))                           pos = 'bottom';
+    }
+
+    // Notch style.
+    var nBorder         = nSize+'px solid #000000';
+    var nFill           = nSize+'px solid #ffffff';
+    var nTransparent    = nSize+'px solid transparent';
+    var nNone           = '0px';
+    if (pos === 'top')
+    {
+        dom.style(notchBorder,  {borderTop:nBorder, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
+        dom.style(notchFill,    {borderTop:nFill, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
+    }
+    else if (pos === 'bottom')
+    {
+        dom.style(notchBorder,  {borderTop:nNone, borderRight:nTransparent, borderBottom:nBorder, borderLeft:nTransparent});
+        dom.style(notchFill,    {borderTop:nNone, borderRight:nTransparent, borderBottom:nFill, borderLeft:nTransparent});
+    }
+    else if (pos === 'left')
+    {
+        dom.style(notchBorder,  {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nBorder});
+        dom.style(notchFill,    {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nFill});
+    }
+    else if (pos === 'right')
+    {
+        dom.style(notchBorder,  {borderTop:nTransparent, borderRight:nBorder, borderBottom:nTransparent, borderLeft:nNone});
+        dom.style(notchFill,    {borderTop:nTransparent, borderRight:nFill, borderBottom:nTransparent, borderLeft:nNone});
+    }
 
     // Notch dimensions.
     var nw = notchBorder.offsetWidth;
     var nh = notchBorder.offsetHeight;
+
+    // Hide notch if its bigger than the tip.
+    if  (((pos === 'left' || pos === 'right') && (nh > h)) || ((pos === 'top' || pos === 'bottom') && (nw > w)))
+    {
+        dom.style(notchBorder,  {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
+        dom.style(notchFill,    {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
+    }
 
     // Adjust positioning to take account of position, margin and notch.
     if (pos === 'top')   
@@ -144,28 +196,12 @@ var position = function (x, y, pos, margin)
         y = y - (h / 2);
     }
 
-    // Resize the tip width if its bigger than the viewport width.
-    var vw = dom.viewportWidth() - (viewportMargin * 2);
-    if (w > vw) 
-    {
-        // Apply width resize.
-        dom.style(tip, {width : vw + 'px'});
-        dom.style(tipText, {whiteSpace : ''});
-    }
-    else 
-    {
-        // Clear width resize.
-        dom.style(tip, {width : ''});
-        dom.style(tipText, {whiteSpace : 'nowrap'});
-    }
-
     // Get viewport x and y of tip.
-    var pageOffset  = dom.pageOffset();
-    var viewportX   = x - pageOffset.x;
-    var viewportY   = y - pageOffset.y;
+    viewportX = x - pageOffset.x;
+    viewportY = y - pageOffset.y;
 
     // Adjust position of tip to fit inside viewport.
-    var o = dom.isRectInViewport({left:viewportX, top:viewportY, right:viewportX + w, bottom:viewportY + h}, viewportMargin);
+    var o = dom.isRectInViewport({left:viewportX, top:viewportY, right:viewportX + w, bottom:viewportY + h}, tipPadding);
     x = x + o.left - o.right;
     y = y + o.top - o.bottom;
 
@@ -174,28 +210,29 @@ var position = function (x, y, pos, margin)
 
     // Position the notch.
     var nx, ny;
-    if (pos === 'top')   
+    if (pos === 'top')
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
         dom.style(notchBorder,  {left:nx+'px', bottom:(ny-1)+'px',  top:'', right:''});
-        dom.style(notchFill,    {left:nx+'px', bottom:ny+'px',      top:'',  right:''});
+        dom.style(notchFill,    {left:nx+'px', bottom:ny+'px',      top:'', right:''});
     } 
-    else if (pos === 'bottom')   
+    else if (pos === 'bottom')
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
         dom.style(notchBorder,  {left:nx+'px', top:(ny-1)+'px',  bottom:'', right:''});
-        dom.style(notchFill,    {left:nx+'px', top:ny+'px',      bottom:'',  right:''});
+        dom.style(notchFill,    {left:nx+'px', top:ny+'px',      bottom:'', right:''});
     }
-    else if (pos === 'left')   
+    else if (pos === 'left')
+
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;
         dom.style(notchBorder,  {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
         dom.style(notchFill,    {top:ny+'px', right:nx+'px',     bottom:'', left:''});
     }
-    else if (pos === 'right')   
+    else if (pos === 'right')
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;

@@ -379,7 +379,7 @@ var isRectInViewport = function (rect, margin)
  */
 var viewportWidth = function () 
 {
-    return (window.innerWidth || document.documentElement.clientWidth);
+    return document.documentElement.clientWidth;
 };
 
 /** 
@@ -391,7 +391,7 @@ var viewportWidth = function ()
  */
 var viewportHeight = function () 
 {
-    return (window.innerHeight || document.documentElement.clientHeight);
+    return document.documentElement.clientHeight;
 };
 
 /** 

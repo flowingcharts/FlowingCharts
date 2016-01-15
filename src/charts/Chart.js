@@ -274,10 +274,10 @@ Chart.prototype.addEventHandler = function (options)
                 {
 
                 }
-
-                datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
+                datatip.html('Tooltip that should always be visible in'+highlightItem.coords.cy);
+                //datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
                 datatip.style({borderColor : highlightItem.style.fillColor});
-                datatip.position(event.pageX, event.pageY, 'top', 0); //highlightItem.coords.size / 2);
+                datatip.position(event.pageX, event.pageY, 'right', 0); //highlightItem.coords.size / 2);
 
                 me._uiCanvas.render();
             }
