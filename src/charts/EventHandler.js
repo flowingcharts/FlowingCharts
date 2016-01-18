@@ -137,7 +137,8 @@ function EventHandler (options)
                 clientX     : event.clientX,
                 clientY     : event.clientY,
                 pageX       : event.pageX,
-                pageY       : event.pageY
+                pageY       : event.pageY,
+                elementPosition : elementPosition
             });
         }
     }

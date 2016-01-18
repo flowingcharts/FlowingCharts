@@ -3,7 +3,7 @@
 'use strict';
 
 /**
- * @fileoverview    Contains data tip functions.
+ * @fileoverview    Exports the {@link Datatip} class.
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          datatip 
@@ -15,52 +15,72 @@
 var dom       = require('../utils/dom');
 var colorUtil = require('../utils/color');
 
-var tip = dom.createElement('div'); // Create the data tip.
-dom.style(tip, 
+/** 
+ * @classdesc Class for graphics libraries.
+ *
+ * @class
+ * @alias Canvas
+ * @since 0.1.0
+ * @constructor
+ *
+ * @param {HTMLElement} container The html container.
+ */
+function Datatip (container)
 {
-    position                : 'absolute', 
-    zIndex                  : 999999999,  
-    cursor                  : 'default',
-    borderStyle             : 'solid',
-    borderWidth             : '1px',
-    borderRadius            : '3px',
-    fontFamily              : 'arial,serif', 
-    fontSize                : '12px', 
-    color                   : '#666666', 
-    padding                 : '7px', 
-    background              : 'rgba(255, 255, 255, 0.8)',     
-    boxShadow               : '2px 2px 2px 0px rgba(156,156,156,1)'
-});
-dom.appendChild(window.document.body, tip);
+    this._container = container;
 
-var tipText = dom.createElement('div'); // Create the data tip.
-dom.style(tipText, 
-{
-    overflow                : 'hidden', 
-    whiteSpace              : 'nowrap',
-    '-webkitTouchCallout'   : 'none',
-    '-webkitUserSelect'     : 'none',
-    '-khtmlUserSelect'      : 'none',
-    '-mozUserSelect'        : 'none',
-    '-msUserSelect'         : 'none',
-    userSelect              : 'none'
-});
-dom.appendChild(tip, tipText);
+    this._tip = dom.createElement('div'); // Create the data tip.
+    dom.style(this._tip, 
+    {
+        position                : 'absolute', 
+        zIndex                  : 999999999,  
+        cursor                  : 'default',
+        borderStyle             : 'solid',
+        borderWidth             : '1px',
+        fontFamily              : 'arial,serif', 
+        fontSize                : '12px', 
+        color                   : '#666666', 
+        padding                 : '7px', 
+        background              : 'rgba(255, 255, 255, 0.8)',     
+        boxShadow               : '2px 2px 2px 0px rgba(156,156,156,1)',
+        '-mozTransition'        : 'transform 0.2s', 
+        '-webkitTransition'     : 'transform 0.2s',  
+        '-msTransition'         : 'transform 0.2s',  
+        '-oTransition'          : 'transform 0.2s',  
+        transition              : 'transform 0.2s'  
+    });
+    dom.appendChild(this._container, this._tip);
 
-var notchBorder = dom.createElement('div'); // Create the notch border.
-dom.style(notchBorder, 
-{
-    position                : 'absolute'
-});
-dom.appendChild(tip, notchBorder);
+    this._tipText = dom.createElement('div'); // Create the data tip.
+    dom.style(this._tipText, 
+    {
+        overflow                : 'hidden', 
+        whiteSpace              : 'nowrap',
+        '-webkitTouchCallout'   : 'none',
+        '-webkitUserSelect'     : 'none',
+        '-khtmlUserSelect'      : 'none',
+        '-mozUserSelect'        : 'none',
+        '-msUserSelect'         : 'none',
+        userSelect              : 'none'
+    });
+    dom.appendChild(this._tip, this._tipText);
 
-var notchFill   = dom.createElement('div'); // Create the notch fill.
-dom.style(notchFill, 
-{
-    position                : 'absolute'
-});
-dom.appendChild(tip, notchFill);
+    this._notchBorder = dom.createElement('div'); // Create the notch border.
+    dom.style(this._notchBorder, 
+    {
+        position                : 'absolute'
+    });
+    dom.appendChild(this._tip, this._notchBorder);
 
+    this._notchFill = dom.createElement('div'); // Create the notch fill.
+    dom.style(this._notchFill, 
+    {
+        position                : 'absolute'
+    });
+    dom.appendChild(this._tip, this._notchFill);
+
+    this.hide();
+}
 
 /** 
  * Position the data tip using absolute positioning.
@@ -73,25 +93,27 @@ dom.appendChild(tip, notchFill);
  *
  * @param {number} [margin = 0] An optional margin around the data tip.
  */
-var position = function (x, y, pos, margin)
+Datatip.prototype.position = function (x, y, pos, margin)
 {
-    // TODO Mouse out bottom over svg element.
+    // TODO Mouse out bottom over svg element - chrome doesnt fire an event.
     // TODO Width of tip on small screen.
     // TODO Callout.
     // TODO Position tip above point not mouse.
+    // TODO on  mouseover tip should so for couple of seconds before disappearing if user immediately mouseouts.
+    // TODO oon mouseover if tip is invisible it shouldnt be moved by animation.
 
     pos    = pos !== undefined ? pos : 'top';
     margin = margin !== undefined ? margin : 0;
 
     var tipPadding  = 5; // Tip padding.
     var nSize       = 7; // Notch size.
-    var mx          = x; // Store initial position x.
-    var my          = y; // Store initial position y.
+    var mx          = x; // Store initial position x to be used later to position notch.
+    var my          = y; // Store initial position y to be used later to position notch.
 
     // Tip dimensions.
-    var w = tip.offsetWidth;
-    var h = tip.offsetHeight;
-        window.console.log(w);
+    var bounds = dom.bounds(this._tip);
+    var w = Math.round(bounds.width);
+    var h = Math.round(bounds.height);
 
     // Get viewport x and y of tip.
     var pageOffset  = dom.pageOffset();
@@ -100,21 +122,21 @@ var position = function (x, y, pos, margin)
 
     // Resize the tip width if its bigger than the viewport width.
     var vw = dom.viewportWidth() - (tipPadding * 2);
+    window.console.log(vw);
     if (w > vw) 
     {
         // Apply width resize.
-        dom.style(tip, {width : vw + 'px'});
-        dom.style(tipText, {whiteSpace : ''});
+        dom.style(this._tip, {width : vw + 'px'});
+        dom.style(this._tipText, {whiteSpace : ''});
 
         pos = 'top';
         w = vw;
-        window.console.log(w);
     }
     else 
     {
         // Clear width resize.
-        dom.style(tip, {width : ''});
-        dom.style(tipText, {whiteSpace : 'nowrap'});
+        dom.style(this._tip, {width : ''});
+        dom.style(this._tipText, {whiteSpace : 'nowrap'});
     }
 
     if (pos === 'left' || pos === 'right')
@@ -144,34 +166,35 @@ var position = function (x, y, pos, margin)
     var nNone           = '0px';
     if (pos === 'top')
     {
-        dom.style(notchBorder,  {borderTop:nBorder, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
-        dom.style(notchFill,    {borderTop:nFill, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
+        dom.style(this._notchBorder,  {borderTop:nBorder, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
+        dom.style(this._notchFill,    {borderTop:nFill, borderRight:nTransparent, borderBottom:nNone, borderLeft:nTransparent});
     }
     else if (pos === 'bottom')
     {
-        dom.style(notchBorder,  {borderTop:nNone, borderRight:nTransparent, borderBottom:nBorder, borderLeft:nTransparent});
-        dom.style(notchFill,    {borderTop:nNone, borderRight:nTransparent, borderBottom:nFill, borderLeft:nTransparent});
+        dom.style(this._notchBorder,  {borderTop:nNone, borderRight:nTransparent, borderBottom:nBorder, borderLeft:nTransparent});
+        dom.style(this._notchFill,    {borderTop:nNone, borderRight:nTransparent, borderBottom:nFill, borderLeft:nTransparent});
     }
     else if (pos === 'left')
     {
-        dom.style(notchBorder,  {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nBorder});
-        dom.style(notchFill,    {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nFill});
+        dom.style(this._notchBorder,  {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nBorder});
+        dom.style(this._notchFill,    {borderTop:nTransparent, borderRight:nNone, borderBottom:nTransparent, borderLeft:nFill});
     }
     else if (pos === 'right')
     {
-        dom.style(notchBorder,  {borderTop:nTransparent, borderRight:nBorder, borderBottom:nTransparent, borderLeft:nNone});
-        dom.style(notchFill,    {borderTop:nTransparent, borderRight:nFill, borderBottom:nTransparent, borderLeft:nNone});
+        dom.style(this._notchBorder,  {borderTop:nTransparent, borderRight:nBorder, borderBottom:nTransparent, borderLeft:nNone});
+        dom.style(this._notchFill,    {borderTop:nTransparent, borderRight:nFill, borderBottom:nTransparent, borderLeft:nNone});
     }
 
     // Notch dimensions.
-    var nw = notchBorder.offsetWidth;
-    var nh = notchBorder.offsetHeight;
+    var nBounds = dom.bounds(this._notchBorder);
+    var nw = Math.round(nBounds.width);
+    var nh = Math.round(nBounds.height);
 
     // Hide notch if its bigger than the tip.
     if  (((pos === 'left' || pos === 'right') && (nh > h)) || ((pos === 'top' || pos === 'bottom') && (nw > w)))
     {
-        dom.style(notchBorder,  {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
-        dom.style(notchFill,    {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
+        dom.style(this._notchBorder,  {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
+        dom.style(this._notchFill,    {borderTop:nNone, borderRight:nNone, borderBottom:nNone, borderLeft:nNone});
     }
 
     // Adjust positioning to take account of position, margin and notch.
@@ -206,7 +229,10 @@ var position = function (x, y, pos, margin)
     y = y + o.top - o.bottom;
 
     // Position the tip.
-    dom.style(tip, {left: x + 'px', top: y + 'px'});
+    //dom.style(this._tip, {left: x + 'px', top: y + 'px'});
+
+    this._tip.style.transform = 'translateY('+y+'px)';
+    this._tip.style.transform += 'translateX('+x+'px)';
 
     // Position the notch.
     var nx, ny;
@@ -214,30 +240,30 @@ var position = function (x, y, pos, margin)
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
-        dom.style(notchBorder,  {left:nx+'px', bottom:(ny-1)+'px',  top:'', right:''});
-        dom.style(notchFill,    {left:nx+'px', bottom:ny+'px',      top:'', right:''});
+        dom.style(this._notchBorder,  {left:nx+'px', bottom:(ny-1)+'px',  top:'', right:''});
+        dom.style(this._notchFill,    {left:nx+'px', bottom:ny+'px',      top:'', right:''});
     } 
     else if (pos === 'bottom')
     {
         nx = mx - (nw / 2) - x;
         ny = nh * -1;
-        dom.style(notchBorder,  {left:nx+'px', top:(ny-1)+'px',  bottom:'', right:''});
-        dom.style(notchFill,    {left:nx+'px', top:ny+'px',      bottom:'', right:''});
+        dom.style(this._notchBorder,  {left:nx+'px', top:(ny-1)+'px',  bottom:'', right:''});
+        dom.style(this._notchFill,    {left:nx+'px', top:ny+'px',      bottom:'', right:''});
     }
     else if (pos === 'left')
 
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;
-        dom.style(notchBorder,  {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
-        dom.style(notchFill,    {top:ny+'px', right:nx+'px',     bottom:'', left:''});
+        dom.style(this._notchBorder,  {top:ny+'px', right:(nx-1)+'px', bottom:'', left:''});
+        dom.style(this._notchFill,    {top:ny+'px', right:nx+'px',     bottom:'', left:''});
     }
     else if (pos === 'right')
     {
         nx = nw * -1;
         ny = my - (nh / 2) - y;
-        dom.style(notchBorder,  {top:ny+'px', left:(nx-1)+'px', bottom:'', right:''});
-        dom.style(notchFill,    {top:ny+'px', left:nx+'px',     bottom:'', right:''});
+        dom.style(this._notchBorder,  {top:ny+'px', left:(nx-1)+'px', bottom:'', right:''});
+        dom.style(this._notchFill,    {top:ny+'px', left:nx+'px',     bottom:'', right:''});
     }
 };
 
@@ -248,9 +274,9 @@ var position = function (x, y, pos, margin)
  * 
  * @param {string} html The html.
  */
-var html = function (text)
+Datatip.prototype.html = function (text)
 {
-    dom.html(tipText, text);
+    dom.html(this._tipText, text);
 };
 
 /** 
@@ -258,20 +284,19 @@ var html = function (text)
  * 
  * @since 0.1.0
  */
-var hide = function ()
+Datatip.prototype.hide = function ()
 {
-    dom.hide(tip);
+    dom.hide(this._tip);
 };
-hide();
 
 /** 
  * Shows the data tip.
  * 
  * @since 0.1.0
  */
-var show = function ()
+Datatip.prototype.show = function ()
 {
-    dom.show(tip);
+    dom.show(this._tip);
 };
 
 /** 
@@ -281,9 +306,9 @@ var show = function ()
  *
  * @param {number} [delay = 0] A delay before the fade starts.
  */
-var fadeOut = function (delay)
+Datatip.prototype.fadeOut = function (delay)
 {
-    dom.fadeOut(tip, 7, delay);
+    dom.fadeOut(this._tip, 7, delay);
 };
 
 /** 
@@ -293,9 +318,9 @@ var fadeOut = function (delay)
  *
  * @param {number} [delay = 0] A delay before the fade starts.
  */
-var fadeIn = function (delay)
+Datatip.prototype.fadeIn = function (delay)
 {
-    dom.fadeIn(tip, 10, delay);
+    dom.fadeIn(this._tip, 10, delay);
 };
 
 /** 
@@ -305,9 +330,9 @@ var fadeIn = function (delay)
  *
  * @return {number} The width.
  */
-var width = function ()
+Datatip.prototype.width = function ()
 {
-    return tip.offsetWidth;
+    return Math.round(dom.bounds(this._tip).width);
 };
 
 /** 
@@ -317,32 +342,21 @@ var width = function ()
  *
  * @return {number} The height.
  */
-var height = function ()
+Datatip.prototype.height = function ()
 {
-    return tip.offsetHeight;
+    return Math.round(dom.bounds(this._tip).height);
 };
 
 /** 
- * Sets the style for the data tip
+ * Sets the style for the data tip.
  * 
  * @since 0.1.0
  * 
  * @param {object} styles The list of style attributes.
  */
-var style = function (styles)
+Datatip.prototype.style = function (styles)
 {
-    dom.style(tip, styles);
+    dom.style(this._tip, styles);
 };
 
-module.exports = 
-{
-    position    : position,
-    html        : html,
-    hide        : hide,
-    show        : show,
-    fadeOut     : fadeOut,
-    fadeIn      : fadeIn,
-    width       : width,
-    height      : height,
-    style       : style
-};
+module.exports = Datatip;

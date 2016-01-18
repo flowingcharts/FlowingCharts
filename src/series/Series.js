@@ -233,7 +233,7 @@ Series.prototype.render = function()
 };
 
 /** 
- * Returns the nearest item to the given coords.
+ * Returns a hit event for the nearest item.
  *
  * @since 0.1.0
  *
@@ -242,9 +242,9 @@ Series.prototype.render = function()
  *
  * @return {CanvasItem} The canvas item.
  */
-Series.prototype.nearestItem = function(x, y)
+Series.prototype.hitEvent = function(x, y)
 {
-    return this.canvas.nearestItem(x, y);
+    return this.canvas.hitEvent(x, y);
 };
 
 module.exports = Series;

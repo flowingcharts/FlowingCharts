@@ -21,7 +21,7 @@
 
 // Required modules.
 var EventHandler        = require('./EventHandler');
-var datatip             = require('./datatip');
+var Datatip             = require('./Datatip');
 var Canvas              = require('../canvas/Canvas');
 var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
@@ -69,8 +69,9 @@ function Chart (options)
         // Add a resizeTimeout to stop multiple calls to setSize().
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function ()
-        {        
-            me.setSize(me._canvasContainer.offsetWidth, me._canvasContainer.offsetHeight);
+        { 
+            var bounds = dom.bounds(me._canvasContainer);       
+            me.setSize(bounds.width, bounds.height);
         }, me._options.renderRate);
     });
 
@@ -165,7 +166,10 @@ Chart.prototype.options = function(options)
         this.addEventHandler(this._options);
 
         // Set charts size to that of the container - it will subsequently be rendered.
-        this.setSize(this._canvasContainer.offsetWidth, this._canvasContainer.offsetHeight);
+        var bounds = dom.bounds(this._canvasContainer);       
+        this.setSize(bounds.width, bounds.height);
+
+        this._datatip = new Datatip(this._canvasContainer);
 
         return this;
     }
@@ -256,12 +260,11 @@ Chart.prototype.addEventHandler = function (options)
         },
         mousemove : function (event)
         {
-            var nearestItem = me.nearestItem(event.dataX, event.dataY);
-
+            var hitEvent = me.hitEvent(event.dataX, event.dataY);
             me._uiCanvas.empty();
-            if (nearestItem !== undefined)  
+            if (hitEvent !== undefined)  
             {
-                var highlightItem = util.cloneObject(nearestItem);
+                var highlightItem = util.cloneObject(hitEvent.items[0]);
                 me._uiCanvas.addItem(highlightItem);
 
                 if (highlightItem.marker === true)
@@ -274,37 +277,39 @@ Chart.prototype.addEventHandler = function (options)
                 {
 
                 }
-                datatip.html('Tooltip that should always be visible in'+highlightItem.coords.cy);
-                //datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
-                datatip.style({borderColor : highlightItem.style.fillColor});
-                datatip.position(event.pageX, event.pageY, 'right', 0); //highlightItem.coords.size / 2);
+
+                me._datatip.html('Tooltip that should always be visible in'+highlightItem.coords.cy);
+                //me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
+                me._datatip.style({borderColor : highlightItem.style.fillColor});
+                me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top', 0); //highlightItem.coords.size / 2);
 
                 me._uiCanvas.render();
             }
+            else me._datatip.fadeOut(700);
         },
         mouseover : function (event)
         {
-            datatip.fadeIn();
+            me._datatip.fadeIn();
         },
         mouseout : function (event)
         {
-            datatip.fadeOut(700);    
+            me._datatip.fadeOut(700);    
             me._uiCanvas.empty();
         },
         mousedragstart : function (event)
         {
-            datatip.fadeOut();
+            me._datatip.fadeOut();
             me._uiCanvas.empty();
         },
         mousedragend : function (event)
         {                  
-            if (event.isOver) datatip.fadeIn();
+            if (event.isOver) me._datatip.fadeIn();
         }
     });
 };
 
 /** 
- * Returns the nearest item to the given coords.
+ * Returns a hit event for the nearest item.
  *
  * @since 0.1.0
  *
@@ -313,21 +318,21 @@ Chart.prototype.addEventHandler = function (options)
  *
  * @return {CanvasItem} The canvas item.
  */
-Chart.prototype.nearestItem = function(x, y)
+Chart.prototype.hitEvent = function(x, y)
 {
-    var nearestItem;
+    var nearestEvent;
     var shortestDistance = Infinity;
     for (var i = 0; i < this._series.length; i++)  
     {
         var s = this._series[i];
-        var hitEvent = s.nearestItem(x, y);
-        if (hitEvent.distance < shortestDistance) 
+        var event = s.hitEvent(x, y);
+        if (event.distance < shortestDistance) 
         {
-            nearestItem = hitEvent.item; 
-            shortestDistance = hitEvent.distance;
+            nearestEvent = event; 
+            shortestDistance = event.distance;
         }
     }
-    return nearestItem;
+    return nearestEvent;
 };
 
 /** 

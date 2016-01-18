@@ -285,8 +285,8 @@ Canvas.prototype.render = function ()
 Canvas.prototype.drawItem = function (item)
 {
     var p;
-    if (this._coords !== undefined && item.coords.units === 'data') p = getPixelUnits(item, this._coords);  // Canvas using data units.
-    else                                                            p = item.coords;                        // Canvas using pixel units.
+    if (this._coords !== undefined && item.coords.units === 'data') p = this.getPixelUnits(item);   // Canvas using data units.
+    else                                                            p = item.coords;                // Canvas using pixel units.
 
     if (item.marker) 
     {
@@ -355,7 +355,7 @@ Canvas.prototype.getItem = function (type, coords)
 };
 
 /** 
- * Returns the nearest item to the given coords.
+ * Returns a hit event for the nearest item.
  *
  * @since 0.1.0
  *
@@ -364,57 +364,70 @@ Canvas.prototype.getItem = function (type, coords)
  *
  * @return {Object} The canvas item.
  */
-Canvas.prototype.nearestItem = function(x, y)
+Canvas.prototype.hitEvent = function (x, y)
 {
-    var nearestItem;
+    var items = [];
     var shortestDistance = Infinity;
+
     var n = this._items.length;
     for (var i = 0; i < n; i++)  
     {
         var item = this._items[i];
-        var dx = x - item.coords.cx;
-        var dy = y - item.coords.cy;
-        var distanceToPoint = Math.pow(dx, 2) + Math.pow(dy, 2);
-        if (distanceToPoint < shortestDistance) 
+        var dx   = x - item.coords.cx;
+        var dy   = y - item.coords.cy;
+        var dp   = Math.pow(dx, 2) + Math.pow(dy, 2);
+
+        if (dp === shortestDistance) 
         {
-            nearestItem = 
-            {
-                item        : item,
-                distance    : distanceToPoint,
-            };
-            shortestDistance = distanceToPoint;
+            items.push(item);
+        }
+        else if (dp < shortestDistance) 
+        {
+            items = [];
+            items.push(item);
+            shortestDistance = dp;
         }
     }
-    return nearestItem;
+
+    if (items.length > 0)
+    {
+        var p = this.getPixelUnits(items[0]);
+        return {
+            items    : items, 
+            distance : shortestDistance, 
+            pixelX   : p.cx, 
+            pixelY   : p.cy
+        };
+    }
+    else return undefined;
 };
 
 /** 
  * Gets the pixel units for an item.
  *
  * @since 0.1.0
- * @private
  *
  * @param {Object}                      item    The canvas item.
  * @param {CartesianCoords|PolarCoords} coords  The coordinate system 
  */
-function getPixelUnits (item, coords)
+Canvas.prototype.getPixelUnits = function (item)
 {
     var pixelUnits = {};
 
     if (item.marker) 
     {
         // coords{cx, cy, size}
-        pixelUnits.cx   = coords.getPixelX(item.coords.cx);
-        pixelUnits.cy   = coords.getPixelY(item.coords.cy); 
+        pixelUnits.cx   = this._coords.getPixelX(item.coords.cx);
+        pixelUnits.cy   = this._coords.getPixelY(item.coords.cy); 
         pixelUnits.size = item.coords.size; 
     } 
     else if (item.shape) 
     {
         // coords{x, y, width, height}
-        pixelUnits.x      = coords.getPixelX(item.coords.x);
-        pixelUnits.y      = coords.getPixelY(item.coords.y); 
-        pixelUnits.width  = coords.getPixelDimensionX(item.coords.width);
-        pixelUnits.height = coords.getPixelDimensionY(item.coords.height); 
+        pixelUnits.x      = this._coords.getPixelX(item.coords.x);
+        pixelUnits.y      = this._coords.getPixelY(item.coords.y); 
+        pixelUnits.width  = this._coords.getPixelDimensionX(item.coords.width);
+        pixelUnits.height = this._coords.getPixelDimensionY(item.coords.height); 
     }
     else
     {
@@ -422,43 +435,43 @@ function getPixelUnits (item, coords)
         {
             // coords{cx, cy, r}
             case 'circle':      
-                pixelUnits.cx = coords.getPixelX(item.coords.cx);
-                pixelUnits.cy = coords.getPixelY(item.coords.cy); 
+                pixelUnits.cx = this._coords.getPixelX(item.coords.cx);
+                pixelUnits.cy = this._coords.getPixelY(item.coords.cy); 
                 pixelUnits.r  = item.coords.r; 
             break;
             // coords{cx, cy, rx, ry}
             case 'ellipse':     
-                pixelUnits.cx = coords.getPixelX(item.coords.cx);
-                pixelUnits.cy = coords.getPixelY(item.coords.cy); 
-                pixelUnits.rx = coords.getPixelDimensionX(item.coords.rx);
-                pixelUnits.ry = coords.getPixelDimensionY(item.coords.ry); 
+                pixelUnits.cx = this._coords.getPixelX(item.coords.cx);
+                pixelUnits.cy = this._coords.getPixelY(item.coords.cy); 
+                pixelUnits.rx = this._coords.getPixelDimensionX(item.coords.rx);
+                pixelUnits.ry = this._coords.getPixelDimensionY(item.coords.ry); 
             break;
             // coords{x, y, width, height}  
             case 'rect':        
-                pixelUnits.x      = coords.getPixelX(item.coords.x);
-                pixelUnits.y      = coords.getPixelY(item.coords.y); 
-                pixelUnits.width  = coords.getPixelDimensionX(item.coords.width);
-                pixelUnits.height = coords.getPixelDimensionY(item.coords.height); 
+                pixelUnits.x      = this._coords.getPixelX(item.coords.x);
+                pixelUnits.y      = this._coords.getPixelY(item.coords.y); 
+                pixelUnits.width  = this._coords.getPixelDimensionX(item.coords.width);
+                pixelUnits.height = this._coords.getPixelDimensionY(item.coords.height); 
             break;
             // coords{x1, y1, x2, y2}
             case 'line':          
-                pixelUnits.x1 = coords.getPixelX(item.coords.x1);
-                pixelUnits.y1 = coords.getPixelY(item.coords.y1); 
-                pixelUnits.x2 = coords.getPixelX(item.coords.x2);
-                pixelUnits.y2 = coords.getPixelY(item.coords.y2); 
+                pixelUnits.x1 = this._coords.getPixelX(item.coords.x1);
+                pixelUnits.y1 = this._coords.getPixelY(item.coords.y1); 
+                pixelUnits.x2 = this._coords.getPixelX(item.coords.x2);
+                pixelUnits.y2 = this._coords.getPixelY(item.coords.y2); 
             break;
             // coords{points}
             case 'polyline':    
-                pixelUnits.points = coords.getPixelArray(item.coords.points);
+                pixelUnits.points = this._coords.getPixelArray(item.coords.points);
             break;
             // coords{points} 
             case 'polygon':      
-                pixelUnits.points = coords.getPixelArray(item.coords.points);
+                pixelUnits.points = this._coords.getPixelArray(item.coords.points);
             break;
         }
     }
 
     return pixelUnits;
-}
+};
 
 module.exports = Canvas;
