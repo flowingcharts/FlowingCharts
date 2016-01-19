@@ -292,7 +292,8 @@ CartesianCoords.prototype.getDataX = function (pixelX)
     //<validation>
     if (!util.isNumber(pixelX)) throw new Error('CartesianCoords.getDataX(pixelX): pixelX must be a number.');
     //</validation>
-    var dataX = this._viewBox.xMin() + this.getDataDimensionX(pixelX);
+    var px = pixelX - this._viewPort.x();
+    var dataX = this._viewBox.xMin() + this.getDataDimensionX(px);
     return dataX;
 };
 
@@ -310,7 +311,8 @@ CartesianCoords.prototype.getDataY = function (pixelY)
     //<validation>
     if (!util.isNumber(pixelY)) throw new Error('CartesianCoords.getDataY(pixelY): pixelY must be a number.');
     //</validation>
-    var dataY = this._viewBox.yMin() + this.getDataDimensionY(this._viewPort.height() - pixelY);
+    var py = pixelY - this._viewPort.y();
+    var dataY = this._viewBox.yMin() + this.getDataDimensionY(this._viewPort.height() - py);
     return dataY;
 };
 

@@ -47,11 +47,11 @@ function EventHandler (options)
         {
             case 'mousemove' : 
                 pixelCoords = getPixelCoords(event);
-                if (pixelCoords.x >= 0 && 
-                    pixelCoords.x <= coords.viewPort().width() && 
-                    pixelCoords.y >= 0 && 
-                    pixelCoords.y <= coords.viewPort().height())  isOver = true;
-                else                                              isOver = false;
+                if (pixelCoords.x >= coords.viewPort().x() && 
+                    (pixelCoords.x - coords.viewPort().x()) <= coords.viewPort().width() && 
+                    pixelCoords.y >= coords.viewPort().y() && 
+                    (pixelCoords.y - coords.viewPort().y()) <= coords.viewPort().height())  isOver = true;
+                else                                                                        isOver = false;
 
                 if (!isDragging && isDown && isOver && (downX !== pixelCoords.x || downY !== pixelCoords.y)) 
                 {
@@ -153,8 +153,8 @@ function EventHandler (options)
     // Return the actual pixel coords within the viewport.
     function getPixelCoords (event) 
     {
-        var x = event.clientX - elementPosition.left - coords.viewPort().x();
-        var y = event.clientY - elementPosition.top - coords.viewPort().y();
+        var x = event.clientX - elementPosition.left;
+        var y = event.clientY - elementPosition.top;
         return {x:x, y:y};
     }
 
