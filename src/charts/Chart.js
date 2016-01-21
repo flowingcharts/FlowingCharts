@@ -284,7 +284,7 @@ Chart.prototype.addEventHandler = function (options)
                 me._datatip.style({borderColor : highlightItem.style.fillColor});
                 //me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top', 0); //highlightItem.coords.size / 2);
 
-me._datatip.position(event.pixelX, event.pixelY, 'top'); //highlightItem.coords.size / 2);
+me._datatip.position(event.pixelX, event.pixelY, 'left'); //highlightItem.coords.size / 2);
 
 
 
