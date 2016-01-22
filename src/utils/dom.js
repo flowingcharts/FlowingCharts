@@ -9,6 +9,35 @@
  * @module          dom 
  */
 
+// Animation polyfill.
+var lastTime = 0;
+var vendors = ['ms', 'moz', 'webkit', 'o'];
+for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) 
+{
+    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+}
+
+if (!window.requestAnimationFrame)
+{
+    window.requestAnimationFrame = function (callback, element) 
+    {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function () {callback(currTime + timeToCall);}, timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+    };
+}
+
+if (!window.cancelAnimationFrame)
+{
+    window.cancelAnimationFrame = function (id) 
+    {
+        clearTimeout(id);
+    };
+}
+
 /** 
  * Check for support of a feature.
  *
@@ -233,7 +262,7 @@ var fadeOpacity = 1;
  * @param {number}      [duration = 10] The duration of the fade.
  * @param {number}      [delay = 0]     A delay before the fade starts.
  */
-var fadeOut = function (element, duration, delay)
+var fadeOut = function (element, duration, delay, callback)
 {
     duration = duration !== undefined ? duration : 10;
     delay = delay !== undefined ? delay : 0;
@@ -251,6 +280,7 @@ var fadeOut = function (element, duration, delay)
             {
                 clearInterval(fadeTimer);
                 hide(element);
+                if (callback !== undefined) callback.call(null);
             }
             style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
             fadeOpacity -= fadeOpacity * 0.1;
@@ -267,7 +297,7 @@ var fadeOut = function (element, duration, delay)
  * @param {number}      [duration = 10] The duration of the fade.
  * @param {number}      [delay = 0]     A delay before the fade starts.
  */
-var fadeIn = function (element, duration, delay) 
+var fadeIn = function (element, duration, delay, callback) 
 {
     duration = duration !== undefined ? duration : 10;
     delay = delay !== undefined ? delay : 0;
@@ -282,7 +312,11 @@ var fadeIn = function (element, duration, delay)
 
         fadeTimer = setInterval(function () 
         {
-            if (fadeOpacity >= 1) clearInterval(fadeTimer);
+            if (fadeOpacity >= 1) 
+            {
+                clearInterval(fadeTimer);
+                if (callback !== undefined) callback.call(null);
+            }
             style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
             fadeOpacity += fadeOpacity * 0.1;
         }, duration);

@@ -260,40 +260,11 @@ Chart.prototype.addEventHandler = function (options)
         },
         mousemove : function (event)
         {
-            var hitEvent = me.hitEvent(event.dataX, event.dataY);
-            me._uiCanvas.empty();
-            if (hitEvent !== undefined)  
-            {
-                var highlightItem = util.cloneObject(hitEvent.items[0]);
-                me._uiCanvas.addItem(highlightItem);
-
-                if (highlightItem.marker === true)
-                {
-                    highlightItem.style.fillOpacity = 0.3;
-                    highlightItem.style.lineColor   = highlightItem.style.fillColor;
-                    highlightItem.coords.size       = highlightItem.coords.size * 2;
-                }
-                else if (highlightItem.shape === true)
-                {
-
-                }
-
-
-                //me._datatip.html('Tooltip that should always be visible in'+highlightItem.coords.cy);
-                me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
-                me._datatip.style({borderColor : highlightItem.style.fillColor});
-                //me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top', 0); //highlightItem.coords.size / 2);
-
-me._datatip.position(event.pixelX, event.pixelY, 'left'); //highlightItem.coords.size / 2);
-
-
-
-                me._uiCanvas.render();
-            }
-            else me._datatip.fadeOut(700);
+            updateTip(event);
         },
         mouseover : function (event)
         {
+            updateTip(event);
             me._datatip.fadeIn();
         },
         mouseout : function (event)
@@ -311,6 +282,35 @@ me._datatip.position(event.pixelX, event.pixelY, 'left'); //highlightItem.coords
             if (event.isOver) me._datatip.fadeIn();
         }
     });
+
+    function updateTip(event)
+    { 
+        var hitEvent = me.hitEvent(event.dataX, event.dataY);
+        me._uiCanvas.empty();
+        if (hitEvent !== undefined)  
+        {
+            var highlightItem = util.cloneObject(hitEvent.items[0]);
+            me._uiCanvas.addItem(highlightItem);
+
+            if (highlightItem.marker === true)
+            {
+                highlightItem.style.fillOpacity = 0.3;
+                highlightItem.style.lineColor   = highlightItem.style.fillColor;
+                highlightItem.coords.size       = highlightItem.coords.size * 2;
+            }
+            else if (highlightItem.shape === true)
+            {
+
+            }
+
+            me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
+            me._datatip.borderColor(highlightItem.style.fillColor);
+            //me._datatip.position(event.pixelX, event.pixelY, 'top');
+            me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
+
+            me._uiCanvas.render();
+        }
+    }
 };
 
 /** 

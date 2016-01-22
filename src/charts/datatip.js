@@ -27,31 +27,43 @@ var colorUtil = require('../utils/color');
  */
 function Datatip (container)
 {
-    this._container = container;
+    this._container       = container;   // Tip container.
+    this._pos             = 'top';       // Tip position.
+    this._backgroundColor = '#ffffff';   // Tip background color.
+    this._borderColor     = '#000000';   // Tip border color.
+    this._borderWidth     = 1;           // Tip border width.
+    this._viewportMargin  = 10;          // Margin around the viewport edge that the tip isnt allowed to overlap.
+    this._minNotchSize    = 8;           // The minimum notch size.
+    this._minNotchGap     = 10;          // The minimum distance the notch is allowed from the edge of the tip.
 
-    this._tip = dom.createElement('div'); // Create the data tip.
+    // For animation.
+    this._mouseTracking = null;
+    this._xPos = 0;
+    this._yPos = 0;
+    this._x = 0;
+    this._y = 0;
+
+    // Create the data tip.
+    this._tip = dom.createElement('div'); 
     dom.style(this._tip, 
     {
         position                : 'absolute', 
         cursor                  : 'default',
         borderStyle             : 'solid',
-        borderWidth             : '1px',
-        borderRadius            : '3px',
+        borderWidth             : this._borderWidth+'px',
+        borderColor             : this._borderColor, 
+        borderRadius            : '3px', 
         fontFamily              : 'arial,serif', 
         fontSize                : '12px', 
         color                   : '#666666', 
         padding                 : '7px', 
-        background              : 'rgba(255, 255, 255, 0.8)',     
-        boxShadow               : '2px 2px 2px 0px rgba(156,156,156,1)',
-        '-mozTransition'        : 'transform 0.2s', 
-        '-webkitTransition'     : 'transform 0.2s',  
-        '-msTransition'         : 'transform 0.2s',  
-        '-oTransition'          : 'transform 0.2s',  
-        transition              : 'transform 0.2s'  
+        background              : this._backgroundColor,     
+        boxShadow               : '2px 2px 2px 0px rgba(200,200,200,1)'
     });
     dom.appendChild(this._container, this._tip);
 
-    this._tipText = dom.createElement('div'); // Create the data tip.
+    // Create the data tip text.
+    this._tipText = dom.createElement('div'); 
     dom.style(this._tipText, 
     {
         overflow                : 'hidden', 
@@ -65,18 +77,14 @@ function Datatip (container)
     });
     dom.appendChild(this._tip, this._tipText);
 
-    this._notchBorder = dom.createElement('div'); // Create the notch border.
-    dom.style(this._notchBorder, 
-    {
-        position                : 'absolute'
-    });
+    // Create the notch border.
+    this._notchBorder = dom.createElement('div'); 
+    dom.style(this._notchBorder, {position : 'absolute'});
     dom.appendChild(this._tip, this._notchBorder);
 
-    this._notchFill = dom.createElement('div'); // Create the notch fill.
-    dom.style(this._notchFill, 
-    {
-        position                : 'absolute'
-    });
+    // Create the notch fill.
+    this._notchFill = dom.createElement('div'); 
+    dom.style(this._notchFill, {position : 'absolute'});
     dom.appendChild(this._tip, this._notchFill);
 
     this.hide();
@@ -94,168 +102,137 @@ function Datatip (container)
 Datatip.prototype.position = function (x, y, pos)
 {
     // TODO Mouse out bottom over svg element - chrome doesnt fire an event.
-    // TODO Width of tip on small screen.
-    // TODO Callout.
-    // TODO Position tip above point not mouse.
-    // TODO on  mouseover tip should so for couple of seconds before disappearing if user immediately mouseouts.
     // TODO on mouseover if tip is invisible it shouldnt be moved by animation.
-    // TODO gap * 2 should be added to notch when testing if notch is too wide/high for the tip.
-    // TODOnotch appearing in top left corner on first mouseover after refresh.
+    // TODO this._minNotchGap * 2 should be added to notch when testing if notch is too wide/high for the tip.
+    // TODO mousein then mouseout immediately - get semi transparent tip - needs time to fully appear and stay before disappearing.
 
-    pos = pos !== undefined ? pos : 'top';
+    this._pos = pos !== undefined ? pos : this._pos;
 
-    var initX      = x;  // Store initial position x to be used later to position notch.
-    var initY      = y;  // Store initial position y to be used later to position notch.
-    var edgeMargin = 10; // Margin around the viewport edge.
+    // Store initial position.
+    var initX = x;
+    var initY = y;
 
     // Tip dimensions.
     var bTip   = dom.bounds(this._tip);
     this._wTip = Math.round(bTip.width);
     this._hTip = Math.round(bTip.height);
 
-    // Notch dimensions.
-    this._wNotch = 0;
-    this._hNotch = 0;
-
-    // Check if tip is within the viewport.
-    this._drawNotch(pos);
-    var pageOffset = dom.pageOffset();
+    // Change tip position if it is overlapping the viewport margin.
+    this._styleNotch();
     var bContainer = dom.bounds(this._container);
-    var vx = bContainer.left + x; //- pageOffset.x;
-    var vy = bContainer.top + y; //- pageOffset.y;
-    if (pos === 'top' || pos === 'bottom')
+    var vx = bContainer.left + x;
+    var vy = bContainer.top + y;
+    if (this._pos === 'top' || this._pos === 'bottom')
     {
-        var th = this._hTip + edgeMargin + this._hNotch;
-        if (vy > (dom.viewportHeight() - th))  pos = 'top';
-        if (vy < th)                           pos = 'bottom';
+        var totalTipHeight = this._hNotch + this._hTip + this._viewportMargin;
+        if (vy < totalTipHeight)                          this._pos = 'bottom';
+        if (vy > (dom.viewportHeight() - totalTipHeight)) this._pos = 'top';
     }
-    else if (pos === 'left' || pos === 'right')
+    else if (this._pos === 'left' || this._pos === 'right')
     {
-        var tw = this._wTip + edgeMargin + this._wNotch;
-        if (vx > (dom.viewportWidth() - tw))   pos = 'left';
-        if (vx < tw)                           pos = 'right';
+        var totalTipWidth = this._hNotch + this._wTip + this._viewportMargin;
+        if (vx < totalTipWidth)                          this._pos = 'right';
+        if (vx > (dom.viewportWidth() - totalTipWidth))  this._pos = 'left';
     }
+    this._styleNotch();
 
-    // Redraw notch in case its position has changed.
-    this._drawNotch(pos);
-
-    // Adjust positioning to take account of position and notch.
-    if (pos === 'top')   
+    // Change tip xy to take account of the tip position and notch dimensions.
+    if (this._pos === 'top')   
     {
         x = x - (this._wTip / 2);
         y = y - (this._hTip + this._hNotch);
     } 
-    else if (pos === 'bottom')   
+    else if (this._pos === 'bottom')   
     {
         x = x - (this._wTip / 2);
         y = y + this._hNotch;
     }
-    else if (pos === 'left')   
+    else if (this._pos === 'left')   
     {
         x = x - (this._wTip + this._wNotch);
         y = y - (this._hTip / 2);
     }
-    else if (pos === 'right')   
+    else if (this._pos === 'right')   
     {
         x = x + this._wNotch;
         y = y - (this._hTip / 2);
     }
 
-    // Get viewport x and y of tip.
-    vx = bContainer.left + x; //- pageOffset.x;
-    vy = bContainer.top + y; //- pageOffset.y;
-
-    // Adjust position of tip to fit inside viewport.
-    var o = dom.isRectInViewport({left:vx, top:vy, right:vx + this._wTip, bottom:vy + this._hTip}, edgeMargin);
+    // Change tip xy if tip is overlapping the viewport margin.
+    vx = bContainer.left + x;
+    vy = bContainer.top + y;
+    var o = dom.isRectInViewport({left:vx, top:vy, right:vx + this._wTip, bottom:vy + this._hTip}, this._viewportMargin);
     x = x + o.left - o.right;
     y = y + o.top - o.bottom;
 
-    // Position the tip.
-    dom.style(this._tip,  {left:x+'px', top:y+'px'});
-    //this._tip.style.transform = 'translate('+x+'px,'+y+'px)';
-
-    // Position the notch.
+    // Change tip xy if the notch is overlapping the viewport margin.
     var xNotch = initX - x;
     var yNotch = initY - y;
-    this._positionNotch(pos, xNotch, yNotch);
 
-    var gap = 5;
-    if (pos === 'top' || pos === 'bottom')   
+    if (this._pos === 'top' || this._pos === 'bottom')   
     {
-        var dx = (xNotch + (this._wNotch / 2) + gap) - this._wTip;
-        if (dx > 0) 
-        {
-            x = x + dx;
-            dom.style(this._tip, {left:x+'px'});
-            xNotch = initX - x;
-            yNotch = initY - y;
-            this._positionNotch(pos, xNotch, yNotch);
-        }
-        dx = xNotch - ((this._wNotch / 2) + gap);
-        if (dx < 0) 
-        {
-            x = x + dx;
-            dom.style(this._tip, {left:x+'px'});
-            xNotch = initX - x;
-            yNotch = initY - y;
-            this._positionNotch(pos, xNotch, yNotch);
-        }
+        var dw = (this._wNotch / 2) + this._minNotchGap + this._borderWidth;
+
+        var dx = xNotch + dw - this._wTip;
+        if (dx > 0) x = x + dx;
+
+        dx = xNotch - dw;
+        if (dx < 0) x = x + dx;
     }
-    if (pos === 'left' || pos === 'right')   
+    if (this._pos === 'left' || this._pos === 'right')   
     {
-        var dy = (yNotch + (this._hNotch / 2) + gap) - this._hTip;
-        if (dy > 0) 
-        {
-            y = y + dy;
-            dom.style(this._tip, {top:y+'px'});
-            xNotch = initX - x;
-            yNotch = initY - y;
-            this._positionNotch(pos, xNotch, yNotch);
-        }
-        dy = yNotch - ((this._hNotch / 2) + gap);
-        if (dy < 0) 
-        {
-            y = y + dy;
-            dom.style(this._tip, {left:y+'px'});
-            xNotch = initX - x;
-            yNotch = initY - y;
-            this._positionNotch(pos, xNotch, yNotch);
-        }
+        var dh = (this._hNotch / 2) + this._minNotchGap + this._borderWidth;
+
+        var dy = yNotch + dh - this._hTip;
+        if (dy > 0) y = y + dy;
+
+        dy = yNotch - dh;
+        if (dy < 0) y = y + dy;
     }
+    xNotch = initX - x;
+    yNotch = initY - y;
+
+    // Position the tip and notch.
+    this._positionNotch(xNotch, yNotch);
+    //this._tip.style.transform = 'translate('+x+'px,'+y+'px)';
+    //dom.style(this._tip, {left:x+'px', top:y+'px'});
+
+    this._x = x;
+    this._y = y;
+
+
 };
 
 /** 
- * Draws the notch.
+ * Styles the notch.
  * 
  * @since 0.1.0
  * @private
- * 
- * @param {number} pos The position.
  */
-Datatip.prototype._drawNotch = function (pos)
+Datatip.prototype._styleNotch = function ()
 {
     // Notch style - uses css border trick.
-    var nSize   = 7;
-    var nBorder = nSize+'px solid #000000';
-    var nFill   = nSize+'px solid #ffffff';
+    var nSize   = Math.max(this._minNotchSize, this._borderWidth);
+    var nBorder = nSize+'px solid '+this._borderColor;
+    var nFill   = nSize+'px solid '+this._backgroundColor;
     var nTrans  = nSize+'px solid transparent';
 
-    if (pos === 'top')
+    if (this._pos === 'top')
     {
         dom.style(this._notchBorder, {borderTop:nBorder,    borderRight:nTrans, borderLeft:nTrans,   borderBottom:'0px'});
         dom.style(this._notchFill,   {borderTop:nFill,      borderRight:nTrans, borderLeft:nTrans,   borderBottom:'0px'});
     }
-    else if (pos === 'bottom')
+    else if (this._pos === 'bottom')
     {
         dom.style(this._notchBorder, {borderBottom:nBorder, borderRight:nTrans, borderLeft:nTrans,   borderTop:'0px'});
         dom.style(this._notchFill,   {borderBottom:nFill,   borderRight:nTrans, borderLeft:nTrans,   borderTop:'0px'});
     }
-    else if (pos === 'left')
+    else if (this._pos === 'left')
     {
         dom.style(this._notchBorder, {borderLeft:nBorder,   borderTop:nTrans,   borderBottom:nTrans, borderRight:'0px'});
         dom.style(this._notchFill,   {borderLeft:nFill,     borderTop:nTrans,   borderBottom:nTrans, borderRight:'0px'});
     }
-    else if (pos === 'right')
+    else if (this._pos === 'right')
     {
         dom.style(this._notchBorder, {borderRight:nBorder,  borderTop:nTrans,   borderBottom:nTrans, borderLeft:'0px'});
         dom.style(this._notchFill,   {borderRight:nFill,    borderTop:nTrans,   borderBottom:nTrans, borderLeft:'0px'});
@@ -267,7 +244,7 @@ Datatip.prototype._drawNotch = function (pos)
     this._hNotch = Math.round(bNotch.height);
 
     // Hide notch if its bigger than the tip.
-    if  (((pos === 'left' || pos === 'right') && (this._hNotch > this._hTip)) || ((pos === 'top' || pos === 'bottom') && (this._wNotch > this._wTip)))
+    if  (((this._pos === 'left' || this._pos === 'right') && (this._hNotch > this._hTip)) || ((this._pos === 'top' || this._pos === 'bottom') && (this._wNotch > this._wTip)))
     {
         dom.style(this._notchBorder, {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});
         dom.style(this._notchFill,   {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});
@@ -282,38 +259,49 @@ Datatip.prototype._drawNotch = function (pos)
  * @since 0.1.0
  * @private
  * 
- * @param {number} pos The position.
+ * @param {number} x The x position.
+ * @param {number} y The y position.
  */
-Datatip.prototype._positionNotch = function (pos, x, y)
+Datatip.prototype._positionNotch = function (x, y)
 {
     var nx, ny;
-    if (pos === 'top')
+    if (this._pos === 'top')
     {
-        nx = x - (this._wNotch / 2);
+        nx = x - (this._wNotch / 2) - this._borderWidth;
         ny = this._hNotch * -1;
-        dom.style(this._notchBorder, {left:nx+'px', bottom:(ny-1)+'px', top:'',    right:''});
-        dom.style(this._notchFill,   {left:nx+'px', bottom:ny+'px',     top:'',    right:''});
+        dom.style(this._notchBorder, {left:nx+'px', bottom:(ny-this._borderWidth)+'px', top:'',    right:''});
+        dom.style(this._notchFill,   {left:nx+'px', bottom:(ny+1)+'px',                 top:'',    right:''});
+
+        /*dom.style(this._notchBorder, {bottom:(ny-this._borderWidth)+'px', top:'',    right:''});
+        dom.style(this._notchFill,   {bottom:(ny+1)+'px',                 top:'',    right:''});
+        this._notchBorder.style.transform = 'translateX('+nx+'px)';
+        this._notchFill.style.transform = 'translateX('+nx+'px)';*/
     } 
-    else if (pos === 'bottom')
+    else if (this._pos === 'bottom')
     {
-        nx = x - (this._wNotch / 2);
+        nx = x - (this._wNotch / 2) - this._borderWidth;
         ny = this._hNotch * -1;
-        dom.style(this._notchBorder, {left:nx+'px', top:(ny-1)+'px',    bottom:'', right:''});
-        dom.style(this._notchFill,   {left:nx+'px', top:ny+'px',        bottom:'', right:''});
+        dom.style(this._notchBorder, {left:nx+'px', top:(ny-this._borderWidth)+'px',    bottom:'', right:''});
+        dom.style(this._notchFill,   {left:nx+'px', top:(ny+1)+'px',                    bottom:'', right:''});
+
+        /*dom.style(this._notchBorder, {top:(ny-this._borderWidth)+'px',    bottom:'', right:''});
+        dom.style(this._notchFill,   {top:(ny+1)+'px',                    bottom:'', right:''});
+        this._notchBorder.style.transform = 'translateX('+nx+'px)';
+        this._notchFill.style.transform = 'translateX('+nx+'px)';*/
     }
-    else if (pos === 'left')
+    else if (this._pos === 'left')
     {
-        ny = y - (this._hNotch / 2);
+        ny = y - (this._hNotch / 2) - this._borderWidth;
         nx = this._wNotch * -1;
-        dom.style(this._notchBorder, {top:ny+'px',  right:(nx-1)+'px',  bottom:'', left:''});
-        dom.style(this._notchFill,   {top:ny+'px',  right:nx+'px',      bottom:'', left:''});
+        dom.style(this._notchBorder, {top:ny+'px',  right:(nx-this._borderWidth)+'px',  bottom:'', left:''});
+        dom.style(this._notchFill,   {top:ny+'px',  right:(nx+1)+'px',                  bottom:'', left:''});
     }
-    else if (pos === 'right')
+    else if (this._pos === 'right')
     {
-        ny = y - (this._hNotch / 2);
+        ny = y - (this._hNotch / 2) - this._borderWidth;
         nx = this._wNotch * -1;
-        dom.style(this._notchBorder, {top:ny+'px',  left:(nx-1)+'px',   bottom:'', right:''});
-        dom.style(this._notchFill,   {top:ny+'px',  left:nx+'px',       bottom:'', right:''});
+        dom.style(this._notchBorder, {top:ny+'px',  left:(nx-this._borderWidth)+'px',   bottom:'', right:''});
+        dom.style(this._notchFill,   {top:ny+'px',  left:(nx+1)+'px',                   bottom:'', right:''});
     }
 };
 
@@ -329,6 +317,26 @@ Datatip.prototype.html = function (text)
     dom.html(this._tipText, text);
 };
 
+
+Datatip.prototype._startMouseTracking = function ()
+{
+    this._xPos += (this._x - this._xPos) / 5;
+    this._yPos += (this._y - this._yPos) / 5;
+    dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
+
+    var me = this;
+    this._mouseTracking = window.requestAnimationFrame(function ()
+    {
+        me._startMouseTracking();
+    });
+};
+
+Datatip.prototype._endMouseTracking = function ()
+{
+    window.cancelAnimationFrame(this._mouseTracking);
+    this._mouseTracking = null;
+};
+
 /** 
  * Hides the  data tip.
  * 
@@ -336,6 +344,7 @@ Datatip.prototype.html = function (text)
  */
 Datatip.prototype.hide = function ()
 {
+    this._endMouseTracking();
     dom.hide(this._tip);
 };
 
@@ -346,6 +355,7 @@ Datatip.prototype.hide = function ()
  */
 Datatip.prototype.show = function ()
 {
+    if (this._mouseTracking === null) this._startMouseTracking();
     dom.show(this._tip);
 };
 
@@ -358,7 +368,11 @@ Datatip.prototype.show = function ()
  */
 Datatip.prototype.fadeOut = function (delay)
 {
-    dom.fadeOut(this._tip, 7, delay);
+    var me = this;
+    dom.fadeOut(this._tip, 7, delay, function()
+    {  
+        me._endMouseTracking();
+    });
 };
 
 /** 
@@ -370,6 +384,7 @@ Datatip.prototype.fadeOut = function (delay)
  */
 Datatip.prototype.fadeIn = function (delay)
 {
+    if (this._mouseTracking === null) this._startMouseTracking();
     dom.fadeIn(this._tip, 10, delay);
 };
 
@@ -398,15 +413,18 @@ Datatip.prototype.height = function ()
 };
 
 /** 
- * Sets the style for the data tip.
+ * Sets the color of the border.
  * 
  * @since 0.1.0
  * 
- * @param {object} styles The list of style attributes.
+ * @param {string} color The color.
  */
-Datatip.prototype.style = function (styles)
+Datatip.prototype.borderColor = function (color)
 {
-    dom.style(this._tip, styles);
+    // Border color cant be transparent because the tip shadow cuts across the notch.
+    this._borderColor = colorUtil.toRGBA(color, 1);
+    dom.style(this._tip, {borderColor:this._borderColor});
+    this._styleNotch();
 };
 
 module.exports = Datatip;
