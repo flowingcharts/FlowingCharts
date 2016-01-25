@@ -248,81 +248,6 @@ var isVisible = function (element)
     else                                        return true;
 };
 
-// Fade variables.
-var fadeTimer;
-var fadeDelay;
-var fadeOpacity = 1;
-
-/** 
- * Fade out the target element.
- * 
- * @since 0.1.0
- * 
- * @param {HTMLElement} element The target element.
- * @param {number}      [duration = 10] The duration of the fade.
- * @param {number}      [delay = 0]     A delay before the fade starts.
- */
-var fadeOut = function (element, duration, delay, callback)
-{
-    duration = duration !== undefined ? duration : 10;
-    delay = delay !== undefined ? delay : 0;
-
-    clearTimeout(fadeDelay);
-    clearInterval(fadeTimer);
-
-    fadeDelay = setTimeout(function ()
-    {
-        if (isVisible) fadeOpacity = 1;  // Initial opacity.
-
-        fadeTimer = setInterval(function () 
-        {
-            if (fadeOpacity <= 0.1)
-            {
-                clearInterval(fadeTimer);
-                hide(element);
-                if (callback !== undefined) callback.call(null);
-            }
-            style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
-            fadeOpacity -= fadeOpacity * 0.1;
-        }, duration);
-    }, delay);
-};
-
-/** 
- * Fade in the target element.
- * 
- * @since 0.1.0
- * 
- * @param {HTMLElement} element         The target element.
- * @param {number}      [duration = 10] The duration of the fade.
- * @param {number}      [delay = 0]     A delay before the fade starts.
- */
-var fadeIn = function (element, duration, delay, callback) 
-{
-    duration = duration !== undefined ? duration : 10;
-    delay = delay !== undefined ? delay : 0;
-
-    clearTimeout(fadeDelay);
-    clearInterval(fadeTimer);
-
-    fadeDelay = setTimeout(function ()
-    {
-        if (!isVisible) fadeOpacity = 0.1;  // Initial opacity.
-        show(element);
-
-        fadeTimer = setInterval(function () 
-        {
-            if (fadeOpacity >= 1) 
-            {
-                clearInterval(fadeTimer);
-                if (callback !== undefined) callback.call(null);
-            }
-            style(element, {opacity:fadeOpacity, filter:'alpha(opacity=' + fadeOpacity * 100 + ')'});
-            fadeOpacity += fadeOpacity * 0.1;
-        }, duration);
-    }, delay);
-};
-
 /** 
  * Add event listeners to the target element.
  * 
@@ -462,8 +387,6 @@ module.exports =
     hide                    : hide,
     show                    : show,
     isVisible               : isVisible,
-    fadeOut                 : fadeOut,
-    fadeIn                  : fadeIn,
     bounds                  : bounds,
     isRectInViewport        : isRectInViewport,
     viewportWidth           : viewportWidth,

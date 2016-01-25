@@ -36,18 +36,24 @@ function Datatip (container)
     this._minNotchSize    = 8;           // The minimum notch size.
     this._minNotchGap     = 10;          // The minimum distance the notch is allowed from the edge of the tip.
 
-    // For animation.
-    this._mouseTracking = null;
-    this._xPos = 0;
-    this._yPos = 0;
-    this._x = 0;
-    this._y = 0;
+    // Animation.
+    this._mouseTracking   = null;
+    this._xPos            = 0;
+    this._yPos            = 0;
+    this._x               = 0;
+    this._y               = 0;
+
+    // Fade in / out.
+    this._fadeInterval    = null;
+    this._fadeOutDelay    = null;
+    this._tipOpacity      = 1;
 
     // Create the data tip.
     this._tip = dom.createElement('div'); 
     dom.style(this._tip, 
     {
         position                : 'absolute', 
+        pointerEvents           : 'none',
         cursor                  : 'default',
         borderStyle             : 'solid',
         borderWidth             : this._borderWidth+'px',
@@ -66,6 +72,7 @@ function Datatip (container)
     this._tipText = dom.createElement('div'); 
     dom.style(this._tipText, 
     {
+        pointerEvents           : 'none',
         overflow                : 'hidden', 
         whiteSpace              : 'nowrap',
         '-webkitTouchCallout'   : 'none',
@@ -79,12 +86,20 @@ function Datatip (container)
 
     // Create the notch border.
     this._notchBorder = dom.createElement('div'); 
-    dom.style(this._notchBorder, {position : 'absolute'});
+    dom.style(this._notchBorder, 
+    {
+        position                : 'absolute',
+        pointerEvents           : 'none'
+    });
     dom.appendChild(this._tip, this._notchBorder);
 
     // Create the notch fill.
     this._notchFill = dom.createElement('div'); 
-    dom.style(this._notchFill, {position : 'absolute'});
+    dom.style(this._notchFill, 
+    {
+        position                : 'absolute',
+        pointerEvents           : 'none'
+    });
     dom.appendChild(this._tip, this._notchFill);
 
     this.hide();
@@ -114,8 +129,8 @@ Datatip.prototype.position = function (x, y, pos)
 
     // Tip dimensions.
     var bTip   = dom.bounds(this._tip);
-    this._wTip = Math.round(bTip.width);
-    this._hTip = Math.round(bTip.height);
+    this._wTip = bTip.width;
+    this._hTip = bTip.height;
 
     // Change tip position if it is overlapping the viewport margin.
     this._styleNotch();
@@ -194,13 +209,9 @@ Datatip.prototype.position = function (x, y, pos)
 
     // Position the tip and notch.
     this._positionNotch(xNotch, yNotch);
-    //this._tip.style.transform = 'translate('+x+'px,'+y+'px)';
-    //dom.style(this._tip, {left:x+'px', top:y+'px'});
 
     this._x = x;
     this._y = y;
-
-
 };
 
 /** 
@@ -211,6 +222,8 @@ Datatip.prototype.position = function (x, y, pos)
  */
 Datatip.prototype._styleNotch = function ()
 {
+    dom.style(this._tip, {borderColor:this._borderColor});
+
     // Notch style - uses css border trick.
     var nSize   = Math.max(this._minNotchSize, this._borderWidth);
     var nBorder = nSize+'px solid '+this._borderColor;
@@ -240,8 +253,8 @@ Datatip.prototype._styleNotch = function ()
 
     // Get notch dimensions after its been drawn.
     var bNotch   = dom.bounds(this._notchBorder);
-    this._wNotch = Math.round(bNotch.width);
-    this._hNotch = Math.round(bNotch.height);
+    this._wNotch = bNotch.width;
+    this._hNotch = bNotch.height;
 
     // Hide notch if its bigger than the tip.
     if  (((this._pos === 'left' || this._pos === 'right') && (this._hNotch > this._hTip)) || ((this._pos === 'top' || this._pos === 'bottom') && (this._wNotch > this._wTip)))
@@ -271,11 +284,6 @@ Datatip.prototype._positionNotch = function (x, y)
         ny = this._hNotch * -1;
         dom.style(this._notchBorder, {left:nx+'px', bottom:(ny-this._borderWidth)+'px', top:'',    right:''});
         dom.style(this._notchFill,   {left:nx+'px', bottom:(ny+1)+'px',                 top:'',    right:''});
-
-        /*dom.style(this._notchBorder, {bottom:(ny-this._borderWidth)+'px', top:'',    right:''});
-        dom.style(this._notchFill,   {bottom:(ny+1)+'px',                 top:'',    right:''});
-        this._notchBorder.style.transform = 'translateX('+nx+'px)';
-        this._notchFill.style.transform = 'translateX('+nx+'px)';*/
     } 
     else if (this._pos === 'bottom')
     {
@@ -283,11 +291,6 @@ Datatip.prototype._positionNotch = function (x, y)
         ny = this._hNotch * -1;
         dom.style(this._notchBorder, {left:nx+'px', top:(ny-this._borderWidth)+'px',    bottom:'', right:''});
         dom.style(this._notchFill,   {left:nx+'px', top:(ny+1)+'px',                    bottom:'', right:''});
-
-        /*dom.style(this._notchBorder, {top:(ny-this._borderWidth)+'px',    bottom:'', right:''});
-        dom.style(this._notchFill,   {top:(ny+1)+'px',                    bottom:'', right:''});
-        this._notchBorder.style.transform = 'translateX('+nx+'px)';
-        this._notchFill.style.transform = 'translateX('+nx+'px)';*/
     }
     else if (this._pos === 'left')
     {
@@ -317,20 +320,38 @@ Datatip.prototype.html = function (text)
     dom.html(this._tipText, text);
 };
 
-
+/** 
+ * Start mouse tracking.
+ * 
+ * @since 0.1.0
+ * @private
+ */
 Datatip.prototype._startMouseTracking = function ()
 {
-    this._xPos += (this._x - this._xPos) / 5;
-    this._yPos += (this._y - this._yPos) / 5;
-    dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
-
     var me = this;
-    this._mouseTracking = window.requestAnimationFrame(function ()
+
+    /*if (this._mouseTracking === null)
     {
-        me._startMouseTracking();
-    });
+        this._xPos = this._x;
+        this._yPos = this._y;
+        dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
+    }
+    else if (Math.floor(this._xPos) !== Math.floor(this._x) && 
+             Math.floor(this._yPos) !== Math.floor(this._y))
+    {*/
+        this._xPos += (this._x - this._xPos) / 5;
+        this._yPos += (this._y - this._yPos) / 5;
+        dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
+    //}
+    this._mouseTracking = window.requestAnimationFrame(function () {me._startMouseTracking();});
 };
 
+/** 
+ * End mouse tracking.
+ * 
+ * @since 0.1.0
+ * @private
+ */
 Datatip.prototype._endMouseTracking = function ()
 {
     window.cancelAnimationFrame(this._mouseTracking);
@@ -344,6 +365,8 @@ Datatip.prototype._endMouseTracking = function ()
  */
 Datatip.prototype.hide = function ()
 {
+    clearTimeout(this._fadeOutDelay);
+    clearInterval(this._fadeInterval);
     this._endMouseTracking();
     dom.hide(this._tip);
 };
@@ -355,61 +378,51 @@ Datatip.prototype.hide = function ()
  */
 Datatip.prototype.show = function ()
 {
+    clearTimeout(this._fadeOutDelay);
+    clearInterval(this._fadeInterval);
     if (this._mouseTracking === null) this._startMouseTracking();
     dom.show(this._tip);
-};
-
-/** 
- * Fade out the  data tip.
- * 
- * @since 0.1.0
- *
- * @param {number} [delay = 0] A delay before the fade starts.
- */
-Datatip.prototype.fadeOut = function (delay)
-{
-    var me = this;
-    dom.fadeOut(this._tip, 7, delay, function()
-    {  
-        me._endMouseTracking();
-    });
 };
 
 /** 
  * Fade in the data tip.
  * 
  * @since 0.1.0
- *
- * @param {number} [delay = 0] A delay before the fade starts.
  */
-Datatip.prototype.fadeIn = function (delay)
+Datatip.prototype.fadeIn = function ()
 {
-    if (this._mouseTracking === null) this._startMouseTracking();
-    dom.fadeIn(this._tip, 10, delay);
+    var me = this;
+
+    this.show();
+
+    me._fadeInterval = setInterval(function () 
+    {
+        if (me._tipOpacity >= 1) clearInterval(me._fadeInterval);
+        dom.style(me._tip, {opacity:me._tipOpacity, filter:'alpha(opacity=' + me._tipOpacity * 100 + ')'});
+        me._tipOpacity += me._tipOpacity * 0.1;
+    }, 7);
 };
 
 /** 
- * Get the width.
- *
+ * Fade out the  data tip.
+ * 
  * @since 0.1.0
- *
- * @return {number} The width.
  */
-Datatip.prototype.width = function ()
+Datatip.prototype.fadeOut = function ()
 {
-    return Math.round(dom.bounds(this._tip).width);
-};
+    var me = this;
 
-/** 
- * Get the height.
- *
- * @since 0.1.0
- *
- * @return {number} The height.
- */
-Datatip.prototype.height = function ()
-{
-    return Math.round(dom.bounds(this._tip).height);
+    clearTimeout(this._fadeOutDelay);
+    this._fadeOutDelay = setTimeout(function ()
+    {
+        clearInterval(me._fadeInterval);
+        me._fadeInterval = setInterval(function () 
+        {
+            if (me._tipOpacity <= 0.1) me.hide();
+            dom.style(me._tip, {opacity:me._tipOpacity, filter:'alpha(opacity=' + me._tipOpacity * 100 + ')'});
+            me._tipOpacity -= me._tipOpacity * 0.1;
+        }, 10);
+    }, 500);
 };
 
 /** 
@@ -423,7 +436,6 @@ Datatip.prototype.borderColor = function (color)
 {
     // Border color cant be transparent because the tip shadow cuts across the notch.
     this._borderColor = colorUtil.toRGBA(color, 1);
-    dom.style(this._tip, {borderColor:this._borderColor});
     this._styleNotch();
 };
 

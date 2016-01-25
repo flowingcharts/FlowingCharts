@@ -269,7 +269,7 @@ Chart.prototype.addEventHandler = function (options)
         },
         mouseout : function (event)
         {
-            me._datatip.fadeOut(700);    
+            me._datatip.fadeOut();    
             me._uiCanvas.empty();
         },
         mousedragstart : function (event)
@@ -305,8 +305,8 @@ Chart.prototype.addEventHandler = function (options)
 
             me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
             me._datatip.borderColor(highlightItem.style.fillColor);
-            //me._datatip.position(event.pixelX, event.pixelY, 'top');
-            me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
+            me._datatip.position(event.pixelX, event.pixelY, 'top');
+            //me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
 
             me._uiCanvas.render();
         }

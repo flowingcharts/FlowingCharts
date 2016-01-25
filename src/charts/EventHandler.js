@@ -29,6 +29,8 @@ function EventHandler (options)
     var element         = options.element;
     var coords          = options.coords;
     var elementPosition;
+    var viewportWidth;
+    var viewportHeight;
     var pixelCoords;
     var isOver          = false;
     var isDragging      = false;
@@ -40,18 +42,25 @@ function EventHandler (options)
     // Mouse event handler
     function mouseEventHandler (event)
     {
+        event.preventDefault();
+
         var type = event.type;
         type.replace(/^(on\.)/,''); // For event types with 'on' prefix.
 
         switch (type)
         {
             case 'mousemove' : 
+
                 pixelCoords = getPixelCoords(event);
-                if (pixelCoords.x >= coords.viewPort().x() && 
-                    (pixelCoords.x - coords.viewPort().x()) <= coords.viewPort().width() && 
-                    pixelCoords.y >= coords.viewPort().y() && 
-                    (pixelCoords.y - coords.viewPort().y()) <= coords.viewPort().height())  isOver = true;
-                else                                                                        isOver = false;
+
+                // Prevent mouseevents being dispatched when mouse is over scrollbars in FF and IE.
+                if (event.clientX > viewportWidth || event.clientY > viewportHeight)            isOver = false;
+                // Check if mouse is over the chart.
+                else if (pixelCoords.x >= coords.viewPort().x() && 
+                        (pixelCoords.x - coords.viewPort().x()) <= coords.viewPort().width() && 
+                        pixelCoords.y >= coords.viewPort().y() && 
+                        (pixelCoords.y - coords.viewPort().y()) <= coords.viewPort().height())  isOver = true;
+                else                                                                            isOver = false;
 
                 if (!isDragging && isDown && isOver && (downX !== pixelCoords.x || downY !== pixelCoords.y)) 
                 {
@@ -130,15 +139,14 @@ function EventHandler (options)
                 isOver      : isOver,
                 isDragging  : isDragging,
                 isDown      : isDown,
-                pixelX      : pixelCoords.x,
-                pixelY      : pixelCoords.y,
                 dataX       : coords.getDataX(pixelCoords.x),
                 dataY       : coords.getDataY(pixelCoords.y),
+                pixelX      : pixelCoords.x,
+                pixelY      : pixelCoords.y,
                 clientX     : event.clientX,
                 clientY     : event.clientY,
                 pageX       : event.pageX,
                 pageY       : event.pageY,
-                elementPosition : elementPosition
             });
         }
     }
@@ -146,6 +154,8 @@ function EventHandler (options)
     // Updated the position of the element when the window is resize or scrolled.
     function updateElementPosition () 
     {
+        viewportWidth   = dom.viewportWidth();
+        viewportHeight  = dom.viewportHeight();
         elementPosition = dom.bounds(element);
     }
     updateElementPosition();
