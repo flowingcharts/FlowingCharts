@@ -29,12 +29,12 @@ function Datatip (container)
 {
     this._container       = container;   // Tip container.
     this._pos             = 'top';       // Tip position.
-    this._backgroundColor = '#ffffff';   // Tip background color.
-    this._borderColor     = '#000000';   // Tip border color.
-    this._borderWidth     = 1;           // Tip border width.
+    this._backgroundColor = '#fafafa';   // Tip background color.
+    this._borderColor     = '#666666';   // Tip border color.
+    this._borderWidth     = 2;           // Tip border width.
     this._viewportMargin  = 10;          // Margin around the viewport edge that the tip isnt allowed to overlap.
     this._minNotchSize    = 8;           // The minimum notch size.
-    this._minNotchGap     = 10;          // The minimum distance the notch is allowed from the edge of the tip.
+    this._minNotchGap     = 5;           // The minimum distance the notch is allowed from the edge of the tip.
 
     // Animation.
     this._mouseTracking   = null;
@@ -58,7 +58,7 @@ function Datatip (container)
         borderStyle             : 'solid',
         borderWidth             : this._borderWidth+'px',
         borderColor             : this._borderColor, 
-        borderRadius            : '3px', 
+        borderRadius            : '4px', 
         fontFamily              : 'arial,serif', 
         fontSize                : '12px', 
         color                   : '#666666', 
@@ -116,11 +116,6 @@ function Datatip (container)
  */
 Datatip.prototype.position = function (x, y, pos)
 {
-    // TODO Mouse out bottom over svg element - chrome doesnt fire an event.
-    // TODO on mouseover if tip is invisible it shouldnt be moved by animation.
-    // TODO this._minNotchGap * 2 should be added to notch when testing if notch is too wide/high for the tip.
-    // TODO mousein then mouseout immediately - get semi transparent tip - needs time to fully appear and stay before disappearing.
-
     this._pos = pos !== undefined ? pos : this._pos;
 
     // Store initial position.
@@ -257,7 +252,8 @@ Datatip.prototype._styleNotch = function ()
     this._hNotch = bNotch.height;
 
     // Hide notch if its bigger than the tip.
-    if  (((this._pos === 'left' || this._pos === 'right') && (this._hNotch > this._hTip)) || ((this._pos === 'top' || this._pos === 'bottom') && (this._wNotch > this._wTip)))
+    if  (((this._pos === 'left' || this._pos === 'right') && ((this._hNotch + (this._minNotchGap * 2) + (this._borderWidth * 2)) > this._hTip)) || 
+         ((this._pos === 'top' || this._pos === 'bottom') && ((this._wNotch + (this._minNotchGap * 2) + (this._borderWidth * 2))  > this._wTip)))
     {
         dom.style(this._notchBorder, {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});
         dom.style(this._notchFill,   {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});
@@ -328,22 +324,20 @@ Datatip.prototype.html = function (text)
  */
 Datatip.prototype._startMouseTracking = function ()
 {
-    var me = this;
-
-    /*if (this._mouseTracking === null)
+    if (this._mouseTracking === null)
     {
         this._xPos = this._x;
         this._yPos = this._y;
         dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
     }
-    else if (Math.floor(this._xPos) !== Math.floor(this._x) && 
-             Math.floor(this._yPos) !== Math.floor(this._y))
-    {*/
+    else if (Math.floor(this._xPos) !== Math.floor(this._x) || Math.floor(this._yPos) !== Math.floor(this._y))
+    {
         this._xPos += (this._x - this._xPos) / 5;
         this._yPos += (this._y - this._yPos) / 5;
         dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
-    //}
-    this._mouseTracking = window.requestAnimationFrame(function () {me._startMouseTracking();});
+    }
+    var me = this;
+    this._mouseTracking = dom.requestAnimation(function () {me._startMouseTracking();});
 };
 
 /** 
@@ -354,7 +348,7 @@ Datatip.prototype._startMouseTracking = function ()
  */
 Datatip.prototype._endMouseTracking = function ()
 {
-    window.cancelAnimationFrame(this._mouseTracking);
+    dom.cancelAnimation(this._mouseTracking);
     this._mouseTracking = null;
 };
 
@@ -434,8 +428,7 @@ Datatip.prototype.fadeOut = function ()
  */
 Datatip.prototype.borderColor = function (color)
 {
-    // Border color cant be transparent because the tip shadow cuts across the notch.
-    this._borderColor = colorUtil.toRGBA(color, 1);
+    this._borderColor = color;
     this._styleNotch();
 };
 

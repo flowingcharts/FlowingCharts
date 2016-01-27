@@ -285,9 +285,9 @@ Chart.prototype.addEventHandler = function (options)
 
     function updateTip(event)
     { 
-        var hitEvent = me.hitEvent(event.dataX, event.dataY);
+        var hitEvent = me.hitEvent(event.pixelX, event.pixelY);
         me._uiCanvas.empty();
-        if (hitEvent !== undefined)  
+        if (hitEvent !== undefined)
         {
             var highlightItem = util.cloneObject(hitEvent.items[0]);
             me._uiCanvas.addItem(highlightItem);
@@ -303,10 +303,12 @@ Chart.prototype.addEventHandler = function (options)
 
             }
 
+            //me._datatip.html('1');
+           // me._datatip.html(highlightItem.coords.cx+' '+highlightItem.coords.cy);
             me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
             me._datatip.borderColor(highlightItem.style.fillColor);
-            me._datatip.position(event.pixelX, event.pixelY, 'top');
-            //me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
+            //me._datatip.position(event.pixelX, event.pixelY, 'top');
+            me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
 
             me._uiCanvas.render();
         }
@@ -318,8 +320,8 @@ Chart.prototype.addEventHandler = function (options)
  *
  * @since 0.1.0
  *
- * @param {number} x The x coord.
- * @param {number} y The y coord.
+ * @param {number} x The x pixel coord.
+ * @param {number} y The y pixel coord.
  *
  * @return {CanvasItem} The canvas item.
  */

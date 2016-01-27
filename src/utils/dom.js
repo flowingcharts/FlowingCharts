@@ -11,32 +11,55 @@
 
 // Animation polyfill.
 var lastTime = 0;
-var vendors = ['ms', 'moz', 'webkit', 'o'];
-for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) 
+var vendors  = ['ms', 'moz', 'webkit', 'o'];
+var raf      = window.requestAnimationFrame;
+var caf      = window.cancelAnimationFrame;
+for (var x = 0; x < vendors.length && !raf; ++x) 
 {
-    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    raf = window[vendors[x]+'RequestAnimationFrame'];
+    caf = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
 }
-
-if (!window.requestAnimationFrame)
+if (!raf)
 {
-    window.requestAnimationFrame = function (callback, element) 
+    raf = function (callback, element) 
     {
-        var currTime = new Date().getTime();
+        var currTime   = new Date().getTime();
         var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function () {callback(currTime + timeToCall);}, timeToCall);
-        lastTime = currTime + timeToCall;
+        var id         = window.setTimeout(function () {callback(currTime + timeToCall);}, timeToCall);
+        lastTime       = currTime + timeToCall;
         return id;
     };
 }
-
-if (!window.cancelAnimationFrame)
+if (!caf)
 {
-    window.cancelAnimationFrame = function (id) 
-    {
-        clearTimeout(id);
-    };
+    caf = function (id) {clearTimeout(id);};
 }
+
+/** 
+ * Request animation.
+ *
+ * @since 0.1.0
+ *
+ * @param {Function} callback Function to call when it's time to update your animation for the next repaint
+ *
+ * @return {number} The request id, that uniquely identifies the entry in the callback list.
+ */
+var requestAnimation = function (callback)
+{
+    return raf(callback);
+};
+
+/** 
+ * Cancel animation.
+ *
+ * @since 0.1.0
+ *
+ * @param {number} id The id value returned by the call to requestAnimation() that requested the callback.
+ */
+var cancelAnimation = function (id)
+{
+    caf(id);
+};
 
 /** 
  * Check for support of a feature.
@@ -263,8 +286,7 @@ var on = function (element, types, listener)
     for (var i = 0; i < arrTypes.length; i++)  
     {
         var type = arrTypes[i].trim();
-        if (element.attachEvent) element.attachEvent('on'+type, listener); // <IE9.
-        else                     element.addEventListener(type, listener);
+        element.addEventListener(type, listener);
     }
 };
 
@@ -283,8 +305,7 @@ var off = function (element, types, listener)
     for (var i = 0; i < arrTypes.length; i++)  
     {
         var type = arrTypes[i].trim();
-        if (element.attachEvent) element.detachEvent('on'+type, listener); // <IE9.
-        else                     element.removeEventListener(type, listener);
+        element.removeEventListener(type, listener);
     }
 };
 
@@ -391,5 +412,7 @@ module.exports =
     isRectInViewport        : isRectInViewport,
     viewportWidth           : viewportWidth,
     viewportHeight          : viewportHeight,
-    pageOffset              : pageOffset
+    pageOffset              : pageOffset,
+    requestAnimation        : requestAnimation,
+    cancelAnimation         : cancelAnimation
 };

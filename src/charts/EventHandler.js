@@ -26,6 +26,8 @@ var dom = require('../utils/dom');
  */
 function EventHandler (options)
 {
+    // TODO Mouse out window over svg element - chrome doesnt fire an event.
+
     var element         = options.element;
     var coords          = options.coords;
     var elementPosition;
@@ -43,10 +45,7 @@ function EventHandler (options)
     function mouseEventHandler (event)
     {
         event.preventDefault();
-
         var type = event.type;
-        type.replace(/^(on\.)/,''); // For event types with 'on' prefix.
-
         switch (type)
         {
             case 'mousemove' : 
@@ -54,7 +53,10 @@ function EventHandler (options)
                 pixelCoords = getPixelCoords(event);
 
                 // Prevent mouseevents being dispatched when mouse is over scrollbars in FF and IE.
-                if (event.clientX > viewportWidth || event.clientY > viewportHeight)            isOver = false;
+                if (event.clientX < 0               || 
+                    event.clientX > viewportWidth   || 
+                    event.clientY < 0               || 
+                    event.clientY > viewportHeight)                                             isOver = false;
                 // Check if mouse is over the chart.
                 else if (pixelCoords.x >= coords.viewPort().x() && 
                         (pixelCoords.x - coords.viewPort().x()) <= coords.viewPort().width() && 

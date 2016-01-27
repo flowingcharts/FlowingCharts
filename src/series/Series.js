@@ -237,8 +237,8 @@ Series.prototype.render = function()
  *
  * @since 0.1.0
  *
- * @param {number} x The x coord.
- * @param {number} y The y coord.
+ * @param {number} x The x pixel coord.
+ * @param {number} y The y pixel coord.
  *
  * @return {CanvasItem} The canvas item.
  */

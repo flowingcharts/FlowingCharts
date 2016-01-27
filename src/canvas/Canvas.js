@@ -359,8 +359,8 @@ Canvas.prototype.getItem = function (type, coords)
  *
  * @since 0.1.0
  *
- * @param {number} x The x coord.
- * @param {number} y The y coord.
+ * @param {number} x The x pixel coord.
+ * @param {number} y The y pixel coord.
  *
  * @return {Object} The canvas item.
  */
@@ -373,9 +373,10 @@ Canvas.prototype.hitEvent = function (x, y)
     for (var i = 0; i < n; i++)  
     {
         var item = this._items[i];
-        var dx   = x - item.coords.cx;
-        var dy   = y - item.coords.cy;
-        var dp   = Math.pow(dx, 2) + Math.pow(dy, 2);
+        var p    = this.getPixelUnits(item);
+        var dx   = x - p.cx;
+        var dy   = y - p.cy;
+        var dp   = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         if (dp === shortestDistance) 
         {
@@ -391,12 +392,12 @@ Canvas.prototype.hitEvent = function (x, y)
 
     if (items.length > 0)
     {
-        var p = this.getPixelUnits(items[0]);
+        var d = this.getPixelUnits(items[0]);
         return {
             items    : items, 
             distance : shortestDistance, 
-            pixelX   : p.cx, 
-            pixelY   : p.cy
+            pixelX   : d.cx, 
+            pixelY   : d.cy
         };
     }
     else return undefined;
