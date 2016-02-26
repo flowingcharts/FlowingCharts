@@ -63,8 +63,8 @@ function Datatip (container)
         fontSize                : '12px', 
         color                   : '#666666', 
         padding                 : '7px', 
-        background              : this._backgroundColor,     
-        boxShadow               : '2px 2px 2px 0px rgba(200,200,200,1)'
+        background              : this._backgroundColor/*,     
+        boxShadow               : '2px 2px 2px 0px rgba(200,200,200,1)'*/
     });
     dom.appendChild(this._container, this._tip);
 
@@ -332,8 +332,8 @@ Datatip.prototype._startMouseTracking = function ()
     }
     else if (Math.floor(this._xPos) !== Math.floor(this._x) || Math.floor(this._yPos) !== Math.floor(this._y))
     {
-        this._xPos += (this._x - this._xPos) / 5;
-        this._yPos += (this._y - this._yPos) / 5;
+        this._xPos += (this._x - this._xPos) / 3; // This number controls speed of animation.
+        this._yPos += (this._y - this._yPos) / 3;
         dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
     }
     var me = this;
@@ -375,6 +375,7 @@ Datatip.prototype.show = function ()
     clearTimeout(this._fadeOutDelay);
     clearInterval(this._fadeInterval);
     if (this._mouseTracking === null) this._startMouseTracking();
+    dom.style(this._tip, {opacity:1, filter:'alpha(opacity=100)'});
     dom.show(this._tip);
 };
 

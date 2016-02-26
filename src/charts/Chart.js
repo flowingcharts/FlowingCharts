@@ -42,7 +42,7 @@ var colorUtil           = require('../utils/color');
  * @param {HTMLElement} options.container                       The html element that will contain the chart.
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string}      [options.renderer = svg]                The graphics renderer. Possible values are 'canvas' or 'svg'.
- * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ * @param {string}      [options.refreshRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
  * @param {number}      [options.padding = 20]                  The chart padding.
  * @param {number}      [options.paddingTop]                    The chart top padding.
  * @param {number}      [options.paddingRight]                  The chart right padding.
@@ -72,7 +72,7 @@ function Chart (options)
         { 
             var bounds = dom.bounds(me._canvasContainer);       
             me.setSize(bounds.width, bounds.height);
-        }, me._options.renderRate);
+        }, me._options.refreshRate);
     });
 
     this.options(options); 
@@ -87,7 +87,7 @@ function Chart (options)
  * @param {HTMLElement} options.container                       The html element that will contain the chart.
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string}      [options.renderer = svg]                The graphics renderer. Possible values are 'canvas' or 'svg'.
- * @param {string}      [options.renderRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ * @param {string}      [options.refreshRate = 250]             The rate in ms that graphics are refreshed when the chart is resized.
  * @param {number}      [options.padding = 20]                  The chart padding.
  * @param {number}      [options.paddingTop]                    The chart top padding.
  * @param {number}      [options.paddingRight]                  The chart right padding.
@@ -111,7 +111,7 @@ Chart.prototype.options = function(options)
             container           : undefined,
             coordinateSystem    : 'cartesian',
             renderer            : 'svg',
-            renderRate          : 250,
+            refreshRate         : 250,
             padding             : 20,
             paddingTop          : undefined,
             paddingRight        : undefined,
@@ -274,12 +274,26 @@ Chart.prototype.addEventHandler = function (options)
         },
         mousedragstart : function (event)
         {
-            me._datatip.fadeOut();
+            me._datatip.hide();
             me._uiCanvas.empty();
         },
         mousedragend : function (event)
         {                  
             if (event.isOver) me._datatip.fadeIn();
+        },
+        touchdown : function (event)
+        {
+            updateTip(event);
+            me._datatip.show();
+        },
+        touchupout : function (event)
+        {
+            me._datatip.fadeOut();    
+            me._uiCanvas.empty();
+        },
+        touchdragstart : function (event)
+        {
+
         }
     });
 
