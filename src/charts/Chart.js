@@ -261,11 +261,11 @@ Chart.prototype.addEventHandler = function (options)
         mousemove : function (event)
         {
             updateTip(event);
+            if (!me._datatip.isVisible()) me._datatip.show();
         },
         mouseover : function (event)
         {
-            updateTip(event);
-            me._datatip.fadeIn();
+
         },
         mouseout : function (event)
         {
@@ -277,23 +277,32 @@ Chart.prototype.addEventHandler = function (options)
             me._datatip.hide();
             me._uiCanvas.empty();
         },
+        mousedrag : function (event)
+        {
+
+        },
         mousedragend : function (event)
-        {                  
-            if (event.isOver) me._datatip.fadeIn();
+        {   
+
         },
         touchdown : function (event)
         {
-            updateTip(event);
-            me._datatip.show();
+
         },
-        touchupout : function (event)
+        touchoutside : function (event)
         {
             me._datatip.fadeOut();    
             me._uiCanvas.empty();
         },
         touchdragstart : function (event)
         {
-
+            me._datatip.hide();
+            me._uiCanvas.empty();
+        },
+        touchup : function (event)
+        {
+            updateTip(event);
+            me._datatip.show();
         }
     });
 

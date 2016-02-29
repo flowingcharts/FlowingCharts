@@ -390,6 +390,21 @@ var pageOffset = function ()
     };
 };
 
+/**
+ * Get the window object of an element
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement}  element The target element.
+ * 
+ * @returns {DocumentView|Window} The window.
+ */
+var getWindowForElement = function(element) 
+{
+    var doc = element.ownerDocument || element;
+    return (doc.defaultView || doc.parentWindow || window);
+};
+
 module.exports = 
 {
     isSupported             : isSupported,
@@ -414,5 +429,6 @@ module.exports =
     viewportHeight          : viewportHeight,
     pageOffset              : pageOffset,
     requestAnimation        : requestAnimation,
-    cancelAnimation         : cancelAnimation
+    cancelAnimation         : cancelAnimation,
+    getWindowForElement     : getWindowForElement
 };

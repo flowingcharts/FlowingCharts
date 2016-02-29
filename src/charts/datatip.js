@@ -35,6 +35,7 @@ function Datatip (container)
     this._viewportMargin  = 10;          // Margin around the viewport edge that the tip isnt allowed to overlap.
     this._minNotchSize    = 8;           // The minimum notch size.
     this._minNotchGap     = 5;           // The minimum distance the notch is allowed from the edge of the tip.
+    this._isVisible       = false;       // Is the tip visible?
 
     // Animation.
     this._mouseTracking   = null;
@@ -353,7 +354,24 @@ Datatip.prototype._endMouseTracking = function ()
 };
 
 /** 
- * Hides the  data tip.
+ * Shows the data tip.
+ * 
+ * @since 0.1.0
+ */
+Datatip.prototype.show = function ()
+{ 
+    clearTimeout(this._fadeOutDelay);
+    clearInterval(this._fadeInterval);
+    if (this._mouseTracking === null) this._startMouseTracking();
+    dom.show(this._tip);
+    
+    dom.style(this._tip, {opacity:1, filter:'alpha(opacity=100)'});
+    this._tipOpacity = 1;
+    this._isVisible = true;
+};
+
+/** 
+ * Hides the data tip.
  * 
  * @since 0.1.0
  */
@@ -363,39 +381,10 @@ Datatip.prototype.hide = function ()
     clearInterval(this._fadeInterval);
     this._endMouseTracking();
     dom.hide(this._tip);
-};
 
-/** 
- * Shows the data tip.
- * 
- * @since 0.1.0
- */
-Datatip.prototype.show = function ()
-{
-    clearTimeout(this._fadeOutDelay);
-    clearInterval(this._fadeInterval);
-    if (this._mouseTracking === null) this._startMouseTracking();
-    dom.style(this._tip, {opacity:1, filter:'alpha(opacity=100)'});
-    dom.show(this._tip);
-};
-
-/** 
- * Fade in the data tip.
- * 
- * @since 0.1.0
- */
-Datatip.prototype.fadeIn = function ()
-{
-    var me = this;
-
-    this.show();
-
-    me._fadeInterval = setInterval(function () 
-    {
-        if (me._tipOpacity >= 1) clearInterval(me._fadeInterval);
-        dom.style(me._tip, {opacity:me._tipOpacity, filter:'alpha(opacity=' + me._tipOpacity * 100 + ')'});
-        me._tipOpacity += me._tipOpacity * 0.1;
-    }, 7);
+    dom.style(this._tip, {opacity:0, filter:'alpha(opacity=0)'});
+    this._tipOpacity = 0;
+    this._isVisible = false;
 };
 
 /** 
@@ -406,6 +395,7 @@ Datatip.prototype.fadeIn = function ()
 Datatip.prototype.fadeOut = function ()
 {
     var me = this;
+    this._isVisible = false;
 
     clearTimeout(this._fadeOutDelay);
     this._fadeOutDelay = setTimeout(function ()
@@ -416,8 +406,20 @@ Datatip.prototype.fadeOut = function ()
             if (me._tipOpacity <= 0.1) me.hide();
             dom.style(me._tip, {opacity:me._tipOpacity, filter:'alpha(opacity=' + me._tipOpacity * 100 + ')'});
             me._tipOpacity -= me._tipOpacity * 0.1;
-        }, 10);
-    }, 500);
+        }, 20);
+    }, 700);
+};
+
+/** 
+ * Is the data tip visible?.
+ * 
+ * @since 0.1.0
+ * 
+ * @return {boolean} The visibility as true or false.
+ */
+Datatip.prototype.isVisible = function ()
+{
+    return this._isVisible;
 };
 
 /** 

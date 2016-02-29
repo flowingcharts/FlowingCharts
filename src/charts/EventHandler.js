@@ -26,6 +26,8 @@ var dom = require('../utils/dom');
  */
 function EventHandler (options)
 {
+    // TODO Chrome, FF and Opera dont dispatch a mouseout event if you leave the browser window whilst hovering an svg element.
+
     var element         = options.element;
     var coords          = options.coords;
     var isOver          = false;
@@ -42,25 +44,29 @@ function EventHandler (options)
     // Mouse event handler
     function mouseEventHandler (event)
     {
-        var type = event.type;
-        switch (type)
+        var clientX = event.clientX;
+        var clientY = event.clientY;
+        pointerPosition = getPointerPosition(clientX, clientY);
+        isPointerOverChart(clientX, clientY);
+
+        switch (event.type)
         {
             case 'mousemove' : 
-                var clientX = event.clientX;
-                var clientY = event.clientY;
-                pointerPosition = getPointerPosition(clientX, clientY);
-                isPointerOverViewport(clientX, clientY);
-
-                if (!isDragging && isDown && isOver && (downX !== pointerPosition.x || downY !== pointerPosition.y)) 
+                if (isDragging) 
+                {
+                    dispatch('mousedrag', event, pointerPosition);
+                }  
+                else if (isDown) 
                 {
                     isDragging = true;
                     dispatch('mousedragstart', event, pointerPosition);
                 }
-                else if (isDragging) 
+                else if (isOver  && (downX !== pointerPosition.x || downY !== pointerPosition.y)) 
                 {
-                    dispatch('mousedrag', event, pointerPosition);
-                }   
-                else if (isOver && !dispatchedOver)
+                    dispatch('mousemove', event, pointerPosition);
+                }
+
+                if (isOver && !dispatchedOver)
                 {
                     dispatchedOver = true;
                     dispatch('mouseover', event, pointerPosition);
@@ -70,14 +76,10 @@ function EventHandler (options)
                     dispatchedOver = false;
                     dispatch('mouseout', event, pointerPosition);
                 }
-                else if (isOver) 
-                {
-                    dispatch('mousemove', event, pointerPosition);
-                }
             break;
 
             case 'mousedown' : 
-                if (isOver)      
+                if (isOver)
                 {
                     dispatch('mousedown', event, pointerPosition);
                     downX = pointerPosition.x;
@@ -87,20 +89,21 @@ function EventHandler (options)
             break;
 
             case 'mouseup' : 
-                if      (isDragging)    dispatch('mousedragend', event, pointerPosition);
+                if (isDragging)    
+                {
+                    dispatch('mousedragend', event, pointerPosition);
+                }
                 else if (isOver)      
                 {  
                     dispatch('click', event, pointerPosition); 
                     dispatch('mouseup', event, pointerPosition);    
                 }
-                else dispatch('mouseupout', event, pointerPosition);   
                 isDragging = false;
                 isDown     = false; 
             break;
 
             // For cases when the mouse moves outside the browser window whilst over the charts viewport.
             case 'mouseout' : 
-                // TODO Chrome, FF and Opera dont dispatch a mouseout event if you leave the browser window whilst hovering an svg element.
                 if (event.toElement === null && event.relatedTarget === null) 
                 {
                     if (isOver && dispatchedOver)
@@ -143,36 +146,47 @@ function EventHandler (options)
             clientX = t.clientX;
             clientY = t.clientY;
             pointerPosition = getPointerPosition(clientX, clientY);
-            isPointerOverViewport(clientX, clientY);
+            isPointerOverChart(clientX, clientY);
         }
         else
         {
 
         }
 
-        var type = event.type;
-        switch (type)
+        switch (event.type)
         {
             case 'touchmove' : 
-                if (!isDragging && isOver && (downX !== pointerPosition.x || downY !== pointerPosition.y)) 
+
+                if (isDragging) 
+                {
+                    dispatch('touchdrag', event, pointerPosition);
+                }  
+                else if (isOver)
                 {
                     isDragging = true;
                     dispatch('touchdragstart', event, pointerPosition);
                 }
-                else if (isDragging) 
+
+                if (isOver && !dispatchedOver)
                 {
-                    dispatch('touchdrag', event, pointerPosition);
-                }   
+                    dispatchedOver = true;
+                    dispatch('touchover', event, pointerPosition);
+                }
+                else if (!isOver && dispatchedOver)
+                {
+                    dispatchedOver = false;
+                    dispatch('touchout', event, pointerPosition);
+                }
             break;
 
             case 'touchstart' : 
                 if (isOver) 
                 {
-                    window.console.log("isOver");
                     dispatch('touchdown', event, pointerPosition);
                     downX = pointerPosition.x;
                     downY = pointerPosition.y;
                 }
+                else dispatch('touchoutside', event, pointerPosition); 
             break;
 
             case 'touchend' : 
@@ -182,8 +196,6 @@ function EventHandler (options)
                     dispatch('touchclick', event, pointerPosition); 
                     dispatch('touchup', event, pointerPosition);    
                 }
-                // TODO Wty is it saying its over?
-                else dispatch('touchupout', event, pointerPosition); 
                 isDragging = false;
             break;
         }
@@ -199,18 +211,14 @@ function EventHandler (options)
         {
             options[eventType](
             {
-                event       : event,
-                isOver      : isOver,
-                isDragging  : isDragging,
-                isDown      : isDown,
-                dataX       : coords.getDataX(pointerPosition.x),
-                dataY       : coords.getDataY(pointerPosition.y),
-                pixelX      : pointerPosition.x,
-                pixelY      : pointerPosition.y,
-                clientX     : event.clientX,
-                clientY     : event.clientY,
-                pageX       : event.pageX,
-                pageY       : event.pageY,
+                originalEvent : event,
+                isOver        : isOver,
+                isDragging    : isDragging,
+                isDown        : isDown,
+                dataX         : coords.getDataX(pointerPosition.x),
+                dataY         : coords.getDataY(pointerPosition.y),
+                pixelX        : pointerPosition.x,
+                pixelY        : pointerPosition.y
             });
         }
     }
@@ -225,7 +233,7 @@ function EventHandler (options)
     }
     updateElementPosition();
 
-    // Return the position of the pointer within the browser viewport.
+    // Return the position of the pointer within the element.
     function getPointerPosition (clientX, clientY) 
     {
         var x = clientX - elementPosition.left;
@@ -234,14 +242,14 @@ function EventHandler (options)
     }
 
     // Check if the pointer is over the charts viewport.
-    function isPointerOverViewport (clientX, clientY)
+    function isPointerOverChart (clientX, clientY)
     {
-        // Prevent pointer events being dispatched when the pointer is over scrollbars in FF and IE.
+        // Prevent pointer events being dispatched when the pointer is over scrollbars in FF and IE (ie outside the browser viewport).
         if (clientX < 0 || clientX > viewportWidth || clientY < 0 || clientY > viewportHeight) 
         {
             isOver = false;
         }
-        // Check if pointer is over the chart.
+        // Check if pointer is over the chart viewport.
         else if (pointerPosition.x >= coords.viewPort().x() && (pointerPosition.x - coords.viewPort().x()) <= coords.viewPort().width() && 
                  pointerPosition.y >= coords.viewPort().y() && (pointerPosition.y - coords.viewPort().y()) <= coords.viewPort().height())  
         {
@@ -253,11 +261,17 @@ function EventHandler (options)
         }
     }
 
-    // Attach events listeners to window rather then element (because element listeners arent reliable in certain situations).
-    dom.on(window, 'mousemove mouseup mousedown mouseout', mouseEventHandler);
-    dom.on(window, 'scroll resize', updateElementPosition);
-    dom.on(window, 'touchmove touchend', touchEventHandler);
-    dom.on(element, 'touchstart', touchEventHandler);
+    var win = dom.getWindowForElement(element);
+
+    // Monitor changes to to browser window.
+    dom.on(win, 'scroll resize', updateElementPosition);
+
+    // Mouse events.
+    dom.on(win, 'mousemove mouseup', mouseEventHandler);
+    dom.on(element, 'mousedown mouseout', mouseEventHandler);
+
+    // Touch events.
+    if ('ontouchstart' in window) dom.on(win, 'touchstart touchmove touchend', touchEventHandler);
 }
 
 module.exports = EventHandler;
