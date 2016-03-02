@@ -246,7 +246,7 @@ Chart.prototype.addEventHandler = function (options)
     {
         element : this._canvasContainer,
         coords  : this._coords,
-        click : function (event)
+        mouseclick : function (event)
         {
 
         },
@@ -289,7 +289,7 @@ Chart.prototype.addEventHandler = function (options)
         {
 
         },
-        touchoutside : function (event)
+        touchdownoutside : function (event)
         {
             me._datatip.fadeOut();    
             me._uiCanvas.empty();

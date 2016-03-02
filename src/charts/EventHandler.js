@@ -21,7 +21,6 @@ var dom = require('../utils/dom');
  * @since 0.1.0
  * @constructor
  *
- * @param {HTMLElement}                 element The target element.
  * @param {CartesianCoords|PolarCoords} coords  The coordinate system. 
  */
 function EventHandler (options)
@@ -33,6 +32,7 @@ function EventHandler (options)
     var isOver          = false;
     var isDragging      = false;
     var isDown          = false;
+    var isDownOver      = false;
     var downX           = 0;
     var downY           = 0;
     var dispatchedOver  = false;
@@ -49,6 +49,10 @@ function EventHandler (options)
         pointerPosition = getPointerPosition(clientX, clientY);
         isPointerOverChart(clientX, clientY);
 
+        var dx   = pointerPosition.x - downX;
+        var dy   = pointerPosition.y - downY;
+        var diff = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+
         switch (event.type)
         {
             case 'mousemove' : 
@@ -56,12 +60,12 @@ function EventHandler (options)
                 {
                     dispatch('mousedrag', event, pointerPosition);
                 }  
-                else if (isDown) 
+                else if (isDownOver && (diff > 5)) 
                 {
                     isDragging = true;
-                    dispatch('mousedragstart', event, pointerPosition);
+                    dispatch('mousedragstart', event, {x:downX, y:downY});
                 }
-                else if (isOver  && (downX !== pointerPosition.x || downY !== pointerPosition.y)) 
+                else if (isOver && !isDown && (downX !== pointerPosition.x || downY !== pointerPosition.y)) 
                 {
                     dispatch('mousemove', event, pointerPosition);
                 }
@@ -81,11 +85,13 @@ function EventHandler (options)
             case 'mousedown' : 
                 if (isOver)
                 {
+                    isDownOver = true; 
                     dispatch('mousedown', event, pointerPosition);
                     downX = pointerPosition.x;
                     downY = pointerPosition.y;
-                    isDown = true; 
                 } 
+                else dispatch('mousedownoutside', event, pointerPosition); 
+                isDown = true; 
             break;
 
             case 'mouseup' : 
@@ -93,13 +99,14 @@ function EventHandler (options)
                 {
                     dispatch('mousedragend', event, pointerPosition);
                 }
-                else if (isOver)      
+                else if (isDownOver)      
                 {  
-                    dispatch('click', event, pointerPosition); 
                     dispatch('mouseup', event, pointerPosition);    
+                    dispatch('mouseclick', event, pointerPosition); 
                 }
                 isDragging = false;
                 isDown     = false; 
+                isDownOver = false;
             break;
 
             // For cases when the mouse moves outside the browser window whilst over the charts viewport.
@@ -115,6 +122,7 @@ function EventHandler (options)
             break;
         }
 
+        // Prevent default mouse functionality.
         if (isOver || isDragging) event.preventDefault();
     }
 
@@ -139,14 +147,18 @@ function EventHandler (options)
         But weve attached handlers to the window rather than the element so only call preventDefault() if were
         dragging or over the chart viewport so we dont break default window touch events when not over the chart.
         */
-        var clientX, clientY;
-        if (event.targetTouches.length === 1)
+        var clientX, clientY, diff;
+        if (event.targetTouches && event.targetTouches.length === 1)
         {
             var t = event.targetTouches[0];
             clientX = t.clientX;
             clientY = t.clientY;
             pointerPosition = getPointerPosition(clientX, clientY);
             isPointerOverChart(clientX, clientY);
+
+            var dx   = pointerPosition.x - downX;
+            var dy   = pointerPosition.y - downY;
+            diff     = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         }
         else
         {
@@ -161,10 +173,10 @@ function EventHandler (options)
                 {
                     dispatch('touchdrag', event, pointerPosition);
                 }  
-                else if (isOver)
+                else if (isDownOver && (diff > 10)) 
                 {
                     isDragging = true;
-                    dispatch('touchdragstart', event, pointerPosition);
+                    dispatch('touchdragstart', event, {x:downX, y:downY});
                 }
 
                 if (isOver && !dispatchedOver)
@@ -180,33 +192,41 @@ function EventHandler (options)
             break;
 
             case 'touchstart' : 
-                if (isOver) 
+                if (isOver)
                 {
+                    isDownOver = true; 
                     dispatch('touchdown', event, pointerPosition);
                     downX = pointerPosition.x;
                     downY = pointerPosition.y;
-                }
-                else dispatch('touchoutside', event, pointerPosition); 
+                } 
+                else dispatch('touchdownoutside', event, pointerPosition); 
+                isDown = true;
             break;
 
             case 'touchend' : 
-                if      (isDragging)    dispatch('touchdragend', event, pointerPosition);
-                else if (isOver)      
+                if (isDragging)    
+                {
+                    dispatch('touchdragend', event, pointerPosition);
+                }
+                else if (isDownOver)      
                 {  
-                    dispatch('touchclick', event, pointerPosition); 
                     dispatch('touchup', event, pointerPosition);    
+                    dispatch('touchclick', event, pointerPosition); 
                 }
                 isDragging = false;
+                isDown     = false; 
+                isDownOver = false;
             break;
         }
 
+        // Prevent default touch functionality.
         if (isOver || isDragging) event.preventDefault();
     }
 
     // Event dispatcher.
     function dispatch (eventType, event, pointerPosition)
     {
-            window.console.log(eventType);
+        window.console.log(eventType);
         if (options[eventType] !== undefined) 
         {
             options[eventType](
@@ -244,7 +264,7 @@ function EventHandler (options)
     // Check if the pointer is over the charts viewport.
     function isPointerOverChart (clientX, clientY)
     {
-        // Prevent pointer events being dispatched when the pointer is over scrollbars in FF and IE (ie outside the browser viewport).
+        // Prevent pointer events being dispatched when the pointer is outside the element or over scrollbars in FF and IE.
         if (clientX < 0 || clientX > viewportWidth || clientY < 0 || clientY > viewportHeight) 
         {
             isOver = false;
@@ -267,8 +287,8 @@ function EventHandler (options)
     dom.on(win, 'scroll resize', updateElementPosition);
 
     // Mouse events.
-    dom.on(win, 'mousemove mouseup', mouseEventHandler);
-    dom.on(element, 'mousedown mouseout', mouseEventHandler);
+    dom.on(win, 'mousemove mouseup mousedown', mouseEventHandler);
+    dom.on(element, 'mouseout', mouseEventHandler);
 
     // Touch events.
     if ('ontouchstart' in window) dom.on(win, 'touchstart touchmove touchend', touchEventHandler);
