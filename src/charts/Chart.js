@@ -271,11 +271,15 @@ Chart.prototype.addEventHandler = function (options)
         {
             me._datatip.fadeOut();    
             me._uiCanvas.empty();
+            me.hitX = undefined;
+            me.hitY = undefined;
         },
         mousedragstart : function (event)
         {
             me._datatip.hide();
             me._uiCanvas.empty();
+            me.hitX = undefined;
+            me.hitY = undefined;
         },
         mousedrag : function (event)
         {
@@ -293,11 +297,15 @@ Chart.prototype.addEventHandler = function (options)
         {
             me._datatip.fadeOut();    
             me._uiCanvas.empty();
+            me.hitX = undefined;
+            me.hitY = undefined;
         },
         touchdragstart : function (event)
         {
             me._datatip.hide();
             me._uiCanvas.empty();
+            me.hitX = undefined;
+            me.hitY = undefined;
         },
         touchup : function (event)
         {
@@ -309,9 +317,14 @@ Chart.prototype.addEventHandler = function (options)
     function updateTip(event)
     { 
         var hitEvent = me.hitEvent(event.pixelX, event.pixelY);
-        me._uiCanvas.empty();
-        if (hitEvent !== undefined)
+        if (hitEvent !== undefined && (hitEvent.pixelX !== me.hitX || hitEvent.pixelY !== me.hitY))
         {
+            me._uiCanvas.empty();
+            me.hitX = hitEvent.pixelX;
+            me.hitY = hitEvent.pixelY;
+
+
+
             var highlightItem = util.cloneObject(hitEvent.items[0]);
             me._uiCanvas.addItem(highlightItem);
 

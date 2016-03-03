@@ -38,11 +38,10 @@ function Datatip (container)
     this._isVisible       = false;       // Is the tip visible?
 
     // Animation.
-    this._mouseTracking   = null;
-    this._xPos            = 0;
-    this._yPos            = 0;
-    this._x               = 0;
-    this._y               = 0;
+    this._xStart          = 0;
+    this._yStart          = 0;
+    this._xEnd            = 0;
+    this._yEnd            = 0;
 
     // Fade in / out.
     this._fadeInterval    = null;
@@ -205,9 +204,34 @@ Datatip.prototype.position = function (x, y, pos)
 
     // Position the tip and notch.
     this._positionNotch(xNotch, yNotch);
+    this._xEnd = x;
+    this._yEnd = y;
+    this._positionAnimate();
 
-    this._x = x;
-    this._y = y;
+};
+
+/** 
+ * Positions the tip using animation.
+ * 
+ * @since 0.1.0
+ * @private
+ */
+Datatip.prototype._positionAnimate = function ()
+{
+    // Stop animation if within one pixel of end point.
+    if ((Math.abs(this._xEnd - this._xStart) < 1) && (Math.abs(this._yEnd - this._yStart) < 1))
+    {
+        this._xStart = this._xEnd;
+        this._yStart = this._yEnd;
+    }
+    else
+    {
+        var me = this;
+        this._xStart += (this._xEnd - this._xStart) / 3; // This number controls speed of animation.
+        this._yStart += (this._yEnd - this._yStart) / 3;
+        dom.style(this._tip, {left:this._xStart+'px', top:this._yStart+'px'});
+        dom.requestAnimation(function () {me._positionAnimate();});
+    }
 };
 
 /** 
@@ -318,42 +342,6 @@ Datatip.prototype.html = function (text)
 };
 
 /** 
- * Start mouse tracking.
- * 
- * @since 0.1.0
- * @private
- */
-Datatip.prototype._startMouseTracking = function ()
-{
-    if (this._mouseTracking === null)
-    {
-        this._xPos = this._x;
-        this._yPos = this._y;
-        dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
-    }
-    else if (Math.floor(this._xPos) !== Math.floor(this._x) || Math.floor(this._yPos) !== Math.floor(this._y))
-    {
-        this._xPos += (this._x - this._xPos) / 3; // This number controls speed of animation.
-        this._yPos += (this._y - this._yPos) / 3;
-        dom.style(this._tip, {left:this._xPos+'px', top:this._yPos+'px'});
-    }
-    var me = this;
-    this._mouseTracking = dom.requestAnimation(function () {me._startMouseTracking();});
-};
-
-/** 
- * End mouse tracking.
- * 
- * @since 0.1.0
- * @private
- */
-Datatip.prototype._endMouseTracking = function ()
-{
-    dom.cancelAnimation(this._mouseTracking);
-    this._mouseTracking = null;
-};
-
-/** 
  * Shows the data tip.
  * 
  * @since 0.1.0
@@ -362,7 +350,6 @@ Datatip.prototype.show = function ()
 { 
     clearTimeout(this._fadeOutDelay);
     clearInterval(this._fadeInterval);
-    if (this._mouseTracking === null) this._startMouseTracking();
     dom.show(this._tip);
     
     dom.style(this._tip, {opacity:1, filter:'alpha(opacity=100)'});
@@ -379,7 +366,6 @@ Datatip.prototype.hide = function ()
 {
     clearTimeout(this._fadeOutDelay);
     clearInterval(this._fadeInterval);
-    this._endMouseTracking();
     dom.hide(this._tip);
 
     dom.style(this._tip, {opacity:0, filter:'alpha(opacity=0)'});
