@@ -255,7 +255,6 @@ var show = function (element)
     element.style.visibility = 'visible';
 };
 
-
 /** 
  * Check if an element is visible.
  * 
@@ -291,7 +290,7 @@ var on = function (element, types, listener)
 };
 
 /** 
- * Removes event listeners from the target element.
+ * Remove event listeners from the target element.
  * 
  * @since 0.1.0
  * 
@@ -391,7 +390,7 @@ var pageOffset = function ()
 };
 
 /**
- * Get the window object of an element
+ * Get the window object of an element.
  * 
  * @since 0.1.0
  * 
