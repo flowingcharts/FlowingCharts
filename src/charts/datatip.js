@@ -27,7 +27,7 @@ var colorUtil = require('../utils/color');
  */
 function Datatip (container)
 {
-    this._viewportMargin  = 10;          // Margin around the viewport edge that the tip isnt allowed to overlap.
+    this._viewportMargin  = 0;          // Margin around the viewport edge that the tip isnt allowed to overlap.
 
     // Tip.
     this._container       = container;   // Tip container.
@@ -37,8 +37,6 @@ function Datatip (container)
     this._borderWidth     = 1;           // Tip border width.
     this._tipOpacity      = 1;           // Tip opacity.
     this._isVisible       = false;       // Is the tip visible?
-    this._wTip            = 0;           // Tip width.
-    this._hTip            = 0;           // Tip height.
     this._xTipStart       = 0;           // The starting x position for the tip when its position is changed using animation.
     this._yTipStart       = 0;           // The starting y position for the tip when its position is changed using animation.
     this._xTipEnd         = 0;           // The end x position for the tip when its position is changed using animation.
@@ -129,139 +127,112 @@ Datatip.prototype.position = function (x, y, pos)
 {
     this._pos = pos !== undefined ? pos : this._pos;
 
-    // Store initial position.
-    var initX = x;
-    var initY = y;
-
     // Get the tip dimensions relative to the viewport.
-    var bContainer  = dom.bounds(this._container);
-    var bTip        = dom.bounds(this._tip);
-    var xTip        = bContainer.left + x;
-    var yTip        = bContainer.top + y;
-    this._wTip      = bTip.width;
-    this._hTip      = bTip.height;
+    var bContainer = dom.bounds(this._container);
+    var bTip       = dom.bounds(this._tip);
 
     // Style the notch so we can get its dimensions for calculations.
     this._styleNotch();
 
-    // Adjust the tip position if overlapping the viewport margin.
+    // Adjust the tip position if its overlapping the viewport margins.
+    var tOverlap, rOverlap, bOverlap, lOverlap;
     if (this._pos === 'top' || this._pos === 'bottom')
     {
         var xGap = (this._wNotch / 2) + this._minNotchGap + this._borderWidth + this._viewportMargin;
-        // x is in the left viewport margin.
-        if (xTip < xGap)                              this._pos = 'right';
-        // x is in the right viewport margin.
-        else if (xTip > (dom.viewportWidth() - xGap)) this._pos = 'left';
+        var totalTipHeight = this._hNotch + bTip.height + this._viewportMargin;
+
+        lOverlap = xGap - (bContainer.left + x);
+        rOverlap = (bContainer.left + x) - (dom.viewportWidth() - xGap);
+        tOverlap = totalTipHeight - (bContainer.top + y);
+        bOverlap = (bContainer.top + y) - (dom.viewportHeight() - totalTipHeight);
+
+        if (lOverlap > 0)       this._pos = 'right';    // x is in the left viewport margin.
+        else if (rOverlap > 0)  this._pos = 'left';     // x is in the right viewport margin. 
+        else if (totalTipHeight > (dom.viewportHeight() / 2))
+        {
+            // Tooltip is too high for both sides so pick side with most space.
+            if ((bContainer.top + x) < (dom.viewportHeight() / 2)) this._pos = 'bottom';
+            else                                                   this._pos = 'top';
+        }
         else
         {
-            var totalTipHeight = this._hNotch + this._hTip + this._viewportMargin;
-            // The tip is overlapping the top viewport margin.
-            if (yTip < totalTipHeight)                          this._pos = 'bottom';
-            // The tip is overlapping the bottom viewport margin.
-            if (yTip > (dom.viewportHeight() - totalTipHeight)) this._pos = 'top';
+            if (tOverlap > 0)   this._pos = 'bottom';   // The tip is overlapping the top viewport margin.
+            if (bOverlap > 0)   this._pos = 'top';      // The tip is overlapping the bottom viewport margin.
         }
     }
     else if (this._pos === 'left' || this._pos === 'right')
     {
         var yGap = (this._hNotch / 2) + this._minNotchGap + this._borderWidth + this._viewportMargin;
-        // y is in the top viewport margin.
-        if (yTip < yGap)                               this._pos = 'bottom';
-        // y is in the bottom viewport margin.
-        else if (yTip > (dom.viewportHeight() - yGap)) this._pos = 'top';
+        var totalTipWidth = this._wNotch + bTip.width + this._viewportMargin;
+
+        tOverlap = yGap - (bContainer.top + y);
+        bOverlap = (bContainer.top + y) - (dom.viewportHeight() - yGap);
+        lOverlap = totalTipWidth - (bContainer.left + x);
+        rOverlap = (bContainer.left + x) - (dom.viewportWidth() - totalTipWidth);
+
+        if (tOverlap > 0)       this._pos = 'bottom';   // y is in the top viewport margin.
+        else if (bOverlap > 0)  this._pos = 'top';      // y is in the bottom viewport margin. 
+        else if (totalTipWidth > (dom.viewportWidth() / 2))
+        {
+            // Tooltip is too wide for both sides so pick side with most space.
+            if ((bContainer.left + x) < (dom.viewportWidth() / 2)) this._pos = 'right';
+            else                                                   this._pos = 'left';
+        }
         else
         {
-            var totalTipWidth = this._hNotch + this._wTip + this._viewportMargin;
-            // The tip is overlapping the left viewport margin.
-            if (xTip < totalTipWidth)                         this._pos = 'right';
-            // The tip is overlapping the right viewport margin.
-            if (xTip > (dom.viewportWidth() - totalTipWidth)) this._pos = 'left';
+            if (lOverlap > 0)   this._pos = 'right';    // The tip is overlapping the left viewport margin.
+            if (rOverlap > 0)   this._pos = 'left';     // The tip is overlapping the right viewport margin.
         }
     }
+
+    // Style the notch a second time as its position may have changed.
     this._styleNotch();
 
-    // Change tip xy to take account of the tip position and notch dimensions.
+    // Change tip position so that x is centred on the tip.
+    var xTip, yTip;
     if (this._pos === 'top')   
     {
-        x = x - (this._wTip / 2);
-        y = y - (this._hTip + this._hNotch);
+        xTip = x - (bTip.width / 2);
+        yTip = y - (bTip.height + this._hNotch);
     } 
     else if (this._pos === 'bottom')   
     {
-        x = x - (this._wTip / 2);
-        y = y + this._hNotch;
+        xTip = x - (bTip.width / 2);
+        yTip = y + this._hNotch;
     }
+    // Change tip bubble position so that y is centred on the tip.
     else if (this._pos === 'left')   
     {
-        x = x - (this._wTip + this._wNotch);
-        y = y - (this._hTip / 2);
+        xTip = x - (bTip.width + this._wNotch);
+        yTip = y - (bTip.height / 2);
     }
     else if (this._pos === 'right')   
     {
-        x = x + this._wNotch;
-        y = y - (this._hTip / 2);
+        xTip = x + this._wNotch;
+        yTip = y - (bTip.height / 2);
     }
 
-    // Change tip xy if tip is overlapping the viewport margin.
-    var xTip2 = bContainer.left + x;
-    var yTip2 = bContainer.top + y;
-    var o = dom.isRectInViewport({left:xTip2, top:yTip, right:xTip2 + this._wTip, bottom:yTip + this._hTip}, this._viewportMargin);
-    x = x + o.left - o.right;
-    y = y + o.top - o.bottom;
-
-    if (xTip > (dom.viewportWidth() / 2))
+    // Adjust the tip position if its overlapping the viewport margin.
+    if (this._pos === 'top' || this._pos === 'bottom')
     {
-window.console.log(o.right);
-        x = x - o.right;
+        lOverlap = this._viewportMargin - (bContainer.left + xTip);
+        if (lOverlap > 0) xTip += lOverlap;
+        rOverlap = (bContainer.left + xTip + bTip.width) - (dom.viewportWidth() - this._viewportMargin);
+        if (rOverlap > 0) xTip -= rOverlap;
     }
-    else
+    else if (this._pos === 'left' || this._pos === 'right')
     {
-        x = x + o.left;
+        tOverlap = this._viewportMargin - (bContainer.top + yTip);
+        if (tOverlap > 0) yTip += tOverlap;
+        bOverlap = (bContainer.top + yTip + bTip.height) - (dom.viewportHeight() - this._viewportMargin);
+        if (bOverlap > 0) yTip -= bOverlap;
     } 
-    if (yTip > (dom.viewportHeight() / 2))
-    {
-        y = y - o.bottom;
-    }
-    else
-    {
-        y = y + o.top;
-    }
-
-
-
-
-
-    // Change tip xy if the notch is overlapping the viewport margin.
-    var xNotch = initX - x;
-    var yNotch = initY - y;
-
-    if (this._pos === 'top' || this._pos === 'bottom')   
-    {
-        var dw = (this._wNotch / 2) + this._minNotchGap + this._borderWidth;
-
-        var dx = xNotch + dw - this._wTip;
-        if (dx > 0) x = x + dx;
-
-        dx = xNotch - dw;
-        if (dx < 0) x = x + dx;
-    }
-    if (this._pos === 'left' || this._pos === 'right')   
-    {
-        var dh = (this._hNotch / 2) + this._minNotchGap + this._borderWidth;
-
-        var dy = yNotch + dh - this._hTip;
-        if (dy > 0) y = y + dy;
-
-        dy = yNotch - dh;
-        if (dy < 0) y = y + dy;
-    }
-    xNotch = initX - x;
-    yNotch = initY - y;
 
     // Position the tip and notch.
-    this._xTipEnd = x;
-    this._yTipEnd = y;
-    this._xNotchEnd = xNotch;
-    this._yNotchEnd = yNotch;
+    this._xTipEnd   = xTip;
+    this._yTipEnd   = yTip;
+    this._xNotchEnd = x - xTip;
+    this._yNotchEnd = y - yTip;
     this._moveTip();
 };
 
@@ -288,22 +259,22 @@ Datatip.prototype._moveTip = function ()
     }
     else
     {
-        this._xTipStart += (this._xTipEnd - this._xTipStart) * 0.3;
-        this._yTipStart += (this._yTipEnd - this._yTipStart) * 0.3;
+        this._xTipStart += (this._xTipEnd - this._xTipStart) * speed;
+        this._yTipStart += (this._yTipEnd - this._yTipStart) * speed;
         continueAnimation = true;
     }
     this._positionTip(this._xTipStart, this._yTipStart);
 
     // Position the notch. Test for within one pixel of end point.
-    if ((Math.abs(this._xNotchEnd - this._xNotchStart) < 1) && (Math.abs(this._xNotchEnd - this._xNotchStart) < 1))
+    if ((Math.abs(this._xNotchEnd - this._xNotchStart) < 1) && (Math.abs(this._yNotchEnd - this._yNotchStart) < 1))
     {
         this._xNotchStart = this._xNotchEnd;
-        this._xNotchStart = this._xNotchEnd;
+        this._yNotchStart = this._yNotchEnd;
     }
     else
     {
-        this._xNotchStart += (this._xNotchEnd - this._xNotchStart) * 0.3;
-        this._yNotchStart += (this._yNotchEnd - this._yNotchStart) * 0.3;
+        this._xNotchStart += (this._xNotchEnd - this._xNotchStart) * speed;
+        this._yNotchStart += (this._yNotchEnd - this._yNotchStart) * speed;
         continueAnimation = true;
     }
     this._positionNotch(this._xNotchStart, this._yNotchStart);
@@ -410,13 +381,14 @@ Datatip.prototype._styleNotch = function ()
     }
 
     // Get notch dimensions after its been drawn.
+    var bTip     = dom.bounds(this._tip);
     var bNotch   = dom.bounds(this._notchBorder);
     this._wNotch = bNotch.width;
     this._hNotch = bNotch.height;
 
     // Hide notch if its bigger than the tip.
-    if  (((this._pos === 'left' || this._pos === 'right') && ((this._hNotch + (this._minNotchGap * 2) + (this._borderWidth * 2)) > this._hTip)) || 
-         ((this._pos === 'top' || this._pos === 'bottom') && ((this._wNotch + (this._minNotchGap * 2) + (this._borderWidth * 2))  > this._wTip)))
+    if  (((this._pos === 'left' || this._pos === 'right') && ((this._hNotch + (this._minNotchGap * 2) + (this._borderWidth * 2)) > bTip.height)) || 
+         ((this._pos === 'top' || this._pos === 'bottom') && ((this._wNotch + (this._minNotchGap * 2) + (this._borderWidth * 2))  > bTip.width)))
     {
         dom.style(this._notchBorder, {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});
         dom.style(this._notchFill,   {borderTop:'0px', borderRight:'0px', borderBottom:'0px', borderLeft:'0px'});

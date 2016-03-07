@@ -316,7 +316,7 @@ Chart.prototype.addEventHandler = function (options)
 
     function updateTip(event)
     { 
-        var hitEvent = me.hitEvent(event.pixelX, event.pixelY);
+        /*var hitEvent = me.hitEvent(event.pixelX, event.pixelY);
         if (hitEvent !== undefined && (hitEvent.pixelX !== me.hitX || hitEvent.pixelY !== me.hitY))
         {
             me._uiCanvas.empty();
@@ -341,13 +341,26 @@ Chart.prototype.addEventHandler = function (options)
 
             //me._datatip.html('1');
            // me._datatip.html(highlightItem.coords.cx+' '+highlightItem.coords.cy);
-            me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
+            me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+ 
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy+
+                ' <br/> Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy+
+                ' <br/> Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy);
             me._datatip.borderColor(highlightItem.style.fillColor);
-            //me._datatip.position(event.pixelX, event.pixelY, 'top');
-            me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'top');
+            me._datatip.position(hitEvent.pixelX, hitEvent.pixelY, 'left');
 
             me._uiCanvas.render();
-        }
+        }*/
+
+            me._datatip.html('Tooltip that should always be visible in viewport X and its just too long: '+
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+
+                ' <br/> Tooltip that should always be visible in viewport X and its just too long: '+
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+
+                ' <br/> Tooltip that should always be visible in viewport X and its just too long: '+
+                ' <br/> Tooltip that should always be visible in viewport Y and its just really long: ');
+            me._datatip.position(event.pixelX, event.pixelY, 'top');
+
     }
 };
 
