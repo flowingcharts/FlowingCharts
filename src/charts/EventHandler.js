@@ -245,7 +245,7 @@ function EventHandler (options)
     // Event dispatcher.
     function dispatch (eventType, event, pointerPosition)
     {
-        window.console.log(eventType);
+        //window.console.log(eventType);
         if (options[eventType] !== undefined) 
         {
             options[eventType](
