@@ -255,6 +255,20 @@ var show = function (element)
     element.style.visibility = 'visible';
 };
 
+/**
+ * Set the opacity of an element.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {HTMLElement}  element The target element.
+ * @param {HTMLElement}  alpha   The alpha value 0 - 1.
+ * 
+ */
+var opacity = function(element, alpha) 
+{
+    style(element, {opacity:alpha, filter:'alpha(opacity=' + alpha * 100 + ')'});
+};
+
 /** 
  * Check if an element is visible.
  * 
@@ -421,6 +435,7 @@ module.exports =
     off                     : off,
     hide                    : hide,
     show                    : show,
+    opacity                 : opacity,
     isVisible               : isVisible,
     bounds                  : bounds,
     isRectInViewport        : isRectInViewport,

@@ -37,24 +37,30 @@ function Datatip (container)
     this._borderWidth           = 1;            // Tip border width.
     this._tipOpacity            = 1;            // Tip opacity.
     this._isVisible             = false;        // Is the tip visible?
-    this._xTipStart             = 0;            // The starting x position for the tip when its position is changed using animation.
-    this._yTipStart             = 0;            // The starting y position for the tip when its position is changed using animation.
-    this._xTipEnd               = 0;            // The end x position for the tip when its position is changed using animation.
-    this._yTipEnd               = 0;            // The end y position for the tip when its position is changed using animation.
 
     // Notch.
+    this._includeNotch          = true;
     this._minNotchSize          = 8;            // Minimum notch size.
     this._minNotchDistToEdge    = 5;            // Minimum distance the notch is allowed from the edge of the tip.
     this._wNotch                = 0;            // Notch width.
     this._hNotch                = 0;            // Notch height.
-    this._xNotchStart           = 0;            // The starting x position for the notch when its position is changed using animation.
-    this._yNotchStart           = 0;            // The starting y position for the notch when its position is changed using animation.
-    this._xNotchEnd             = 0;            // The end x position for the notch when its position is changed using animation.
-    this._yNotchEnd             = 0;            // The end y position for the notch when its position is changed using animation.
 
     // Fade in / out.
     this._fadeInterval          = null;         // The id of the setInterval() function that fades out the tip.
     this._fadeOutDelay          = null;         // The id of the setTimeout() function that provides a delay before the tip fades out.
+
+    // Animation.
+    this._animationId           = null;         // The id of the requestAnimation() function that moves the tip. 
+    this._speed                 = 0.01;         // The speed of the animation. A value between 0 and 1 that controls the speed of the animation.
+    this._speedIncr             = 0.05;         // Increases the animation speed so that it remains more constant and smooth as gaps between start and end points get smaller.
+    this._xTipStart             = 0;            // The starting x position for the tip when its position is changed using animation.
+    this._yTipStart             = 0;            // The starting y position for the tip when its position is changed using animation.
+    this._xTipEnd               = 0;            // The end x position for the tip when its position is changed using animation.
+    this._yTipEnd               = 0;            // The end y position for the tip when its position is changed using animation.
+    this._xNotchStart           = 0;            // The starting x position for the notch when its position is changed using animation.
+    this._yNotchStart           = 0;            // The starting y position for the notch when its position is changed using animation.
+    this._xNotchEnd             = 0;            // The end x position for the notch when its position is changed using animation.
+    this._yNotchEnd             = 0;            // The end y position for the notch when its position is changed using animation.
 
     // Create the data tip.
     this._tip = dom.createElement('div'); 
@@ -214,8 +220,12 @@ Datatip.prototype.position = function (x, y, pos)
     // Adjust the tip xy if its overlapping the viewport margin.
     if (this._pos === 'top' || this._pos === 'bottom')
     {
-        // The tip width is greater than viewport width so just anchor tip to left viewport margin.
-        if (bTip.width > dom.viewportWidth()) xTip = this._viewportMargin - bContainer.left;
+        // The tip width is greater than viewport width so just anchor the tip to the side that the notch is on.
+        if (bTip.width > dom.viewportWidth()) 
+        {
+            if ((bContainer.left + x) < (dom.viewportWidth() / 2)) xTip = this._viewportMargin - bContainer.left;
+            else                                                   xTip = dom.viewportWidth() - bContainer.left - this._viewportMargin - bTip.width;
+        }
         else
         {
             tipOverlapRightEdge = (bContainer.left + xTip + bTip.width) - (dom.viewportWidth() - this._viewportMargin);
@@ -227,8 +237,12 @@ Datatip.prototype.position = function (x, y, pos)
     }
     else if (this._pos === 'left' || this._pos === 'right')
     {
-        // The tip is height is greater than viewport height so just anchor tip to top viewport margin.
-        if (bTip.height > dom.viewportHeight()) yTip = this._viewportMargin - bContainer.top;
+        // The tip is height is greater than viewport height so just anchor the tip to the side that the notch is on.
+        if (bTip.height > dom.viewportHeight()) 
+        {
+            if ((bContainer.top + y) < (dom.viewportHeight() / 2)) yTip = this._viewportMargin - bContainer.top;
+            else                                                   yTip = dom.viewportHeight() - bContainer.top - this._viewportMargin - bTip.height;
+        } 
         else
         {
             tipOverlapBottomEdge = (bContainer.top + yTip + bTip.height) - (dom.viewportHeight() - this._viewportMargin);
@@ -257,8 +271,8 @@ Datatip.prototype.position = function (x, y, pos)
         if ((this._yNotchEnd < yDistFromNotchToEdge) || (this._yNotchEnd > (bTip.height - yDistFromNotchToEdge))) this._hideNotch();
     } 
 
-    dom.cancelAnimation(this._anim);
-    this._moveTip();
+    dom.cancelAnimation(this._animationId);
+    this._moveTip(this._speed);
 };
 
 /** 
@@ -266,20 +280,20 @@ Datatip.prototype.position = function (x, y, pos)
  * 
  * @since 0.1.0
  * @private
+ *
+ * @param {number} speed A value between 0 and 1 that controls the speed of the animation.
  */
-Datatip.prototype._moveTip = function ()
+Datatip.prototype._moveTip = function (speed)
 {
+    window.console.log(speed);
     // Flag to indicate whether animation is complete.
     // Tests for completion of both tip and notch animations.
     var continueAnimation = false;
 
-    // A value between 0 and 1 that controls the speed of the animation.
-    // The higher the number the faster the animation.
-    var speed = 0.3;
-    var tolerance = 1;
+    var snapToPoint = 5;
 
-    // Position the tip. Test for within one pixel of end point.
-    if ((Math.abs(this._xTipEnd - this._xTipStart) < tolerance) && (Math.abs(this._yTipEnd - this._yTipStart) < tolerance))
+    // Position the tip. Test for within snapToPoint of end point.
+    if ((Math.abs(this._xTipEnd - this._xTipStart) < snapToPoint) && (Math.abs(this._yTipEnd - this._yTipStart) < snapToPoint))
     {
         this._xTipStart = this._xTipEnd;
         this._yTipStart = this._yTipEnd;
@@ -292,8 +306,8 @@ Datatip.prototype._moveTip = function ()
     }
     this._positionTip(this._xTipStart, this._yTipStart);
 
-    // Position the notch. Test for within one pixel of end point.
-    if ((Math.abs(this._xNotchEnd - this._xNotchStart) < tolerance) && (Math.abs(this._yNotchEnd - this._yNotchStart) < tolerance))
+    // Position the notch. Test for within snapToPoint of end point.
+    if ((Math.abs(this._xNotchEnd - this._xNotchStart) < snapToPoint) && (Math.abs(this._yNotchEnd - this._yNotchStart) < snapToPoint))
     {
         this._xNotchStart = this._xNotchEnd;
         this._yNotchStart = this._yNotchEnd;
@@ -310,7 +324,7 @@ Datatip.prototype._moveTip = function ()
     if (continueAnimation) 
     {
         var me = this;
-        this._anim = dom.requestAnimation(function () {me._moveTip();});
+        this._animationId = dom.requestAnimation(function () {me._moveTip(speed += me._speedIncr);});
     }
 };
 
@@ -457,7 +471,7 @@ Datatip.prototype.show = function ()
     clearTimeout(this._fadeOutDelay);
     clearInterval(this._fadeInterval);
     dom.show(this._tip);
-    dom.style(this._tip, {opacity:1, filter:'alpha(opacity=100)'});
+    dom.opacity(this._tip, 1);
     this._tipOpacity = 1;
     this._isVisible = true;
 };
@@ -472,7 +486,7 @@ Datatip.prototype.hide = function ()
     clearTimeout(this._fadeOutDelay);
     clearInterval(this._fadeInterval);
     dom.hide(this._tip);
-    dom.style(this._tip, {opacity:0, filter:'alpha(opacity=0)'});
+    dom.opacity(this._tip, 0);
     this._tipOpacity = 0;
     this._isVisible = false;
 };
@@ -494,7 +508,7 @@ Datatip.prototype.fadeOut = function ()
         me._fadeInterval = setInterval(function () 
         {
             if (me._tipOpacity <= 0.1) me.hide();
-            dom.style(me._tip, {opacity:me._tipOpacity, filter:'alpha(opacity=' + me._tipOpacity * 100 + ')'});
+            dom.opacity(me._tip, me._tipOpacity);
             me._tipOpacity -= me._tipOpacity * 0.1;
         }, 20);
     }, 700);
