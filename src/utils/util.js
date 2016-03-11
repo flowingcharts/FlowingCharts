@@ -33,7 +33,8 @@ var isNumber = function (n)
  * @since 0.1.0
  *
  * @param {Object} obj The object to be cloned.
- * @param {Object} A clone of the object.
+ *
+ * @return {Object} A clone of the object.
  */
 var cloneObject = function (obj) 
 {
