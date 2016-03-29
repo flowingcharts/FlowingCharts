@@ -261,7 +261,7 @@ Chart.prototype.addEventHandler = function (options)
         mousemove : function (event)
         {
             updateTip(event);
-            if (!me._datatip.isVisible()) me._datatip.show();
+            me._datatip.show();
         },
         mouseover : function (event)
         {

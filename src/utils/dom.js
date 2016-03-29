@@ -329,7 +329,7 @@ var off = function (element, types, listener)
  * 
  * @param {HTMLElement} element The target element.
  * 
- * @return {DOMRect} A dom rectangle.
+ * @return {DOMRect} The size of the element and its position relative to the viewport.
  */
 var bounds = function (element) 
 {
