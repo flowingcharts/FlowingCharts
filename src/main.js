@@ -5,7 +5,7 @@
 // Add the modules.
 // Only need to require the top-level modules, browserify
 // will walk the dependency graph and load everything correctly.
-var flowingcharts = window.flowingcharts || 
+var flowingcharts = window.flowingcharts ||
 {
     canvas : require('./canvas/Canvas')
 };

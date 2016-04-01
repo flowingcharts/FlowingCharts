@@ -34,14 +34,14 @@ module.exports = function (grunt)
         },
         // Remove console statements, debugger and specific blocks of code.
         // Removes blocks of code surrounded by //<validation>...//</validation>
-        // Generates 'gen_build/<%= pkg.name %>.src.js' from 'gen_build/<%= pkg.name %>.debug.js'.
+        // Generates 'gen_build/<%= pkg.name %>.js' from 'gen_build/<%= pkg.name %>.src.js'.
         groundskeeper: 
         {
             compile: 
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.src.js': 'gen_build/<%= pkg.name %>.debug.js', // 1:1 compile
+                    'gen_build/<%= pkg.name %>.js': 'gen_build/<%= pkg.name %>.src.js', // 1:1 compile
                 }
             }
         },
@@ -70,7 +70,7 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.js': ['gen_build/<%= pkg.name %>.src.js']
+                    'gen_build/<%= pkg.name %>.js': ['gen_build/<%= pkg.name %>.js']
                 }
             }
         },
@@ -82,14 +82,14 @@ module.exports = function (grunt)
             // Deletes test coverage.
             coverage: {src: ['gen_test_coverage/']},
             // Deletes release.
-            release: {src: ['gen_release/<%= pkg.version %>/']},
+            release: {src: ['gen_release/']},
             // Deletes build.
             build: {src: ['gen_build/']}
         },
         // Copies files/directories.
         copy: 
         {
-            // Copies files to a release directory 'gen_release/<%= pkg.version %>/'.
+            // Copies files to a release directory 'gen_release/<%= pkg.name %>-<%= pkg.version %>/'.
             release: 
             {
                 files: 
@@ -104,21 +104,21 @@ module.exports = function (grunt)
                             'gen_build/<%= pkg.name %>.js', 
                             'gen_build/<%= pkg.name %>.src.js'
                         ], 
-                        dest: 'gen_release/<%= pkg.version %>/'
+                        dest: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/'
                     },
-                    // Copies the JavaScript module files 'src/', to 'gen_release/<%= pkg.version %>/src/'.
+                    // Copies the JavaScript module files 'src/', to 'gen_release/<%= pkg.name %>-<%= pkg.version %>/src/'.
                     {
                         expand: true,
                         cwd: 'src/', // Makes the src relative to cwd so that the full file path is not copied into release.    
                         src: '**/*',
-                        dest: 'gen_release/<%= pkg.version %>/src/'
+                        dest: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/src/'
                     },
-                    // Copies the JavaScript API documentation 'gen_doc/', to 'gen_release/<%= pkg.version %>/doc/'.
+                    // Copies the JavaScript API documentation 'gen_doc/', to 'gen_release/<%= pkg.name %>-<%= pkg.version %>/doc/'.
                     {
                         expand: true,
                         cwd: 'gen_doc/',
                         src: '**/*',
-                        dest: 'gen_release/<%= pkg.version %>/doc/'
+                        dest: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/doc/'
                     }
                 ]
             },
@@ -187,8 +187,8 @@ module.exports = function (grunt)
             }
         },
         // Browserify bundles up all of the project dependencies into a single JavaScript file.
-        // Generates a bundled file 'gen_build/<%= pkg.name %>.debug.js' from the starting point 'src/main.js'.
-        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.debug.js'.
+        // Generates a bundled file 'gen_build/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.src.js'.
         browserify: 
         {
             options: 
@@ -196,7 +196,7 @@ module.exports = function (grunt)
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
                 browserifyOptions: 
                 {
-                    // Generates inline source maps as a comment at the bottom of 'gen_build/<%= pkg.name %>.debug.js' 
+                    // Generates inline source maps as a comment at the bottom of 'gen_build/<%= pkg.name %>.src.js' 
                     // to enable debugging of original JavaScript module files.
                     debug: true
                 }
@@ -205,16 +205,13 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.debug.js': ['src/main.js']
+                    'gen_build/<%= pkg.name %>.src.js': ['src/main.js']
                 }
             }
         },
-        // Processes and copies the demo files 'examples/', to 'gen_release/<%= pkg.version %>/examples/'.
+        // Processes and copies the demo files 'examples/', to 'gen_release/<%= pkg.name %>-<%= pkg.version %>/examples/'.
         // Adds a banner to each file displaying the project name, version and date.
-        // Replaces 
-        // <script type="text/javascript" src="../../gen_build/flowingcharts.debug.js"></script>
-        // with
-        // <script type="text/javascript" src="../../flowingcharts.js"></script>
+        // Replaces javascript source paths in html files from dev to release.
         processhtml: 
         {
             options:
@@ -233,7 +230,7 @@ module.exports = function (grunt)
                         expand: true,   
                         cwd: 'examples/', 
                         src: ['**/*.html'],
-                        dest: 'gen_release/<%= pkg.version %>/examples/',
+                        dest: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/examples/',
                         ext: '.html'
                     }
                 ]
@@ -279,7 +276,7 @@ module.exports = function (grunt)
                     archive: 'gen_release/<%= pkg.name %>-<%= pkg.version %>.zip'
                 },
                 expand: true,
-                cwd: 'gen_release/<%= pkg.version %>/',
+                cwd: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/',
                 src: ['**/*'],
                 dest: ''
             }
@@ -289,12 +286,12 @@ module.exports = function (grunt)
         {
             dev : 
             {
-                path: 'file:///C:/Work/GitHub/flowingcharts/examples/svg/scatter/index.html',
+                path: 'file:///C:/Work/GitHub/<%= pkg.name %>/examples/svg/scatter/index.html',
                 app: 'Chrome'
             },
             release : 
             {
-                path : 'file:///C:/Work/GitHub/flowingcharts/gen_release/0.1.0/examples/svg/scatter/index.html',
+                path : 'file:///C:/Work/GitHub/<%= pkg.name %>/gen_release/<%= pkg.name %>-<%= pkg.version %>/examples/svg/scatter/index.html',
                 app: 'Chrome'
             }
         },
@@ -347,7 +344,7 @@ module.exports = function (grunt)
     grunt.registerTask('test', ['clean:coverage', 'copy:coverage', 'blanket:coverage', 'mochaTest']);
 
     // '>grunt publish' 
-    // Publish a release version to 'gen_release/<%= pkg.version %>/'.
+    // Publish a release version to 'gen_release/<%= pkg.name %>-<%= pkg.version %>/'.
     grunt.registerTask('publish', ['clean:release', 'doc', 'copy:release', 'processhtml', 'compress', 'open:release']);      
 
     // '>grunt' 
