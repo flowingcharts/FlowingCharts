@@ -7,8 +7,8 @@ module.exports = function (grunt)
         // We can use properties of this file in our code eg <%= pkg.name %> <%= pkg.version %>.
         pkg: grunt.file.readJSON('package.json'),
 
-        // Concatenates and bundles the JavaScript module files in 'src/' into 'gen_build/<%= pkg.name %>.src.js'.
-        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.src.js'.
+        // Concatenates and bundles the JavaScript module files in 'src/' into 'gen_build/<%= pkg.name %>.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.js'.
         concat: 
         {
             options: 
@@ -21,7 +21,7 @@ module.exports = function (grunt)
                 [
                     'src/**/*.js'
                 ],
-                dest: 'gen_build/<%= pkg.name %>.src.js'
+                dest: 'gen_build/<%= pkg.name %>.js'
             }
         },
         // Detects errors and potential problems in the JavaScript module and test files.
@@ -34,18 +34,18 @@ module.exports = function (grunt)
         },
         // Remove console statements, debugger and specific blocks of code.
         // Removes blocks of code surrounded by //<validation>...//</validation>
-        // Generates 'gen_build/<%= pkg.name %>.js' from 'gen_build/<%= pkg.name %>.src.js'.
+        // Generates 'gen_build/<%= pkg.name %>.min.js' from 'gen_build/<%= pkg.name %>.js'.
         groundskeeper: 
         {
             compile: 
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.js': 'gen_build/<%= pkg.name %>.src.js', // 1:1 compile
+                    'gen_build/<%= pkg.name %>.min.js': 'gen_build/<%= pkg.name %>.js', // 1:1 compile
                 }
             }
         },
-        // Minimises the JavaScript source code file 'gen_build/<%= pkg.name %>.src.js' into 'gen_build/<%= pkg.name %>.js'.
+        // Minimises the JavaScript source code file 'gen_build/<%= pkg.name %>.min.js' into 'gen_build/<%= pkg.name %>.min.js'.
         // Adds a banner displaying the project name, version and date to the minimised file.
         // Creates a source map file 'gen_build/<%= pkg.name %>.map' for debugging the minimised code file.
         // Removes DEBUG code from minimised code file.
@@ -70,7 +70,7 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.js': ['gen_build/<%= pkg.name %>.js']
+                    'gen_build/<%= pkg.name %>.min.js': ['gen_build/<%= pkg.name %>.min.js']
                 }
             }
         },
@@ -95,14 +95,14 @@ module.exports = function (grunt)
                 files: 
                 [
                     // Copies the JavaScript source file 'gen_build/<%= pkg.name %>.js' and 
-                    // minimised file 'gen_build/<%= pkg.name %>.src.js' to 'gen_release/'.
+                    // minimised file 'gen_build/<%= pkg.name %>.min.js' to 'gen_release/'.
                     {
                         expand: true, 
                         flatten: true, // Flattens results to a single level so directory structure isnt copied.
                         src: 
                         [
-                            'gen_build/<%= pkg.name %>.js', 
-                            'gen_build/<%= pkg.name %>.src.js'
+                            'gen_build/<%= pkg.name %>.min.js', 
+                            'gen_build/<%= pkg.name %>.js'
                         ], 
                         dest: 'gen_release/<%= pkg.name %>-<%= pkg.version %>/'
                     },
@@ -187,8 +187,8 @@ module.exports = function (grunt)
             }
         },
         // Browserify bundles up all of the project dependencies into a single JavaScript file.
-        // Generates a bundled file 'gen_build/<%= pkg.name %>.src.js' from the starting point 'src/main.js'.
-        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.src.js'.
+        // Generates a bundled file 'gen_build/<%= pkg.name %>.js' from the starting point 'src/main.js'.
+        // Adds a banner displaying the project name, version and date to 'gen_build/<%= pkg.name %>.js'.
         browserify: 
         {
             options: 
@@ -196,7 +196,7 @@ module.exports = function (grunt)
                 banner: '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
                 browserifyOptions: 
                 {
-                    // Generates inline source maps as a comment at the bottom of 'gen_build/<%= pkg.name %>.src.js' 
+                    // Generates inline source maps as a comment at the bottom of 'gen_build/<%= pkg.name %>.js' 
                     // to enable debugging of original JavaScript module files.
                     debug: true
                 }
@@ -205,7 +205,7 @@ module.exports = function (grunt)
             {
                 files: 
                 {
-                    'gen_build/<%= pkg.name %>.src.js': ['src/main.js']
+                    'gen_build/<%= pkg.name %>.js': ['src/main.js']
                 }
             }
         },

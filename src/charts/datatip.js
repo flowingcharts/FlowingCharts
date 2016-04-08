@@ -28,16 +28,15 @@ var util      = require('../utils/util');
  * @param {Object}      [options]                           The tip options.
  * @param {number}      [options.viewportMargin  = 10]      Margin around the viewport edge that the tip isnt allowed to overlap.
  * @param {string}      [options.position        = top]     The preferred position of the data tip relative to the x and y coords - one of top, bottom, left or right.
- * @param {number}      [options.padding         = 7]       Padding.
+ * @param {number}      [options.padding         = 10]      Padding.
  * @param {string}      [options.fontFamily      = arial]   Font family. 
- * @param {number}      [options.fontSize        = 12]      Font size. 
+ * @param {number}      [options.fontSize        = 14]      Font size. 
  * @param {string}      [options.fontColor       = #666666] Font color. 
  * @param {string}      [options.backgroundColor = #fafafa] Background color.
  * @param {string}      [options.borderStyle     = solid]   Border style.
  * @param {string}      [options.borderColor     = #666666] Border color.
  * @param {number}      [options.borderWidth     = 1]       Border width.
- * @param {number}      [options.borderRadius    = 2]       Border radius.
- * @param {number}      [options.shadowSize      = 1]       Shadow size.
+ * @param {number}      [options.borderRadius    = 5]       Border radius.
  * @param {boolean}     [options.hideShadow      = false]   Hide shadow.
  * @param {number}      [options.notchSize       = 8]       Notch size.
  * @param {number}      [options.notchPadding    = 5]       Padding between notch and edge of tip.
@@ -55,17 +54,15 @@ function Datatip (container, options)
     {
         viewportMargin          : 10,
         position                : 'top',
-        padding                 : '7',
+        padding                 : 10,
         fontFamily              : 'arial',
-        fontSize                : '12',
+        fontSize                : 14,
         fontColor               : '#666666',
         backgroundColor         : '#fafafa',
-        backgroundOpacity       : 0.7,
         borderStyle             : 'solid',
         borderColor             : '#666666',
         borderWidth             : 1,
-        borderRadius            : 2,
-        shadowSize              : 1,
+        borderRadius            : 5,
         hideShadow              : false,
         notchSize               : 8,
         notchPadding            : 5,
@@ -155,16 +152,15 @@ function Datatip (container, options)
  * @param {Object}      [options]                           The tip options.
  * @param {number}      [options.viewportMargin  = 10]      Margin around the viewport edge that the tip isnt allowed to overlap.
  * @param {string}      [options.position        = top]     The preferred position of the data tip relative to the x and y coords - one of top, bottom, left or right.
- * @param {number}      [options.padding         = 7]       Padding.
+ * @param {number}      [options.padding         = 10]      Padding.
  * @param {string}      [options.fontFamily      = arial]   Font family. 
- * @param {number}      [options.fontSize        = 12]      Font size. 
+ * @param {number}      [options.fontSize        = 14]      Font size. 
  * @param {string}      [options.fontColor       = #666666] Font color. 
  * @param {string}      [options.backgroundColor = #fafafa] Background color.
  * @param {string}      [options.borderStyle     = solid]   Border style.
  * @param {string}      [options.borderColor     = #666666] Border color.
  * @param {number}      [options.borderWidth     = 1]       Border width.
- * @param {number}      [options.borderRadius    = 2]       Border radius.
- * @param {number}      [options.shadowSize      = 1]       Shadow size.
+ * @param {number}      [options.borderRadius    = 5]       Border radius.
  * @param {boolean}     [options.hideShadow      = false]   Hide shadow.
  * @param {number}      [options.notchSize       = 8]       Notch size.
  * @param {number}      [options.notchPadding    = 5]       Padding between notch and edge of tip.
@@ -199,7 +195,7 @@ Datatip.prototype.options = function(options)
             color           : this._options.fontColor, 
             padding         : this._options.padding+'px',
             background      : this._options.backgroundColor,     
-            boxShadow       : this._options.hideShadow === true ? '' : this._options.shadowSize+'px '+this._options.shadowSize+'px '+this._options.shadowSize+'px 0px rgba(200,200,200,1)'
+            boxShadow       : '0 5px 10px rgba(0, 0, 0, .2)'
         });
 
         return this;
