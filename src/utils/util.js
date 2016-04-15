@@ -5,8 +5,8 @@
 /**
  * @fileoverview    Contains utility functions.
  * @author          Jonathan Clare 
- * @copyright   FlowingCharts 2015
- * @module      util 
+ * @copyright       FlowingCharts 2015
+ * @module          util 
  */
 
 /** 
@@ -106,7 +106,7 @@ var extendObject = function (objA, objB, overwriteProperties)
  * @param {Object} baseClass    The class from which to inherit.
  * @param {Object} subClass     The inheriting class, or subclass.
  */
-var extendClass = function(baseClass, subClass)
+var extendClass = function (baseClass, subClass)
 {
     function Inheritance() {}
     Inheritance.prototype = baseClass.prototype;
@@ -116,10 +116,39 @@ var extendClass = function(baseClass, subClass)
     subClass.superClass = baseClass.prototype;
 };
 
+/** 
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered.
+ *
+ * @since 0.1.0
+ *
+ * @param {Function} func      The function to call.
+ * @param {Object}   wait      The function will be called after it stops being called for 'wait' milliseconds.
+ * @param {Object}   immediate If `immediate` is passed, trigger the function on the leading edge, instead of the trailing.
+ */
+var debounce = function (func, wait, immediate) 
+{
+    var timeout;
+    return function() 
+    {
+        var me = this, args = arguments;
+        var later = function() 
+        {
+            timeout = null;
+            if (!immediate) func.apply(me, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(me, args);
+    };
+};
+
 module.exports = 
 {
     isNumber        : isNumber,
     cloneObject     : cloneObject,
     extendObject    : extendObject,
-    extendClass     : extendClass
+    extendClass     : extendClass,
+    debounce        : debounce
 };

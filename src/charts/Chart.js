@@ -8,7 +8,7 @@
  * @copyright       FlowingCharts 2015
  * @module          charts/Chart 
  * @requires        charts/EventHandler
- * @requires        charts/datatip
+ * @requires        charts/Datatip
  * @requires        series/Series
  * @requires        canvas/Canvas
  * @requires        geom/CartesianCoords
@@ -42,7 +42,7 @@ var colorUtil           = require('../utils/color');
  * @param {HTMLElement} options.container                       The html element that will contain the chart.
  * @param {string}      [options.coordinateSystem = cartesian]  The coordinate system. Possible values are 'cartesian' or 'polar'.
  * @param {string}      [options.renderer = svg]                The graphics renderer. Possible values are 'canvas' or 'svg'.
- * @param {string}      [options.refreshRate = 250]              The rate in ms that graphics are rendered when the chart is resized.
+ * @param {string}      [options.refreshRate = 250]             The rate in ms that graphics are rendered when the chart is resized.
  * @param {number}      [options.padding = 20]                  The chart padding.
  * @param {number}      [options.paddingTop]                    The chart top padding.
  * @param {number}      [options.paddingRight]                  The chart right padding.
@@ -63,19 +63,15 @@ function Chart (options)
 
     // Resize the chart to fit the container when the window resizes.
     var me = this;
-    var resizeTimeout;
-    dom.on(window, 'resize', function (event)
-    {
-        // Add a resizeTimeout to stop multiple calls to setSize().
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function ()
-        { 
-            var bounds = dom.bounds(me._canvasContainer);       
-            me.setSize(bounds.width, bounds.height);
-        }, me._options.refreshRate);
-    });
 
     this.options(options); 
+
+    var onResize = util.debounce(function () 
+    {
+        var bounds = dom.bounds(me._canvasContainer);       
+        me.setSize(bounds.width, bounds.height);
+    }, me._options.refreshRate);
+    dom.on(window, 'resize', onResize);
 }
 
 /** 

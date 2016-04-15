@@ -306,7 +306,7 @@ module.exports =
     createElement : createElement,
     isSupported   : isSupported,
     getCanvas     : getCanvas,
-    getContext  : getContext,
+    getContext    : getContext,
     clear         : clear,
     empty         : empty,
     circle        : circle,

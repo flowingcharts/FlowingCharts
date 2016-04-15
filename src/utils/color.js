@@ -64,7 +64,7 @@ var isColor = function (c)
  *
  * @return {boolean} true, if c is an rgb color, otherwise false.
  */
-var isRGB = function(c)
+var isRGB = function (c)
 {
     return (c.indexOf('rgb') != -1);
 };
@@ -78,7 +78,7 @@ var isRGB = function(c)
  *
  * @return {boolean} true, if c is an rgba color, otherwise false.
  */
-var isRGBA = function(c)
+var isRGBA = function (c)
 {
     return (c.indexOf('rgba') != -1);
 };
@@ -178,7 +178,7 @@ var colorNameToHex = function (c)
  *
  * @return {Object} An object containing the component colors {r:255, g:255, b:255, a:0.5}.
  */
-var componentColors = function(rgba)
+var componentColors = function (rgba)
 {
     var arr = rgba.match(/\d+/g);
     var o = 
@@ -200,7 +200,7 @@ var componentColors = function(rgba)
  *
  * @return {string} An rgba color string 'rgba(255, 255, 255, 0.5)' or undefined if not a valid color.
  */
-var toRGBA = function(c, opacity)
+var toRGBA = function (c, opacity)
 {
     var o;
     if (isRGBA(c) && opacity === undefined)
