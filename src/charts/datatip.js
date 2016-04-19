@@ -8,13 +8,14 @@
  * @copyright       FlowingCharts 2015
  * @module          datatip 
  * @requires        utils/dom
- * @requires        utils/color
  * @requires        utils/util
+ * @requires        utils/animate
  */
 
 // Required modules.
 var dom       = require('../utils/dom');
 var util      = require('../utils/util');
+var animate   = require('../utils/animate');
 
 /** 
  * @classdesc Class for creating a data tip.
@@ -324,7 +325,7 @@ Datatip.prototype.position = function (x, y)
     }
     else if (position === 'left' || position === 'right')
     {
-        // The tip is height is greater than viewport height so just anchor the tip to the side that the notch is on.
+        // The tip height is greater than viewport height so just anchor the tip to the side that the notch is on.
         if (bTip.height > dom.viewportHeight()) 
         {
             if ((bContainer.top + y) < (dom.viewportHeight() / 2)) yTip = this._options.viewportMargin - bContainer.top;
@@ -358,7 +359,7 @@ Datatip.prototype.position = function (x, y)
         if ((this._yNotchEnd < yDistFromNotchToEdge) || (this._yNotchEnd > (bTip.height - yDistFromNotchToEdge))) this._hideNotch();
     } 
 
-    dom.cancelAnimation(this._animationId);
+    animate.cancelAnimation(this._animationId);
 
     if (this._options.useAnimation) this._animateTip(this._options.speed, position);
     else
@@ -417,7 +418,7 @@ Datatip.prototype._animateTip = function (speed, position)
     if (continueAnimation) 
     {
         var me = this;
-        this._animationId = dom.requestAnimation(function () {me._animateTip(speed += me._options.speedIncr, position);});
+        this._animationId = animate.requestAnimation(function () {me._animateTip(speed += me._options.speedIncr, position);});
     }
 };
 
