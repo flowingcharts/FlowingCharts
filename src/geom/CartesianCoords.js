@@ -7,7 +7,7 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          geom/CartesianCoords 
- * @requires        utils/util
+ * @requires        utils/validate
  * @requires        geom/ViewBox
  * @requires        geom/Rectangle
  * @requires        geom/Point
@@ -17,7 +17,7 @@
 var ViewBox    = require('./ViewBox');
 var Rectangle  = require('./Rectangle');
 var Point      = require('./Point');
-var util       = require('../utils/util');
+var validate   = require('../utils/validate');
 
 /** 
  * @classdesc Maps a data space to a pixel space and vice versa.
@@ -162,7 +162,7 @@ CartesianCoords.prototype.getPixelArray = function (arrData)
 CartesianCoords.prototype.getPixelX = function (dataX)
 {
     //<validation>
-    if (!util.isNumber(dataX)) throw new Error('CartesianCoords.getPixelX(dataX): dataX must be a number.');
+    if (!validate.isNumber(dataX)) throw new Error('CartesianCoords.getPixelX(dataX): dataX must be a number.');
     //</validation>
     var px = this._viewPort.x() + this.getPixelDimensionX(dataX - this._viewBox.xMin());
     return px;
@@ -180,7 +180,7 @@ CartesianCoords.prototype.getPixelX = function (dataX)
 CartesianCoords.prototype.getPixelY = function (dataY)
 {
     //<validation>
-    if (!util.isNumber(dataY)) throw new Error('CartesianCoords.getPixelY(dataY): dataY must be a number.');
+    if (!validate.isNumber(dataY)) throw new Error('CartesianCoords.getPixelY(dataY): dataY must be a number.');
     //</validation>
     var py =  this._viewPort.y() + this._viewPort.height() - this.getPixelDimensionY(dataY - this._viewBox.yMin());
     return py;
@@ -198,7 +198,7 @@ CartesianCoords.prototype.getPixelY = function (dataY)
 CartesianCoords.prototype.getPixelDimensionX = function (dataDimensionX)
 {
     //<validation>
-    if (!util.isNumber(dataDimensionX)) throw new Error('CartesianCoords.getPixelDimensionX(dataDimensionY): dataDimensionX must be a number.');
+    if (!validate.isNumber(dataDimensionX)) throw new Error('CartesianCoords.getPixelDimensionX(dataDimensionY): dataDimensionX must be a number.');
     //</validation>
     if (dataDimensionX === 0) return 0;
     var pixelDimensionX  = (dataDimensionX / this._viewBox.width()) * this._viewPort.width();
@@ -217,7 +217,7 @@ CartesianCoords.prototype.getPixelDimensionX = function (dataDimensionX)
 CartesianCoords.prototype.getPixelDimensionY = function (dataDimensionY)
 {
     //<validation>
-    if (!util.isNumber(dataDimensionY)) throw new Error('CartesianCoords.getPixelDimensionY(dataDimensionY): dataDimensionY must be a number.');
+    if (!validate.isNumber(dataDimensionY)) throw new Error('CartesianCoords.getPixelDimensionY(dataDimensionY): dataDimensionY must be a number.');
     //</validation>
     if (dataDimensionY === 0) return 0;
     var pixelDimensionY = (dataDimensionY / this._viewBox.height()) * this._viewPort.height();
@@ -290,7 +290,7 @@ CartesianCoords.prototype.getDataArray = function (arrPixel)
 CartesianCoords.prototype.getDataX = function (pixelX)
 {
     //<validation>
-    if (!util.isNumber(pixelX)) throw new Error('CartesianCoords.getDataX(pixelX): pixelX must be a number.');
+    if (!validate.isNumber(pixelX)) throw new Error('CartesianCoords.getDataX(pixelX): pixelX must be a number.');
     //</validation>
     var px = pixelX - this._viewPort.x();
     var dataX = this._viewBox.xMin() + this.getDataDimensionX(px);
@@ -309,7 +309,7 @@ CartesianCoords.prototype.getDataX = function (pixelX)
 CartesianCoords.prototype.getDataY = function (pixelY)
 {
     //<validation>
-    if (!util.isNumber(pixelY)) throw new Error('CartesianCoords.getDataY(pixelY): pixelY must be a number.');
+    if (!validate.isNumber(pixelY)) throw new Error('CartesianCoords.getDataY(pixelY): pixelY must be a number.');
     //</validation>
     var py = pixelY - this._viewPort.y();
     var dataY = this._viewBox.yMin() + this.getDataDimensionY(this._viewPort.height() - py);
@@ -328,7 +328,7 @@ CartesianCoords.prototype.getDataY = function (pixelY)
 CartesianCoords.prototype.getDataDimensionX = function (pixelDimensionX)
 {
     //<validation>
-    if (!util.isNumber(pixelDimensionX)) throw new Error('CartesianCoords.getDataDimensionX(pixelDimensionX): pixelDimensionX must be a number.');
+    if (!validate.isNumber(pixelDimensionX)) throw new Error('CartesianCoords.getDataDimensionX(pixelDimensionX): pixelDimensionX must be a number.');
     //</validation>
     if (pixelDimensionX === 0) return 0;
     var dataDimensionX = (pixelDimensionX / this._viewPort.width()) * this._viewBox.width();
@@ -347,7 +347,7 @@ CartesianCoords.prototype.getDataDimensionX = function (pixelDimensionX)
 CartesianCoords.prototype.getDataDimensionY = function (pixelDimensionY)
 {
     //<validation>
-    if (!util.isNumber(pixelDimensionY)) throw new Error('CartesianCoords.getDataDimensionY(pixelDimensionY): pixelDimensionY must be a number.');
+    if (!validate.isNumber(pixelDimensionY)) throw new Error('CartesianCoords.getDataDimensionY(pixelDimensionY): pixelDimensionY must be a number.');
     //</validation>
     if (pixelDimensionY === 0) return 0;
     var dataDimensionY = (pixelDimensionY / this._viewPort.height()) * this._viewBox.height();

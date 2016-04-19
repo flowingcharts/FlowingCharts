@@ -7,11 +7,11 @@
  * @author Jonathan Clare 
  * @copyright FlowingCharts 2015
  * @module geom/Rectangle 
- * @requires utils/util
+ * @requires utils/validate
  */
 
 // Required modules.
-var util = require('../utils/util');
+var validate = require('../utils/validate');
 
 /** 
  * @classdesc A rectangle defined by its <code>x</code>, <code>y</code> 
@@ -80,7 +80,7 @@ Rectangle.prototype.x = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(coord)) throw new Error('Rectangle.x(coord): coord must be a number.');
+        if (!validate.isNumber(coord)) throw new Error('Rectangle.x(coord): coord must be a number.');
         //</validation>
         this._x = coord;
         return this;
@@ -102,7 +102,7 @@ Rectangle.prototype.y = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(coord)) throw new Error('Rectangle.y(coord): coord must be a number.');
+        if (!validate.isNumber(coord)) throw new Error('Rectangle.y(coord): coord must be a number.');
         //</validation>
         this._y = coord;
         return this;
@@ -124,7 +124,7 @@ Rectangle.prototype.width = function (w)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(w))  throw new Error('Rectangle.width(w): w must be a number.');
+        if (!validate.isNumber(w))  throw new Error('Rectangle.width(w): w must be a number.');
         if (w < 0)              throw new Error('Rectangle.width(w): w must be >= 0.');
         //</validation>
         this._w = w;
@@ -147,7 +147,7 @@ Rectangle.prototype.height = function (h)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(h))  throw new Error('Rectangle.height(h): h must be a number.');
+        if (!validate.isNumber(h))  throw new Error('Rectangle.height(h): h must be a number.');
         if (h < 0)              throw new Error('Rectangle.height(h): h must be >= 0.');
         //</validation>
         this._h = h;

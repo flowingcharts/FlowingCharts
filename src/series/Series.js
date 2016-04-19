@@ -8,10 +8,12 @@
  * @copyright       FlowingCharts 2015
  * @module          charts/Series 
  * @requires        utils/util
+ * @requires        utils/validate
  */
 
 // Required modules.
-var util = require('../utils/util');
+var util     = require('../utils/util');
+var validate = require('../utils/validate');
 
 /** 
  * @classdesc A base class for series.
@@ -193,7 +195,7 @@ Series.prototype.update = function()
         var markerSize  = dataItem[this._options.sizeField]  !== undefined ? dataItem[this._options.sizeField]  : this._options.markerSize;
         var shape       = dataItem[this._options.shapeField] !== undefined ? dataItem[this._options.shapeField] : this._options.shape;
 
-        if (util.isNumber(x) && util.isNumber(y))
+        if (validate.isNumber(x) && validate.isNumber(y))
         {
             var item = this.canvas.marker(shape, x, y, markerSize);
             //var item = this.canvas.shape(shape, x, y, markerSize, markerSize);

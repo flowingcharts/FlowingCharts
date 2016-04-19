@@ -7,11 +7,11 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          geom/Point 
- * @requires        utils/util
+ * @requires        utils/validate
  */
 
 // Required modules.
-var util = require('../utils/util');
+var validate = require('../utils/validate');
 
 /** 
  * @classdesc A Point defined by its <code>x</code> and <code>y</code> 
@@ -69,7 +69,7 @@ Point.prototype.x = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(coord)) throw new Error('Point.x(coord): coord must be a number.');
+        if (!validate.isNumber(coord)) throw new Error('Point.x(coord): coord must be a number.');
         //</validation>
         this._x = coord;
         return this;
@@ -91,7 +91,7 @@ Point.prototype.y = function (coord)
     if (arguments.length > 0)
     {
         //<validation>
-        if (!util.isNumber(coord)) throw new Error('Point.y(coord): coord must be a number.');
+        if (!validate.isNumber(coord)) throw new Error('Point.y(coord): coord must be a number.');
         //</validation>
         this._y = coord;
         return this;

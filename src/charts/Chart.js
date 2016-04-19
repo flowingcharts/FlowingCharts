@@ -14,6 +14,7 @@
  * @requires        geom/CartesianCoords
  * @requires        geom/PolarCoords
  * @requires        utils/util
+ * @requires        utils/validate
  * @requires        utils/dom
  * @requires        utils/svg
  * @requires        utils/color
@@ -27,6 +28,7 @@ var CartesianCoords     = require('../geom/CartesianCoords');
 var PolarCoords         = require('../geom/PolarCoords');
 var Series              = require('../series/Series');
 var util                = require('../utils/util');
+var validate            = require('../utils/validate');
 var dom                 = require('../utils/dom');
 var colorUtil           = require('../utils/color');
 
@@ -399,10 +401,10 @@ Chart.prototype.hitEvent = function(x, y)
 Chart.prototype.setSize = function (w, h)
 {
     //<validation>
-    if (!util.isNumber(w))  throw new Error('Chart.setSize(w): w must be a number.');
-    if (w < 0)              throw new Error('Chart.setSize(w): w must be >= 0.');
-    if (!util.isNumber(h))  throw new Error('Chart.setSize(h): h must be a number.');
-    if (h < 0)              throw new Error('Chart.setSize(h): h must be >= 0.');
+    if (!validate.isNumber(w))  throw new Error('Chart.setSize(w): w must be a number.');
+    if (w < 0)                  throw new Error('Chart.setSize(w): w must be >= 0.');
+    if (!validate.isNumber(h))  throw new Error('Chart.setSize(h): h must be a number.');
+    if (h < 0)                  throw new Error('Chart.setSize(h): h must be >= 0.');
     //</validation>
 
     // Set the viewPort.

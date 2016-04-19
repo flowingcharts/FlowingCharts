@@ -7,14 +7,14 @@
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          canvas/Canvas 
- * @requires        utils/util
+ * @requires        utils/validate
  * @requires        utils/canvas
  * @requires        utils/dom
  * @requires        utils/svg
  */
 
 // Required modules.
-var util       = require('../utils/util');
+var validate   = require('../utils/validate');
 var canvasUtil = require('../utils/canvas');
 var svgUtil    = require('../utils/svg');
 var dom        = require('../utils/dom');
@@ -93,10 +93,10 @@ Canvas.prototype.height = function ()
 Canvas.prototype.setSize = function (w, h)
 {
     //<validation>
-    if (!util.isNumber(w))  throw new Error('Canvas.setSize(w): w must be a number.');
-    if (w < 0)              throw new Error('Canvas.setSize(w): w must be >= 0.');
-    if (!util.isNumber(h))  throw new Error('Canvas.setSize(h): h must be a number.');
-    if (h < 0)              throw new Error('Canvas.setSize(h): h must be >= 0.');
+    if (!validate.isNumber(w))  throw new Error('Canvas.setSize(w): w must be a number.');
+    if (w < 0)                  throw new Error('Canvas.setSize(w): w must be >= 0.');
+    if (!validate.isNumber(h))  throw new Error('Canvas.setSize(h): h must be a number.');
+    if (h < 0)                  throw new Error('Canvas.setSize(h): h must be >= 0.');
     //</validation>
 
     // Canvas size.
