@@ -3,7 +3,7 @@
 'use strict';
 
 /**
- * @fileoverview    Contains functions for manipulating svg.
+ * @fileoverview    Provides functions for manipulating svg.
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          svg 

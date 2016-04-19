@@ -3,7 +3,7 @@
 'use strict';
 
 /**
- * @fileoverview    Contains functions for manipulating the dom.
+ * @fileoverview    Provides functions for manipulating the dom.
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          dom 

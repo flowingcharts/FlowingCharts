@@ -3,7 +3,7 @@
 'use strict';
 
 /**
- * @fileoverview    Contains utility functions.
+ * @fileoverview    Provides utility functions.
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          util 

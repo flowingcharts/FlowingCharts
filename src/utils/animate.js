@@ -3,7 +3,7 @@
 'use strict';
 
 /**
- * @fileoverview    Contains functions for animating html elements.
+ * @fileoverview    Provides functions for animating html elements.
  * @author          Jonathan Clare 
  * @copyright       FlowingCharts 2015
  * @module          dom 
