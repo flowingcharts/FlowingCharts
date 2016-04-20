@@ -26,6 +26,7 @@ var dom = require('../utils/dom');
 function EventHandler (options)
 {
     // TODO Chrome, FF and Opera dont dispatch a mouseout event if you leave the browser window whilst hovering an svg element.
+    // TODO Event handler doesnt need to know about coords - makes it more re-useable.
 
     var element         = options.element;
     var coords          = options.coords;

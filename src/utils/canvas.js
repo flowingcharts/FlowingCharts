@@ -270,7 +270,7 @@ function draw (ctx, style)
     // Fill.
     if (style.fillColor !== undefined)
     {
-        ctx.fillStyle   = style.fillOpacity !== undefined ? colorUtil.toRGBA(style.fillColor, style.fillOpacity) : colorUtil.toRGBA(style.fillColor);
+        ctx.fillStyle   = style.fillOpacity !== undefined ? colorUtil.toRgba(style.fillColor, style.fillOpacity) : colorUtil.toRgba(style.fillColor);
         ctx.fill();
     }
 
@@ -280,7 +280,7 @@ function draw (ctx, style)
         ctx.lineWidth   = style.lineWidth   !== undefined ? style.lineWidth : 1;
         ctx.lineJoin    = style.lineJoin    !== undefined ? style.lineJoin  : 'round';
         ctx.lineCap     = style.lineCap     !== undefined ? style.lineCap   : 'butt';
-        ctx.strokeStyle = style.lineOpacity !== undefined ? colorUtil.toRGBA(style.lineColor, style.lineOpacity) : colorUtil.toRGBA(style.lineColor);
+        ctx.strokeStyle = style.lineOpacity !== undefined ? colorUtil.toRgba(style.lineColor, style.lineOpacity) : colorUtil.toRgba(style.lineColor);
         ctx.stroke();
     }
 }

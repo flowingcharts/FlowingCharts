@@ -285,33 +285,6 @@ var bounds = function (element)
 };
 
 /** 
- * Check if a rect is fully contained within the viewport.
- * 
- * @since 0.1.0
- * 
- * @param {Object} rect         The rectangle to test - coords should be relative to the viewport.
- * @param {number} rect.top     The top value.
- * @param {number} rect.right   The right value.
- * @param {number} rect.bottom  The bottom value.
- * @param {number} rect.left    The left value.
- * @param {number} [margin = 0] An optional margin that is applied to the rect.
- * 
- * @return {object} A rectangle that contains the amount of overlap for each edge rect{top:0, right:0, bottom:0, left:0}.
- */
-var isRectInViewport = function (rect, margin) 
-{
-    var w = viewportWidth();
-    var h = viewportHeight();
-    margin = margin !== undefined ? margin : 0;
-    return {
-        top     : rect.top  - margin < 0   ? (rect.top - margin) * -1  : 0,
-        right   : rect.right + margin > w  ? rect.right + margin - w   : 0,
-        bottom  : rect.bottom + margin > h ? rect.bottom + margin - h  : 0,
-        left    : rect.left - margin < 0   ? (rect.left - margin) * -1 : 0
-    };
-};
-
-/** 
  * Get the viewport width.
  * 
  * @since 0.1.0
@@ -386,7 +359,6 @@ module.exports =
     opacity                 : opacity,
     isVisible               : isVisible,
     bounds                  : bounds,
-    isRectInViewport        : isRectInViewport,
     viewportWidth           : viewportWidth,
     viewportHeight          : viewportHeight,
     pageOffset              : pageOffset,

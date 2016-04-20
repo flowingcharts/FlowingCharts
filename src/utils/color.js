@@ -50,7 +50,7 @@ var colorNames =
 var isColor = function (c)
 {
     if (isHex(c))       return true;
-    if (isRGB(c))       return true;
+    if (isRgb(c))       return true;
     if (isColorName(c)) return true;
     return false;
 };
@@ -64,7 +64,7 @@ var isColor = function (c)
  *
  * @return {boolean} true, if c is an rgb color, otherwise false.
  */
-var isRGB = function (c)
+var isRgb = function (c)
 {
     return (c.indexOf('rgb') != -1);
 };
@@ -78,7 +78,7 @@ var isRGB = function (c)
  *
  * @return {boolean} true, if c is an rgba color, otherwise false.
  */
-var isRGBA = function (c)
+var isRgba = function (c)
 {
     return (c.indexOf('rgba') != -1);
 };
@@ -123,7 +123,7 @@ var isColorName = function (c)
  *
  * @return {string} The hexadecimal value.
  */
-var RGBToHex = function (r, g, b)
+var rgbToHex = function (r, g, b)
 {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 };
@@ -137,7 +137,7 @@ var RGBToHex = function (r, g, b)
  *
  * @return {Object} An object containing the rgb color values {r:255, g:255, b:255}.
  */
-var hexToRGB = function (hex)
+var hexToRgb = function (hex)
 {
     // Expand shorthand form (e.g. '03F') to full form (e.g. '0033FF')
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -178,7 +178,7 @@ var colorNameToHex = function (c)
  *
  * @return {Object} An object containing the component colors {r:255, g:255, b:255, a:0.5}.
  */
-var componentColors = function (rgba)
+var rgbStringToObject = function (rgba)
 {
     var arr = rgba.match(/\d+/g);
     var o = 
@@ -200,19 +200,19 @@ var componentColors = function (rgba)
  *
  * @return {string} An rgba color string 'rgba(255, 255, 255, 0.5)' or undefined if not a valid color.
  */
-var toRGBA = function (c, opacity)
+var toRgba = function (c, opacity)
 {
     var o;
-    if (isRGBA(c) && opacity === undefined)
+    if (isRgba(c) && opacity === undefined)
         return c; 
-    else if (isRGB(c))
-        o = componentColors(c); 
+    else if (isRgb(c))
+        o = rgbStringToObject(c); 
     else if (isHex(c))       
-        o = hexToRGB(c);
+        o = hexToRgb(c);
     else if (isColorName(c))
     {
         var hex = colorNameToHex(c);
-        o = hexToRGB(hex);
+        o = hexToRgb(hex);
     }   
     else return undefined;
     
@@ -224,7 +224,7 @@ module.exports =
 {
     isColor         : isColor,
     isHex           : isHex,
-    isRGB           : isRGB,
-    isRGBA          : isRGBA,
-    toRGBA          : toRGBA
+    isRgb           : isRgb,
+    isRgba          : isRgba,
+    toRgba          : toRgba
 };

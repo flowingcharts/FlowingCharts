@@ -339,7 +339,7 @@ Chart.prototype.addEventHandler = function (options)
 
             //me._datatip.html('1')
            //me._datatip.html(highlightItem.coords.cx+' '+highlightItem.coords.cy)
-            me._datatip.options({borderColor : highlightItem.style.fillColor, position: 'top'})
+            me._datatip.options({borderColor : highlightItem.style.fillColor, placement: 'top'})
             .html('Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+ 
                 ' <br/> Tooltip that should always be visible in viewport Y and its just really long: '+highlightItem.coords.cy+
                 ' <br/> Tooltip that should always be visible in viewport X and its just too long: '+highlightItem.coords.cx+
