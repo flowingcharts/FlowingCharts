@@ -48,7 +48,6 @@ module.exports = function (grunt)
         // Minimises the JavaScript source code file 'gen_build/<%= pkg.name %>.min.js' into 'gen_build/<%= pkg.name %>.min.js'.
         // Adds a banner displaying the project name, version and date to the minimised file.
         // Creates a source map file 'gen_build/<%= pkg.name %>.map' for debugging the minimised code file.
-        // Removes DEBUG code from minimised code file.
         uglify: 
         {
             options: 
@@ -58,12 +57,7 @@ module.exports = function (grunt)
                 sourceMapName: "gen_build/<%= pkg.name %>.map"*/
                 compress: 
                 {
-                    // Remove debug code from minimised code.
-                    global_defs: 
-                    {
-                        "DEBUG": false
-                    },
-                    dead_code: true
+                    dead_code: true // Removes dead code - http://lisperator.net/uglifyjs/compress#global-defs.
                 }
             },
             build: 
@@ -198,7 +192,8 @@ module.exports = function (grunt)
                 {
                     // Generates inline source maps as a comment at the bottom of 'gen_build/<%= pkg.name %>.js' 
                     // to enable debugging of original JavaScript module files.
-                    debug: true
+                    debug: true,
+                    standalone: '<%= pkg.name %>' // Exposes the module to the world - http://www.forbeslindesay.co.uk/post/46324645400/standalone-browserify-builds
                 }
             },
             build: 
@@ -284,14 +279,9 @@ module.exports = function (grunt)
         // Opens the specified files.
         open : 
         {
-            dev : 
-            {
-                path: 'file:///C:/Work/GitHub/<%= pkg.name %>/examples/svg/scatter/index.html',
-                app: 'Chrome'
-            },
             release : 
             {
-                path : 'file:///C:/Work/GitHub/<%= pkg.name %>/gen_release/<%= pkg.name %>-<%= pkg.version %>/examples/svg/scatter/index.html',
+                path : 'file:///C:/Work/GitHub/<%= pkg.name %>/gen_release/<%= pkg.name %>-<%= pkg.version %>/examples/jquery/svg/scatter/index.html',
                 app: 'Chrome'
             }
         },
@@ -299,9 +289,6 @@ module.exports = function (grunt)
         // Enable by typing '>grunt watch' into a command prompt.
         watch:
         {
-            // livereload reloads any html pages that contain <script src="http://localhost:35729/livereload.js"></script>
-            // see http://stackoverflow.com/a/16430183
-            options: { livereload: true },
             files: ['src/**/*.js'],
             tasks: ['build']
         }

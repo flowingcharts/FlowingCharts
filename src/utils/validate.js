@@ -1,5 +1,4 @@
 /* jshint browserify: true */
-/* globals DEBUG */
 'use strict';
 
 /**

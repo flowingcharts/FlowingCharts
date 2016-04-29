@@ -1,5 +1,4 @@
 /* jshint browserify: true */
-/* globals DEBUG */
 'use strict';
 
 /**
@@ -160,6 +159,20 @@ var createElement = function (type, attributes)
     var htmlElement = document.createElement(type);
     attr(htmlElement, attributes);
     return htmlElement;
+};
+
+/** 
+ * Gets the html element with the given id.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {string} id  The element id.
+ * 
+ * @return {HTMLElement} The html element.
+ */
+var getElement = function (id)
+{
+    return document.getElementById(id);
 };
 
 /** 
@@ -351,6 +364,7 @@ module.exports =
     removeAttr              : removeAttr,
     style                   : style,
     createElement           : createElement,
+    getElement              : getElement,
     createSVGElement        : createSVGElement,
     on                      : on,
     off                     : off,

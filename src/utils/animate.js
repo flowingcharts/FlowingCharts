@@ -1,5 +1,4 @@
 /* jshint browserify: true */
-/* globals DEBUG */
 'use strict';
 
 /**
@@ -63,6 +62,6 @@ var cancelAnimation = function (id)
 
 module.exports = 
 {
-    requestAnimation        : requestAnimation,
-    cancelAnimation         : cancelAnimation
+    requestAnimation : requestAnimation,
+    cancelAnimation  : cancelAnimation
 };

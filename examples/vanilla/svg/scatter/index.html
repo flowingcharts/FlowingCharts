@@ -10,20 +10,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="keywords" content="flowingcharts, charts, javascript charts, ajax charts, plots, line charts, bar charts, pie charts, javascript plots, ajax plots">
         <meta name="description" content="FlowingCharts - Interactive JavaScript charts for your web pages.">
-        <!-- build:remove 
-        <script src="http://localhost:35729/livereload.js"></script>
-        /build -->
         
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function()
-            {
-                $('#container').flowingcharts(
+            document.addEventListener("DOMContentLoaded", function (event) 
+            { 
+                flowingcharts.chart("container", 
                 {
                     chart : 
                     {
-                        type: 'scatter',
-                        renderer : 'canvas'
+                        type: 'scatter'
                     },
                     title : 
                     {
@@ -170,8 +165,8 @@
     </head>
     <body>
         <div id="container" style="min-width: 310px; height: 400px; max-width: 800px; margin: 0 auto"></div>
-        <!-- build:js ../../../flowingcharts.min.js -->
-        <script type="text/javascript" src="../../../gen_build/flowingcharts.js"></script>
+        <!-- build:js ../../../../flowingcharts.min.js -->
+        <script type="text/javascript" src="../../../../gen_build/flowingcharts.js"></script>
         <!-- /build -->
     </body>
 </html>
