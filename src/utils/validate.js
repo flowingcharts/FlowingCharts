@@ -42,6 +42,6 @@ var isString = function (obj)
 
 module.exports = 
 {
-    isNumber : isNumber
+    isNumber : isNumber,
     isString : isNumber
 };
