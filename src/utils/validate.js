@@ -8,6 +8,8 @@
  * @module          util 
  */
 
+var toString = Object.prototype.toString;
+
 /** 
  * Check if obj is a valid number. Returns false if obj is equal to NaN, Infinity, -Infinity or a string eg '10'.
  *
