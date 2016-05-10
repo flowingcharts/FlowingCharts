@@ -9,24 +9,39 @@
  */
 
 /** 
- * Check if n is a valid number. Returns false if n is equal to NaN, Infinity, -Infinity or a string eg '10'.
+ * Check if obj is a valid number. Returns false if obj is equal to NaN, Infinity, -Infinity or a string eg '10'.
  *
  * @since 0.1.0
  *
- * @param {*} n The number to test.
+ * @param {*} obj The number to test.
  *
- * @return {boolean} true, if n is a number, otherwise false.
+ * @return {boolean} true, if obj is a number, otherwise false.
  */
-var isNumber = function (n)
+var isNumber = function (obj)
 {
     // (typeof n == 'number')   Reject objects that arent number types eg numbers stored as strings such as '10'.
     //                          NaN, Infinity and -Infinity are number types so will pass this test.
     // isFinite(n)              Reject infinite numbers.
     // !isNaN(n))               Reject NaN.
-    return (typeof n == 'number') && isFinite(n) && !isNaN(n);
+    return (typeof obj == 'number') && isFinite(obj) && !isNaN(obj);
+};
+
+/** 
+ * Check if obj is a valid string.
+ *
+ * @since 0.1.0
+ *
+ * @param {*} obj The string to test.
+ *
+ * @return {boolean} true, if obj is a string, otherwise false.
+ */
+var isString = function (obj) 
+{
+    return toString.call(obj) == '[object String]';
 };
 
 module.exports = 
 {
-    isNumber        : isNumber
+    isNumber : isNumber
+    isString : isNumber
 };
