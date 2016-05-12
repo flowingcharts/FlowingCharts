@@ -25,7 +25,7 @@ var isNumber = function (obj)
     //                          NaN, Infinity and -Infinity are number types so will pass this test.
     // isFinite(n)              Reject infinite numbers.
     // !isNaN(n))               Reject NaN.
-    return (typeof obj == 'number') && isFinite(obj) && !isNaN(obj);
+    return (typeof obj === 'number') && isFinite(obj) && !isNaN(obj);
 };
 
 /** 
@@ -39,11 +39,11 @@ var isNumber = function (obj)
  */
 var isString = function (obj) 
 {
-    return toString.call(obj) == '[object String]';
+    return toString.call(obj) === '[object String]';
 };
 
 module.exports = 
 {
     isNumber : isNumber,
-    isString : isNumber
+    isString : isString
 };
